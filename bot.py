@@ -1,5 +1,5 @@
 """
-Main bot class with event handlers and cog loading
+Main bot class with event handlers and cog loading - UPDATED
 """
 import os
 import logging
@@ -31,6 +31,7 @@ class GuildBot(commands.Bot):
         
         # Load all cogs
         cogs = [
+            'cogs.general',        # NEW: General utility commands
             'cogs.onboarding',
             'cogs.profiles', 
             'cogs.polls',
@@ -45,6 +46,13 @@ class GuildBot(commands.Bot):
                 logger.info(f"Loaded cog: {cog}")
             except Exception as e:
                 logger.error(f"Failed to load cog {cog}: {e}")
+        
+        # Load context menus
+        try:
+            await self.load_extension('context_menus')
+            logger.info("Loaded context menus")
+        except Exception as e:
+            logger.error(f"Failed to load context menus: {e}")
         
         # Sync app commands
         try:
@@ -120,6 +128,7 @@ class GuildBot(commands.Bot):
     async def restore_persistent_views(self):
         """Restore persistent views for all guilds."""
         from views.panels import AdminDashboard, MemberHub
+        from views.onboarding import QuickOnboardingActionView
         
         logger.info("Restoring persistent views...")
         
@@ -156,7 +165,41 @@ class GuildBot(commands.Bot):
                         except Exception as e:
                             logger.error(f"Error restoring member hub for guild {guild.id}: {e}")
         
+        # Also restore poll views and onboarding notification views
+        await self.restore_poll_views()
+        await self.restore_onboarding_notification_views()
+        
         logger.info("Persistent views restored")
+    
+    async def restore_poll_views(self):
+        """Restore poll voting views."""
+        from views.polls import PollVoteView
+        from database import Poll
+        
+        async with get_session() as session:
+            # Get active polls
+            result = await session.execute(
+                select(Poll).where(Poll.status == 'active')
+            )
+            active_polls = result.scalars().all()
+            
+            for poll in active_polls:
+                if poll.message_id:
+                    try:
+                        view = PollVoteView(poll.id, poll.options, poll.is_anonymous)
+                        self.add_view(view, message_id=poll.message_id)
+                        logger.debug(f"Restored poll view for poll {poll.id}")
+                    except Exception as e:
+                        logger.error(f"Failed to restore poll view for poll {poll.id}: {e}")
+    
+    async def restore_onboarding_notification_views(self):
+        """Restore onboarding notification quick action views."""
+        from views.onboarding import QuickOnboardingActionView
+        from database import OnboardingSession
+        
+        # Note: This would require storing message IDs for notification messages
+        # For now, we'll skip this as notification views are less critical
+        pass
     
     async def log_action(self, guild_id: int, action: str, actor: discord.Member, 
                         target: Optional[discord.Member] = None, details: str = ""):

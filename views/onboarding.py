@@ -212,9 +212,107 @@ class OnboardingWizard(discord.ui.View):
     
     async def notify_admins(self, interaction: discord.Interaction):
         """Notify admins of new onboarding completion."""
-        # This would typically send a message to an admin channel
-        # or update the onboarding queue view
-        pass
+        bot = interaction.client
+        
+        # Get guild config to find logs channel
+        guild_config = await bot.get_guild_config(interaction.guild_id)
+        if not guild_config or not guild_config.logs_channel_id:
+            return  # No logs channel configured
+        
+        logs_channel = bot.get_channel(guild_config.logs_channel_id)
+        if not logs_channel:
+            return  # Logs channel not found
+        
+        # Get the onboarding session details
+        async with get_session() as session:
+            result = await session.execute(
+                select(OnboardingSession).where(OnboardingSession.id == self.session_id)
+            )
+            onboarding_session = result.scalar_one_or_none()
+            
+            if not onboarding_session:
+                return
+        
+        # Create notification embed
+        embed = discord.Embed(
+            title="📋 New Onboarding Completion",
+            description=f"{interaction.user.mention} has completed the onboarding process and is awaiting review.",
+            color=discord.Color.blue(),
+            timestamp=datetime.utcnow()
+        )
+        
+        embed.add_field(
+            name="User",
+            value=f"{interaction.user.display_name} ({interaction.user.mention})",
+            inline=True
+        )
+        
+        embed.add_field(
+            name="Completed",
+            value=discord.utils.format_dt(onboarding_session.completed_at, 'R'),
+            inline=True
+        )
+        
+        # Show answers summary
+        if onboarding_session.answers:
+            answers_preview = []
+            for qid, answer in list(onboarding_session.answers.items())[:3]:
+                answers_preview.append(f"**{qid}**: {str(answer)[:80]}{'...' if len(str(answer)) > 80 else ''}")
+            
+            if answers_preview:
+                embed.add_field(
+                    name="Answers Preview",
+                    value="\n".join(answers_preview),
+                    inline=False
+                )
+                
+                if len(onboarding_session.answers) > 3:
+                    embed.add_field(
+                        name="Additional Answers",
+                        value=f"...and {len(onboarding_session.answers) - 3} more",
+                        inline=False
+                    )
+        
+        # Show role suggestions if any
+        if onboarding_session.suggestion:
+            role_suggestions = []
+            for role_id in onboarding_session.suggestion[:5]:  # Show first 5
+                try:
+                    role = interaction.guild.get_role(int(role_id))
+                    if role:
+                        role_suggestions.append(role.mention)
+                    else:
+                        role_suggestions.append(f"Role ID: {role_id}")
+                except (ValueError, TypeError):
+                    # Handle string role names
+                    role_suggestions.append(str(role_id))
+            
+            if role_suggestions:
+                embed.add_field(
+                    name="Suggested Roles",
+                    value="\n".join(role_suggestions),
+                    inline=False
+                )
+        
+        embed.add_field(
+            name="Review Action Required",
+            value="Use the **Admin Dashboard → Onboarding Queue** to review and approve/deny this application.",
+            inline=False
+        )
+        
+        embed.set_thumbnail(url=interaction.user.display_avatar.url)
+        embed.set_footer(text=f"Session ID: {onboarding_session.id}")
+        
+        try:
+            # Create view with quick action buttons
+            view = QuickOnboardingActionView(onboarding_session.id, interaction.user)
+            await logs_channel.send(embed=embed, view=view)
+        except Exception as e:
+            # If we can't send with view, try without
+            try:
+                await logs_channel.send(embed=embed)
+            except Exception:
+                pass  # Silently fail if we can't send to logs
     
     @discord.ui.button(
         label="Start",
@@ -329,7 +427,7 @@ class OnboardingQueueView(discord.ui.View):
                 .where(
                     and_(
                         OnboardingSession.guild_id == guild_id,
-                        OnboardingSession.state == 'completed'
+                        OnboardingSession.state == 'completed'  # Only completed, not yet approved/denied
                     )
                 )
                 .order_by(OnboardingSession.completed_at.desc())
@@ -625,3 +723,284 @@ class DenyModal(discord.ui.Modal):
         )
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
+
+
+class QuickOnboardingActionView(discord.ui.View):
+    """Quick action buttons for onboarding notifications."""
+    def __init__(self, session_id: int):
+        super().__init__(timeout=None)  # persistent view
+        self._add_review_button(session_id)
+
+    def _add_review_button(self, session_id: int):
+        btn = discord.ui.Button(
+            label="Review Application",
+            style=discord.ButtonStyle.primary,
+            emoji="📋",
+            custom_id=f"onboarding_review_{session_id}",
+        )
+        btn.callback = self.review_application  # bind callback
+        self.add_item(btn)
+
+    async def review_application(self, interaction: discord.Interaction):
+        # derive the session id from the custom_id (don’t rely on self.* for persistent views)
+        cid = interaction.data["custom_id"]
+        session_id = int(cid.removeprefix("onboarding_review_"))
+
+        from utils.permissions import PermissionChecker
+        if not PermissionChecker.is_admin(interaction.user):
+            embed = PermissionChecker.get_permission_error_embed(
+                "review onboarding applications",
+                "Administrator, Manage Server, or Manage Roles"
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        # DB lookup
+        async with get_session() as session:
+            result = await session.execute(
+                select(OnboardingSession).where(OnboardingSession.id == session_id)
+            )
+            onboarding_session = result.scalar_one_or_none()
+
+        if not onboarding_session:
+            embed = discord.Embed(
+                title="❌ Session Not Found",
+                description="This onboarding session no longer exists.",
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        if onboarding_session.state != "completed":
+            embed = discord.Embed(
+                title="ℹ️ Already Processed",
+                description=f"This application has already been {onboarding_session.state}.",
+                color=discord.Color.blue()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        # Use interaction.user rather than storing user on the view
+        view = DetailedOnboardingReviewView(onboarding_session, interaction.user)
+        await view.show_review(interaction)
+
+
+class DetailedOnboardingReviewView(discord.ui.View):
+    """Detailed review interface for a specific onboarding session."""
+    
+    def __init__(self, session: OnboardingSession, user: discord.Member):
+        super().__init__(timeout=300)
+        self.session = session
+        self.user = user
+    
+    async def show_review(self, interaction: discord.Interaction):
+        """Show detailed review interface."""
+        embed = discord.Embed(
+            title=f"📋 Onboarding Review - {self.user.display_name}",
+            color=discord.Color.blue()
+        )
+        
+        embed.add_field(
+            name="User Information",
+            value=(
+                f"**Display Name:** {self.user.display_name}\n"
+                f"**Username:** {self.user.name}\n"
+                f"**User ID:** {self.user.id}\n"
+                f"**Account Created:** {discord.utils.format_dt(self.user.created_at, 'R')}\n"
+                f"**Joined Server:** {discord.utils.format_dt(self.user.joined_at, 'R') if self.user.joined_at else 'Unknown'}"
+            ),
+            inline=False
+        )
+        
+        embed.add_field(
+            name="Application Details",
+            value=(
+                f"**Started:** {discord.utils.format_dt(self.session.created_at, 'R')}\n"
+                f"**Completed:** {discord.utils.format_dt(self.session.completed_at, 'R')}\n"
+                f"**Session ID:** {self.session.id}"
+            ),
+            inline=False
+        )
+        
+        # Show all answers
+        if self.session.answers:
+            answers_text = []
+            for qid, answer in self.session.answers.items():
+                answers_text.append(f"**{qid}:** {str(answer)}")
+            
+            # Split into multiple fields if too long
+            answers_str = "\n".join(answers_text)
+            if len(answers_str) <= 1024:
+                embed.add_field(
+                    name="Answers",
+                    value=answers_str,
+                    inline=False
+                )
+            else:
+                # Split into chunks
+                chunks = []
+                current_chunk = []
+                current_length = 0
+                
+                for answer_line in answers_text:
+                    if current_length + len(answer_line) + 1 > 1024:
+                        chunks.append("\n".join(current_chunk))
+                        current_chunk = [answer_line]
+                        current_length = len(answer_line)
+                    else:
+                        current_chunk.append(answer_line)
+                        current_length += len(answer_line) + 1
+                
+                if current_chunk:
+                    chunks.append("\n".join(current_chunk))
+                
+                for i, chunk in enumerate(chunks[:3]):  # Max 3 fields
+                    field_name = "Answers" if i == 0 else f"Answers (cont. {i+1})"
+                    embed.add_field(name=field_name, value=chunk, inline=False)
+        
+        # Show role suggestions
+        if self.session.suggestion:
+            role_suggestions = []
+            for role_id in self.session.suggestion:
+                try:
+                    role = interaction.guild.get_role(int(role_id))
+                    if role:
+                        role_suggestions.append(role.mention)
+                    else:
+                        role_suggestions.append(f"Role ID: {role_id} (not found)")
+                except (ValueError, TypeError):
+                    role_suggestions.append(str(role_id))
+            
+            embed.add_field(
+                name="Suggested Roles",
+                value="\n".join(role_suggestions) if role_suggestions else "None",
+                inline=False
+            )
+        
+        embed.set_thumbnail(url=self.user.display_avatar.url)
+        
+        self.update_buttons()
+        
+        await interaction.response.send_message(embed=embed, view=self, ephemeral=True)
+    
+    def update_buttons(self):
+        """Update action buttons."""
+        self.clear_items()
+        
+        # Approve button
+        approve_button = discord.ui.Button(
+            label="Approve Application",
+            style=discord.ButtonStyle.success,
+            emoji="✅"
+        )
+        approve_button.callback = self.approve_application
+        self.add_item(approve_button)
+        
+        # Deny button
+        deny_button = discord.ui.Button(
+            label="Deny Application",
+            style=discord.ButtonStyle.danger,
+            emoji="❌"
+        )
+        deny_button.callback = self.deny_application
+        self.add_item(deny_button)
+        
+        # Custom roles button
+        custom_roles_button = discord.ui.Button(
+            label="Custom Role Assignment",
+            style=discord.ButtonStyle.secondary,
+            emoji="🎭"
+        )
+        custom_roles_button.callback = self.custom_role_assignment
+        self.add_item(custom_roles_button)
+    
+    async def approve_application(self, interaction: discord.Interaction):
+        """Approve the application with suggested roles."""
+        # Get suggested roles
+        suggested_role_objects = []
+        if self.session.suggestion:
+            for role_id in self.session.suggestion:
+                try:
+                    role = interaction.guild.get_role(int(role_id))
+                    if role:
+                        suggested_role_objects.append(role)
+                except (ValueError, TypeError):
+                    pass  # Skip invalid role IDs
+        
+        if suggested_role_objects:
+            view = ApprovalView(self.session.id, suggested_role_objects)
+            
+            embed = discord.Embed(
+                title="✅ Confirm Approval",
+                description=f"Approve {self.user.mention} and assign the following suggested roles:",
+                color=discord.Color.green()
+            )
+            
+            embed.add_field(
+                name="Roles to Assign",
+                value="\n".join(role.mention for role in suggested_role_objects),
+                inline=False
+            )
+            
+            await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+        else:
+            # No suggested roles, approve without roles
+            view = ConfirmApprovalView(self.session.id, [])
+            
+            embed = discord.Embed(
+                title="✅ Confirm Approval",
+                description=f"Approve {self.user.mention} with no additional roles?",
+                color=discord.Color.green()
+            )
+            
+            await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+    
+    async def deny_application(self, interaction: discord.Interaction):
+        """Deny the application."""
+        modal = DenyModal(self.session.id)
+        await interaction.response.send_modal(modal)
+    
+    async def custom_role_assignment(self, interaction: discord.Interaction):
+        """Custom role assignment interface."""
+        view = CustomRoleApprovalView(self.session.id)
+        
+        embed = discord.Embed(
+            title="🎭 Custom Role Assignment",
+            description=f"Select custom roles to assign to {self.user.mention}:",
+            color=discord.Color.blue()
+        )
+        
+        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
+
+class CustomRoleApprovalView(discord.ui.View):
+    """Custom role selection for approval."""
+    
+    def __init__(self, session_id: int):
+        super().__init__(timeout=300)
+        self.session_id = session_id
+    
+    @discord.ui.select(
+        cls=discord.ui.RoleSelect,
+        placeholder="Select roles to assign...",
+        max_values=10
+    )
+    async def role_select(self, interaction: discord.Interaction, select: discord.ui.RoleSelect):
+        """Select custom roles."""
+        selected_roles = select.values
+        
+        view = ConfirmApprovalView(self.session_id, selected_roles)
+        
+        embed = discord.Embed(
+            title="✅ Confirm Custom Approval",
+            description="Approve application and assign the selected roles:",
+            color=discord.Color.green()
+        )
+        
+        embed.add_field(
+            name="Roles to Assign",
+            value="\n".join(role.mention for role in selected_roles) if selected_roles else "No roles",
+            inline=False
+        )
+        
+        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)

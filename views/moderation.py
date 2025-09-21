@@ -1,5 +1,5 @@
 """
-Moderation features for the Guild Management Bot
+Moderation features for the Guild Management Bot - FIXED VERSION
 """
 import discord
 from sqlalchemy import select, and_
@@ -87,42 +87,49 @@ class SpamFilterView(discord.ui.View):
     async def load_settings(self, guild_id: int):
         """Load current spam filter settings."""
         bot = None
-        # Try to get bot instance from interaction context
-        # This is a simplified approach - in practice you'd want better bot access
+        # Get bot instance and config cache
         try:
-            # Get settings from cache if available
-            config = await self.get_moderation_config(guild_id)
-            spam_config = config.get("spam", {})
-            
-            self.enabled = spam_config.get("enabled", False)
-            self.window_seconds = spam_config.get("window_seconds", 10)
-            self.max_messages = spam_config.get("max_messages", 5)
-            self.max_mentions = spam_config.get("max_mentions", 3)
-            self.action = spam_config.get("action", "delete")
+            # We need to access the bot's config cache through the interaction
+            # This is a bit of a hack but necessary given the architecture
+            pass
         except:
-            pass  # Use defaults
+            pass  # Use defaults if can't load
     
-    async def save_settings(self, guild_id: int):
+    async def save_settings(self, guild_id: int, bot):
         """Save spam filter settings."""
-        # This would typically use the bot's config cache
-        # Simplified for this example
-        pass
-    
-    async def get_moderation_config(self, guild_id: int) -> Dict[str, Any]:
-        """Get moderation config - simplified."""
-        return {
-            "spam": {
-                "enabled": self.enabled,
-                "window_seconds": self.window_seconds,
-                "max_messages": self.max_messages,
-                "max_mentions": self.max_mentions,
-                "action": self.action
-            }
+        if not hasattr(bot, 'config_cache'):
+            return
+        
+        config_cache = bot.config_cache
+        
+        # Get current moderation config
+        current_config = await config_cache.get_moderation_config(guild_id)
+        
+        # Update spam settings
+        current_config['spam'] = {
+            'enabled': self.enabled,
+            'window_seconds': self.window_seconds,
+            'max_messages': self.max_messages,
+            'max_mentions': self.max_mentions,
+            'action': self.action
         }
+        
+        # Save back to database
+        await config_cache.set_config_value(guild_id, 'moderation', current_config)
     
     async def show_settings(self, interaction: discord.Interaction):
         """Display spam filter settings."""
-        await self.load_settings(interaction.guild_id)
+        # Load current settings from database
+        bot = interaction.client
+        if hasattr(bot, 'config_cache'):
+            config = await bot.config_cache.get_moderation_config(interaction.guild_id)
+            spam_config = config.get('spam', {})
+            
+            self.enabled = spam_config.get('enabled', False)
+            self.window_seconds = spam_config.get('window_seconds', 10)
+            self.max_messages = spam_config.get('max_messages', 5)
+            self.max_mentions = spam_config.get('max_mentions', 3)
+            self.action = spam_config.get('action', 'delete')
         
         embed = discord.Embed(
             title="🚫 Spam Filter Settings",
@@ -180,41 +187,62 @@ class SpamFilterView(discord.ui.View):
         self.add_item(toggle_button)
         
         # Window time selector
+        window_options = [
+            discord.SelectOption(label="5 seconds", value="5"),
+            discord.SelectOption(label="10 seconds", value="10"),
+            discord.SelectOption(label="15 seconds", value="15"),
+            discord.SelectOption(label="30 seconds", value="30"),
+            discord.SelectOption(label="60 seconds", value="60")
+        ]
+        
+        # Set default selection
+        for option in window_options:
+            if int(option.value) == self.window_seconds:
+                option.default = True
+        
         window_select = discord.ui.Select(
             placeholder=f"Time Window: {self.window_seconds}s",
-            options=[
-                discord.SelectOption(label="5 seconds", value="5"),
-                discord.SelectOption(label="10 seconds", value="10", default=self.window_seconds==10),
-                discord.SelectOption(label="15 seconds", value="15", default=self.window_seconds==15),
-                discord.SelectOption(label="30 seconds", value="30", default=self.window_seconds==30),
-                discord.SelectOption(label="60 seconds", value="60", default=self.window_seconds==60)
-            ]
+            options=window_options
         )
         window_select.callback = self.set_window
         self.add_item(window_select)
         
         # Max messages selector
+        msg_options = [
+            discord.SelectOption(label="3 messages", value="3"),
+            discord.SelectOption(label="5 messages", value="5"),
+            discord.SelectOption(label="8 messages", value="8"),
+            discord.SelectOption(label="10 messages", value="10"),
+            discord.SelectOption(label="15 messages", value="15")
+        ]
+        
+        # Set default selection
+        for option in msg_options:
+            if int(option.value) == self.max_messages:
+                option.default = True
+        
         msg_select = discord.ui.Select(
             placeholder=f"Max Messages: {self.max_messages}",
-            options=[
-                discord.SelectOption(label="3 messages", value="3"),
-                discord.SelectOption(label="5 messages", value="5", default=self.max_messages==5),
-                discord.SelectOption(label="8 messages", value="8", default=self.max_messages==8),
-                discord.SelectOption(label="10 messages", value="10", default=self.max_messages==10),
-                discord.SelectOption(label="15 messages", value="15", default=self.max_messages==15)
-            ]
+            options=msg_options
         )
         msg_select.callback = self.set_max_messages
         self.add_item(msg_select)
         
         # Action selector
+        action_options = [
+            discord.SelectOption(label="Delete Only", value="delete"),
+            discord.SelectOption(label="Warn User", value="warn"),
+            discord.SelectOption(label="Timeout User", value="timeout")
+        ]
+        
+        # Set default selection
+        for option in action_options:
+            if option.value == self.action:
+                option.default = True
+        
         action_select = discord.ui.Select(
             placeholder=f"Action: {self.action.title()}",
-            options=[
-                discord.SelectOption(label="Delete Only", value="delete", default=self.action=="delete"),
-                discord.SelectOption(label="Warn User", value="warn", default=self.action=="warn"),
-                discord.SelectOption(label="Timeout User", value="timeout", default=self.action=="timeout")
-            ]
+            options=action_options
         )
         action_select.callback = self.set_action
         self.add_item(action_select)
@@ -250,7 +278,8 @@ class SpamFilterView(discord.ui.View):
     
     async def save_settings_callback(self, interaction: discord.Interaction):
         """Save settings callback."""
-        await self.save_settings(interaction.guild_id)
+        bot = interaction.client
+        await self.save_settings(interaction.guild_id, bot)
         
         embed = discord.Embed(
             title="✅ Settings Saved",
@@ -273,9 +302,46 @@ class SwearFilterView(discord.ui.View):
         self.swear_list = []
         self.allow_list = []
     
+    async def load_settings(self, guild_id: int, bot):
+        """Load swear filter settings."""
+        if hasattr(bot, 'config_cache'):
+            config = await bot.config_cache.get_moderation_config(guild_id)
+            swear_config = config.get('swear', {})
+            
+            self.enabled = swear_config.get('enabled', False)
+            self.delete_on_match = swear_config.get('delete_on_match', True)
+            self.action = swear_config.get('action', 'warn')
+            self.timeout_duration = swear_config.get('timeout_duration_minutes', 10)
+            self.swear_list = config.get('swear_list', [])
+            self.allow_list = config.get('allow_list', [])
+    
+    async def save_settings(self, guild_id: int, bot):
+        """Save swear filter settings."""
+        if not hasattr(bot, 'config_cache'):
+            return
+        
+        config_cache = bot.config_cache
+        
+        # Get current moderation config
+        current_config = await config_cache.get_moderation_config(guild_id)
+        
+        # Update swear settings
+        current_config['swear'] = {
+            'enabled': self.enabled,
+            'delete_on_match': self.delete_on_match,
+            'action': self.action,
+            'timeout_duration_minutes': self.timeout_duration
+        }
+        current_config['swear_list'] = self.swear_list
+        current_config['allow_list'] = self.allow_list
+        
+        # Save back to database
+        await config_cache.set_config_value(guild_id, 'moderation', current_config)
+    
     async def show_settings(self, interaction: discord.Interaction):
         """Display swear filter settings."""
-        # Load settings here
+        bot = interaction.client
+        await self.load_settings(interaction.guild_id, bot)
         
         embed = discord.Embed(
             title="🤬 Swear Filter Settings",
@@ -363,6 +429,15 @@ class SwearFilterView(discord.ui.View):
         )
         allow_button.callback = self.manage_allow_list
         self.add_item(allow_button)
+        
+        # Save button
+        save_button = discord.ui.Button(
+            label="Save Settings",
+            style=discord.ButtonStyle.primary,
+            emoji="💾"
+        )
+        save_button.callback = self.save_settings_callback
+        self.add_item(save_button)
     
     async def toggle_enabled(self, interaction: discord.Interaction):
         """Toggle swear filter."""
@@ -376,23 +451,37 @@ class SwearFilterView(discord.ui.View):
     
     async def manage_swear_list(self, interaction: discord.Interaction):
         """Manage swear list."""
-        view = TermListManagerView(self.swear_list, "Blocked Terms", is_swear_list=True)
+        view = TermListManagerView(self.swear_list, "Blocked Terms", is_swear_list=True, parent_view=self)
         await view.show_list(interaction)
     
     async def manage_allow_list(self, interaction: discord.Interaction):
         """Manage allow list."""
-        view = TermListManagerView(self.allow_list, "Allowed Terms", is_swear_list=False)
+        view = TermListManagerView(self.allow_list, "Allowed Terms", is_swear_list=False, parent_view=self)
         await view.show_list(interaction)
+    
+    async def save_settings_callback(self, interaction: discord.Interaction):
+        """Save settings callback."""
+        bot = interaction.client
+        await self.save_settings(interaction.guild_id, bot)
+        
+        embed = discord.Embed(
+            title="✅ Settings Saved",
+            description="Swear filter settings have been updated!",
+            color=discord.Color.green()
+        )
+        
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 class TermListManagerView(discord.ui.View):
     """Manage swear/allow lists."""
     
-    def __init__(self, term_list: List[str], title: str, is_swear_list: bool = True):
+    def __init__(self, term_list: List[str], title: str, is_swear_list: bool = True, parent_view=None):
         super().__init__(timeout=300)
         self.term_list = term_list
         self.title = title
         self.is_swear_list = is_swear_list
+        self.parent_view = parent_view
         self.current_page = 0
     
     async def show_list(self, interaction: discord.Interaction):
@@ -451,6 +540,16 @@ class TermListManagerView(discord.ui.View):
                 remove_select.callback = self.remove_term
                 self.add_item(remove_select)
         
+        # Save button (saves to parent)
+        if self.parent_view:
+            save_button = discord.ui.Button(
+                label="Save & Return",
+                style=discord.ButtonStyle.success,
+                emoji="💾"
+            )
+            save_button.callback = self.save_and_return
+            self.add_item(save_button)
+        
         # Pagination buttons
         per_page = 10
         if self.current_page > 0:
@@ -483,6 +582,22 @@ class TermListManagerView(discord.ui.View):
         
         # Refresh the list
         await self.show_list(interaction)
+    
+    async def save_and_return(self, interaction: discord.Interaction):
+        """Save and return to parent view."""
+        # Update parent view lists
+        if self.parent_view:
+            if self.is_swear_list:
+                self.parent_view.swear_list = self.term_list
+            else:
+                self.parent_view.allow_list = self.term_list
+            
+            # Save settings
+            bot = interaction.client
+            await self.parent_view.save_settings(interaction.guild_id, bot)
+            
+            # Return to parent view
+            await self.parent_view.show_settings(interaction)
     
     async def previous_page(self, interaction: discord.Interaction):
         """Go to previous page."""
@@ -550,8 +665,33 @@ class WatchChannelsView(discord.ui.View):
         super().__init__(timeout=300)
         self.watch_channels = []
     
+    async def load_settings(self, guild_id: int, bot):
+        """Load watch channels settings."""
+        if hasattr(bot, 'config_cache'):
+            config = await bot.config_cache.get_moderation_config(guild_id)
+            self.watch_channels = config.get('watch_channels', [])
+    
+    async def save_settings(self, guild_id: int, bot):
+        """Save watch channels settings."""
+        if not hasattr(bot, 'config_cache'):
+            return
+        
+        config_cache = bot.config_cache
+        
+        # Get current moderation config
+        current_config = await config_cache.get_moderation_config(guild_id)
+        
+        # Update watch channels
+        current_config['watch_channels'] = self.watch_channels
+        
+        # Save back to database
+        await config_cache.set_config_value(guild_id, 'moderation', current_config)
+    
     async def show_settings(self, interaction: discord.Interaction):
         """Display watch channels settings."""
+        bot = interaction.client
+        await self.load_settings(interaction.guild_id, bot)
+        
         embed = discord.Embed(
             title="👁️ Watched Channels",
             description="Channels where moderation filters are active",
@@ -561,7 +701,7 @@ class WatchChannelsView(discord.ui.View):
         if not self.watch_channels:
             embed.add_field(
                 name="Status",
-                value="No channels being watched",
+                value="No channels being watched (all channels monitored)",
                 inline=False
             )
         else:
@@ -606,6 +746,15 @@ class WatchChannelsView(discord.ui.View):
             )
             clear_button.callback = self.clear_channels
             self.add_item(clear_button)
+        
+        # Save button
+        save_button = discord.ui.Button(
+            label="Save Settings",
+            style=discord.ButtonStyle.primary,
+            emoji="💾"
+        )
+        save_button.callback = self.save_settings_callback
+        self.add_item(save_button)
     
     async def add_channels(self, interaction: discord.Interaction):
         """Add channels to watch list."""
@@ -634,7 +783,6 @@ class WatchChannelsView(discord.ui.View):
             )
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
-        await self.show_settings(interaction)
     
     async def clear_channels(self, interaction: discord.Interaction):
         """Clear all watched channels."""
@@ -647,7 +795,19 @@ class WatchChannelsView(discord.ui.View):
         )
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
-        await self.show_settings(interaction)
+    
+    async def save_settings_callback(self, interaction: discord.Interaction):
+        """Save settings callback."""
+        bot = interaction.client
+        await self.save_settings(interaction.guild_id, bot)
+        
+        embed = discord.Embed(
+            title="✅ Settings Saved",
+            description="Watch channels settings have been updated!",
+            color=discord.Color.green()
+        )
+        
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 class StaffExemptionsView(discord.ui.View):
@@ -657,8 +817,33 @@ class StaffExemptionsView(discord.ui.View):
         super().__init__(timeout=300)
         self.staff_roles = []
     
+    async def load_settings(self, guild_id: int, bot):
+        """Load staff exemption settings."""
+        if hasattr(bot, 'config_cache'):
+            config = await bot.config_cache.get_moderation_config(guild_id)
+            self.staff_roles = config.get('staff_roles', [])
+    
+    async def save_settings(self, guild_id: int, bot):
+        """Save staff exemption settings."""
+        if not hasattr(bot, 'config_cache'):
+            return
+        
+        config_cache = bot.config_cache
+        
+        # Get current moderation config
+        current_config = await config_cache.get_moderation_config(guild_id)
+        
+        # Update staff roles
+        current_config['staff_roles'] = self.staff_roles
+        
+        # Save back to database
+        await config_cache.set_config_value(guild_id, 'moderation', current_config)
+    
     async def show_settings(self, interaction: discord.Interaction):
         """Display staff exemptions."""
+        bot = interaction.client
+        await self.load_settings(interaction.guild_id, bot)
+        
         embed = discord.Embed(
             title="🛡️ Staff Exemptions",
             description="Roles exempt from moderation filters",
@@ -712,6 +897,15 @@ class StaffExemptionsView(discord.ui.View):
             )
             clear_button.callback = self.clear_roles
             self.add_item(clear_button)
+        
+        # Save button
+        save_button = discord.ui.Button(
+            label="Save Settings",
+            style=discord.ButtonStyle.primary,
+            emoji="💾"
+        )
+        save_button.callback = self.save_settings_callback
+        self.add_item(save_button)
     
     async def add_roles(self, interaction: discord.Interaction):
         """Add roles to exemption list."""
@@ -738,7 +932,6 @@ class StaffExemptionsView(discord.ui.View):
             )
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
-        await self.show_settings(interaction)
     
     async def clear_roles(self, interaction: discord.Interaction):
         """Clear all exempt roles."""
@@ -751,9 +944,22 @@ class StaffExemptionsView(discord.ui.View):
         )
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
-        await self.show_settings(interaction)
+    
+    async def save_settings_callback(self, interaction: discord.Interaction):
+        """Save settings callback."""
+        bot = interaction.client
+        await self.save_settings(interaction.guild_id, bot)
+        
+        embed = discord.Embed(
+            title="✅ Settings Saved",
+            description="Staff exemption settings have been updated!",
+            color=discord.Color.green()
+        )
+        
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
+# Rest of the classes remain the same but with proper persistence...
 class RoleManagerView(discord.ui.View):
     """Role management interface."""
     
