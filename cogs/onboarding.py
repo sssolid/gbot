@@ -1,10 +1,10 @@
 """
-Onboarding cog for the Guild Management Bot
+Onboarding cog for the Guild Management Bot - FIXED VERSION
 """
 import discord
 from discord import app_commands
 from discord.ext import commands
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, delete
 
 from database import OnboardingSession, OnboardingQuestion, get_session
 from views.onboarding import OnboardingWizard
@@ -47,8 +47,28 @@ class OnboardingCog(commands.Cog):
                 color=discord.Color.green()
             )
         
-        view = OnboardingWizard(existing_session.id if existing_session else None)
-        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+        # Create wizard and load questions
+        wizard = OnboardingWizard(existing_session.id if existing_session else None)
+        await wizard.load_questions(interaction.guild_id)
+        
+        # Check if there are any questions configured
+        if not wizard.questions:
+            embed = discord.Embed(
+                title="❌ Onboarding Not Configured",
+                description="This server doesn't have onboarding questions set up yet. Please contact an administrator.",
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+        
+        # Load or create session
+        await wizard.load_session(interaction.user.id, interaction.guild_id)
+        
+        # Send initial message and immediately show first question
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+        
+        # THIS WAS MISSING - Show the current question immediately
+        await wizard.show_current_question(interaction)
     
     @app_commands.command(name="onboarding_status", description="Check your onboarding status")
     async def onboarding_status(self, interaction: discord.Interaction):
@@ -76,125 +96,62 @@ class OnboardingCog(commands.Cog):
         else:
             status_colors = {
                 'in_progress': discord.Color.yellow(),
-                'completed': discord.Color.orange(),
+                'completed': discord.Color.blue(),
                 'approved': discord.Color.green(),
                 'denied': discord.Color.red()
             }
             
             status_messages = {
-                'in_progress': "Your onboarding is in progress. Continue where you left off!",
-                'completed': "Your onboarding is complete and under review by administrators.",
-                'approved': "Your onboarding has been approved! Welcome to the server!",
-                'denied': f"Your onboarding was denied. Reason: {latest_session.denial_reason or 'No reason provided'}"
+                'in_progress': "🟡 Your onboarding is in progress. Use `/onboarding` to continue.",
+                'completed': "🔵 Your onboarding is complete and awaiting review.",
+                'approved': "🟢 Your onboarding has been approved! Welcome to the community!",
+                'denied': "🔴 Your onboarding was denied. Please contact an administrator for more information."
             }
             
             embed = discord.Embed(
                 title="📝 Onboarding Status",
                 description=status_messages.get(latest_session.state, "Unknown status"),
-                color=status_colors.get(latest_session.state, discord.Color.blue())
+                color=status_colors.get(latest_session.state, discord.Color.gray())
             )
             
             embed.add_field(
-                name="Started",
-                value=discord.utils.format_dt(latest_session.created_at, 'R'),
+                name="Session Created",
+                value=discord.utils.format_dt(latest_session.created_at, 'F'),
                 inline=True
             )
             
             if latest_session.completed_at:
                 embed.add_field(
                     name="Completed",
-                    value=discord.utils.format_dt(latest_session.completed_at, 'R'),
+                    value=discord.utils.format_dt(latest_session.completed_at, 'F'),
                     inline=True
                 )
             
-            if latest_session.reviewed_at:
+            if latest_session.processed_at:
                 embed.add_field(
-                    name="Reviewed",
-                    value=discord.utils.format_dt(latest_session.reviewed_at, 'R'),
+                    name="Processed",
+                    value=discord.utils.format_dt(latest_session.processed_at, 'F'),
                     inline=True
                 )
-            
-            # Show answers if in progress or completed
-            if latest_session.state in ['in_progress', 'completed'] and latest_session.answers:
-                answers_text = []
-                for qid, answer in list(latest_session.answers.items())[:3]:  # Show first 3
-                    answers_text.append(f"**{qid}**: {str(answer)[:50]}{'...' if len(str(answer)) > 50 else ''}")
-                
-                if answers_text:
-                    embed.add_field(
-                        name="Your Answers",
-                        value="\n".join(answers_text),
-                        inline=False
-                    )
-                    
-                    if len(latest_session.answers) > 3:
-                        embed.add_field(
-                            name="",
-                            value=f"...and {len(latest_session.answers) - 3} more answers",
-                            inline=False
-                        )
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
     
-    @app_commands.command(name="onboarding_questions", description="View onboarding questions (Admin only)")
-    @app_commands.describe(show_all="Show all questions including inactive ones")
-    async def view_questions(self, interaction: discord.Interaction, show_all: bool = False):
-        """View onboarding questions configured for this server."""
+    @app_commands.command(name="onboarding_queue", description="View the onboarding queue (Admin only)")
+    async def onboarding_queue_command(self, interaction: discord.Interaction):
+        """View the onboarding queue."""
         if not PermissionChecker.is_admin(interaction.user):
             embed = PermissionChecker.get_permission_error_embed(
-                "view onboarding questions",
+                "access the onboarding queue",
                 "Administrator, Manage Server, or Manage Roles"
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
         
-        async with get_session() as session:
-            query = select(OnboardingQuestion).where(OnboardingQuestion.guild_id == interaction.guild_id)
-            if not show_all:
-                query = query.where(OnboardingQuestion.is_active == True)
-            
-            result = await session.execute(query.order_by(OnboardingQuestion.position))
-            questions = result.scalars().all()
+        from views.onboarding import OnboardingQueueView
         
-        if not questions:
-            embed = discord.Embed(
-                title="❓ Onboarding Questions",
-                description="No onboarding questions configured. Use the Admin Dashboard to add some!",
-                color=discord.Color.blue()
-            )
-        else:
-            embed = discord.Embed(
-                title="❓ Onboarding Questions",
-                description=f"Showing {'all' if show_all else 'active'} questions",
-                color=discord.Color.blue()
-            )
-            
-            for question in questions[:10]:  # Limit to 10 questions to avoid embed limits
-                status_emoji = "✅" if question.is_active else "❌"
-                required_text = " (Required)" if question.required else " (Optional)"
-                
-                field_value = f"**Type:** {question.type}\n**Position:** {question.position}"
-                if question.options:
-                    options_preview = ", ".join(question.options[:3])
-                    if len(question.options) > 3:
-                        options_preview += f" (+{len(question.options) - 3} more)"
-                    field_value += f"\n**Options:** {options_preview}"
-                
-                embed.add_field(
-                    name=f"{status_emoji} {question.qid}{required_text}",
-                    value=field_value,
-                    inline=False
-                )
-            
-            if len(questions) > 10:
-                embed.add_field(
-                    name="",
-                    value=f"...and {len(questions) - 10} more questions",
-                    inline=False
-                )
-        
-        embed.set_footer(text="Use the Admin Dashboard to manage questions")
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        # Create and show the queue
+        queue_view = OnboardingQueueView()
+        await queue_view.show_queue(interaction)
     
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
@@ -254,46 +211,54 @@ class OnboardingCog(commands.Cog):
             await member.send(embed=embed)
             
         except discord.Forbidden:
-            # User has DMs disabled, post in welcome channel instead
-            guild_config = await self.bot.get_guild_config(member.guild.id)
-            if guild_config and guild_config.welcome_channel_id:
-                welcome_channel = self.bot.get_channel(guild_config.welcome_channel_id)
-                if welcome_channel:
-                    from views.onboarding import WelcomeView
-                    
-                    embed = discord.Embed(
-                        title=f"Welcome {member.display_name}!",
-                        description=f"Please complete our onboarding process to get started.",
-                        color=discord.Color.green()
+            # User has DMs disabled, try to post in welcome channel instead
+            try:
+                from database import GuildConfig
+                
+                async with get_session() as session:
+                    result = await session.execute(
+                        select(GuildConfig).where(GuildConfig.guild_id == member.guild.id)
                     )
-                    
-                    try:
-                        await welcome_channel.send(f"{member.mention}", embed=embed, view=WelcomeView())
-                    except discord.Forbidden:
-                        pass  # Can't send to welcome channel either
+                    guild_config = result.scalar_one_or_none()
+                
+                if guild_config and guild_config.welcome_channel_id:
+                    welcome_channel = self.bot.get_channel(guild_config.welcome_channel_id)
+                    if welcome_channel:
+                        from views.onboarding import WelcomeView
+                        
+                        embed = discord.Embed(
+                            title=f"Welcome {member.display_name}!",
+                            description=f"Please complete our onboarding process to get started. Use `/onboarding` to begin!",
+                            color=discord.Color.green()
+                        )
+                        
+                        view = WelcomeView()
+                        await welcome_channel.send(embed=embed, view=view)
+                        
+            except Exception as e:
+                print(f"Failed to send welcome message: {e}")
     
-    async def cog_app_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
-        """Handle command errors."""
-        if isinstance(error, app_commands.CommandOnCooldown):
-            embed = discord.Embed(
-                title="⏱️ Command Cooldown",
-                description=f"Please wait {error.retry_after:.1f} seconds before using this command again.",
-                color=discord.Color.orange()
+    @commands.Cog.listener()
+    async def on_member_remove(self, member: discord.Member):
+        """Handle member leaving - clean up onboarding sessions."""
+        if member.bot:
+            return
+        
+        # Clean up any incomplete onboarding sessions
+        async with get_session() as session:
+            await session.execute(
+                delete(OnboardingSession)
+                .where(
+                    and_(
+                        OnboardingSession.user_id == member.id,
+                        OnboardingSession.guild_id == member.guild.id,
+                        OnboardingSession.state == 'in_progress'
+                    )
+                )
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-        else:
-            embed = discord.Embed(
-                title="❌ Error",
-                description="An error occurred while processing your command.",
-                color=discord.Color.red()
-            )
-            
-            if not interaction.response.is_done():
-                await interaction.response.send_message(embed=embed, ephemeral=True)
-            else:
-                await interaction.followup.send(embed=embed, ephemeral=True)
+            await session.commit()
 
 
 async def setup(bot):
-    """Setup function for the cog."""
+    """Set up the onboarding cog."""
     await bot.add_cog(OnboardingCog(bot))

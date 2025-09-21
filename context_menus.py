@@ -2,7 +2,7 @@
 Context menu commands for the Guild Management Bot
 """
 import discord
-from discord import app_commands
+from discord import app_commands, InteractionMessage
 from discord.ext import commands
 from sqlalchemy import select, and_
 
