@@ -1,6 +1,7 @@
 """
 Permission checking utilities for the Guild Management Bot
 """
+from functools import wraps
 import discord
 from typing import Union, List
 
@@ -101,6 +102,7 @@ class PermissionChecker:
 def require_admin():
     """Decorator to require admin permissions for a view interaction."""
     def decorator(func):
+        @wraps(func)  # <-- add this
         async def wrapper(self, interaction: discord.Interaction, *args, **kwargs):
             if not PermissionChecker.is_admin(interaction.user):
                 embed = PermissionChecker.get_permission_error_embed(
@@ -113,10 +115,10 @@ def require_admin():
         return wrapper
     return decorator
 
-
 def require_moderator():
     """Decorator to require moderator permissions for a view interaction."""
     def decorator(func):
+        @wraps(func)  # <-- add this
         async def wrapper(self, interaction: discord.Interaction, *args, **kwargs):
             if not PermissionChecker.is_moderator(interaction.user):
                 embed = PermissionChecker.get_permission_error_embed(

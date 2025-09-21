@@ -1,87 +1,114 @@
 """
-Moderation cog for the Guild Management Bot
+Moderation cog for the Guild Management Bot - FIXED VERSION
 """
 import discord
 from discord import app_commands
 from discord.ext import commands
-from sqlalchemy import select, and_
-from typing import Optional, List
+from sqlalchemy import select
+from typing import Dict, List, Set
 from datetime import datetime, timedelta
 import re
+import asyncio
 
 from database import ModerationIncident, get_session
-from utils.permissions import PermissionChecker
-from views.moderation import ModerationCenterView, ReportModal
+from views.moderation import ModerationCenterView
+from utils.permissions import PermissionChecker, require_moderator, require_admin
 
 
 class ModerationCog(commands.Cog):
-    """Handles moderation commands and auto-moderation."""
+    """Handles moderation features and auto-moderation."""
     
     def __init__(self, bot):
         self.bot = bot
-        self.spam_tracker = {}  # Track message counts per user per channel
-        self.swear_patterns = {}  # Compiled regex patterns per guild
-    
-    @app_commands.command(name="moderation", description="Open moderation center (Moderator only)")
-    async def moderation_center(self, interaction: discord.Interaction):
-        """Open the moderation center."""
-        if not PermissionChecker.is_moderator(interaction.user):
-            embed = PermissionChecker.get_permission_error_embed(
-                "access moderation center",
-                "Administrator, Manage Server, Manage Roles, Manage Messages, or Moderate Members"
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
+        self.spam_tracker: Dict[int, Dict[int, Dict[int, List[datetime]]]] = {}
+        self.swear_patterns: Dict[int, Dict[str, re.Pattern]] = {}
         
+        # Start the cleanup task
+        self.cleanup_task = asyncio.create_task(self.cleanup_spam_tracker())
+    
+    def cog_unload(self):
+        """Clean up when cog is unloaded."""
+        if hasattr(self, 'cleanup_task'):
+            self.cleanup_task.cancel()
+    
+    async def cleanup_spam_tracker(self):
+        """Periodically clean up old spam tracking data."""
+        while True:
+            try:
+                await asyncio.sleep(300)  # Clean up every 5 minutes
+                current_time = datetime.utcnow()
+                
+                for guild_id in list(self.spam_tracker.keys()):
+                    for user_id in list(self.spam_tracker[guild_id].keys()):
+                        for channel_id in list(self.spam_tracker[guild_id][user_id].keys()):
+                            # Remove messages older than 5 minutes
+                            cutoff_time = current_time - timedelta(minutes=5)
+                            self.spam_tracker[guild_id][user_id][channel_id] = [
+                                msg_time for msg_time in self.spam_tracker[guild_id][user_id][channel_id]
+                                if msg_time > cutoff_time
+                            ]
+                            
+                            # Remove empty entries
+                            if not self.spam_tracker[guild_id][user_id][channel_id]:
+                                del self.spam_tracker[guild_id][user_id][channel_id]
+                        
+                        if not self.spam_tracker[guild_id][user_id]:
+                            del self.spam_tracker[guild_id][user_id]
+                    
+                    if not self.spam_tracker[guild_id]:
+                        del self.spam_tracker[guild_id]
+                        
+            except Exception as e:
+                print(f"Error in spam tracker cleanup: {e}")
+    
+    @app_commands.command(name="moderation", description="Open the moderation center")
+    @require_admin()
+    async def moderation_center(self, interaction: discord.Interaction):
+        """Open the moderation center interface."""
         view = ModerationCenterView()
         
         embed = discord.Embed(
             title="🛡️ Moderation Center",
             description="Configure and manage server moderation settings.",
-            color=discord.Color.orange()
+            color=discord.Color.blue()
+        )
+        
+        embed.add_field(
+            name="Available Options",
+            value=(
+                "• **Spam Filter** - Configure message spam detection\n"
+                "• **Swear Filter** - Manage word filtering and actions\n"
+                "• **Watch Channels** - Select channels to moderate\n"
+                "• **Staff Exemptions** - Set roles exempt from moderation\n"
+                "• **Recent Incidents** - View moderation log"
+            ),
+            inline=False
         )
         
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
     
-    @app_commands.command(name="warn", description="Warn a user (Moderator only)")
-    @app_commands.describe(
-        user="User to warn",
-        reason="Reason for the warning"
-    )
+    @app_commands.command(name="warn", description="Warn a user")
+    @require_moderator()
     async def warn_user(self, interaction: discord.Interaction, user: discord.Member, reason: str):
-        """Warn a user."""
-        if not PermissionChecker.is_moderator(interaction.user):
-            embed = PermissionChecker.get_permission_error_embed(
-                "warn users",
-                "Administrator, Manage Server, Manage Roles, Manage Messages, or Moderate Members"
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
-        
+        """Warn a user with a reason."""
         if user.bot:
             embed = discord.Embed(
                 title="❌ Cannot Warn Bot",
-                description="You cannot warn bot accounts.",
+                description="You cannot warn bot users.",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
         
-        # Send warning DM
-        dm_status = "✅ DM sent"
-        try:
-            warning_embed = discord.Embed(
-                title=f"⚠️ Warning - {interaction.guild.name}",
-                description="You have received a warning from our moderation team.",
-                color=discord.Color.orange()
+        # Check if user has higher role than moderator
+        if user.top_role >= interaction.user.top_role and interaction.user != interaction.guild.owner:
+            embed = discord.Embed(
+                title="❌ Insufficient Permissions",
+                description="You cannot warn users with equal or higher roles.",
+                color=discord.Color.red()
             )
-            warning_embed.add_field(name="Reason", value=reason, inline=False)
-            warning_embed.add_field(name="Moderator", value=interaction.user.mention, inline=False)
-            warning_embed.set_footer(text="Please review our server rules to avoid future warnings.")
-            
-            await user.send(embed=warning_embed)
-        except discord.Forbidden:
-            dm_status = "❌ DM failed (user has DMs disabled)"
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
         
         # Create incident record
         async with get_session() as session:
@@ -97,74 +124,96 @@ class ModerationCog(commands.Cog):
             session.add(incident)
             await session.commit()
         
+        # Send warning to user via DM
+        try:
+            user_embed = discord.Embed(
+                title="⚠️ Warning",
+                description=f"You have been warned in **{interaction.guild.name}**.",
+                color=discord.Color.orange()
+            )
+            user_embed.add_field(name="Reason", value=reason, inline=False)
+            user_embed.add_field(
+                name="Moderator", 
+                value=interaction.user.display_name, 
+                inline=True
+            )
+            await user.send(embed=user_embed)
+            dm_status = "✅ DM sent"
+        except discord.Forbidden:
+            dm_status = "❌ DM failed (disabled)"
+        
+        # Response to moderator
         embed = discord.Embed(
-            title="⚠️ Warning Issued",
-            description=f"Warning sent to {user.mention}",
+            title="⚠️ User Warned",
+            description=f"Successfully warned {user.mention}.",
             color=discord.Color.orange()
         )
         embed.add_field(name="Reason", value=reason, inline=False)
         embed.add_field(name="DM Status", value=dm_status, inline=True)
         
-        # Log action
-        await self.bot.log_action(
-            interaction.guild_id,
-            "User Warning",
-            interaction.user,
-            user,
-            f"Reason: {reason}"
-        )
-        
         await interaction.response.send_message(embed=embed, ephemeral=True)
     
-    @app_commands.command(name="timeout", description="Timeout a user (Moderator only)")
-    @app_commands.describe(
-        user="User to timeout",
-        duration="Duration in minutes",
-        reason="Reason for the timeout"
-    )
-    async def timeout_user(self, interaction: discord.Interaction, user: discord.Member, duration: int, reason: str):
-        """Timeout a user."""
-        if not PermissionChecker.is_moderator(interaction.user):
-            embed = PermissionChecker.get_permission_error_embed(
-                "timeout users",
-                "Administrator, Manage Server, Manage Roles, Manage Messages, or Moderate Members"
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
-        
+    @app_commands.command(name="timeout", description="Timeout a user")
+    @require_moderator()
+    async def timeout_user(
+        self, 
+        interaction: discord.Interaction, 
+        user: discord.Member, 
+        duration: int, 
+        unit: str,
+        reason: str = "No reason provided"
+    ):
+        """Timeout a user for a specified duration."""
         if user.bot:
             embed = discord.Embed(
                 title="❌ Cannot Timeout Bot",
-                description="You cannot timeout bot accounts.",
+                description="You cannot timeout bot users.",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
         
-        if duration <= 0 or duration > 40320:  # Discord's max timeout is 28 days = 40320 minutes
+        # Check permissions
+        if user.top_role >= interaction.user.top_role and interaction.user != interaction.guild.owner:
             embed = discord.Embed(
-                title="❌ Invalid Duration",
-                description="Timeout duration must be between 1 minute and 28 days (40320 minutes).",
+                title="❌ Insufficient Permissions",
+                description="You cannot timeout users with equal or higher roles.",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
         
-        # Apply timeout
-        timeout_until = discord.utils.utcnow() + timedelta(minutes=duration)
+        # Calculate timeout duration
+        unit_multipliers = {
+            "minutes": 1,
+            "hours": 60,
+            "days": 1440
+        }
+        
+        if unit not in unit_multipliers:
+            embed = discord.Embed(
+                title="❌ Invalid Unit",
+                description="Unit must be 'minutes', 'hours', or 'days'.",
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+        
+        timeout_minutes = duration * unit_multipliers[unit]
+        
+        if timeout_minutes > 40320:  # Discord's 28-day limit
+            embed = discord.Embed(
+                title="❌ Duration Too Long",
+                description="Timeout duration cannot exceed 28 days.",
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+        
+        timeout_until = discord.utils.utcnow() + timedelta(minutes=timeout_minutes)
         
         try:
-            await user.timeout(timeout_until, reason=f"{reason} (by {interaction.user})")
-            
-            # Format duration
-            if duration < 60:
-                duration_text = f"{duration} minute(s)"
-            else:
-                hours = duration // 60
-                minutes = duration % 60
-                duration_text = f"{hours} hour(s)"
-                if minutes > 0:
-                    duration_text += f" and {minutes} minute(s)"
+            await user.timeout(timeout_until, reason=f"Timed out by {interaction.user}: {reason}")
             
             # Create incident record
             async with get_session() as session:
@@ -174,28 +223,39 @@ class ModerationCog(commands.Cog):
                     channel_id=interaction.channel_id,
                     type="manual_timeout",
                     reason=reason,
-                    action_taken=f"timeout_{duration}m",
+                    action_taken=f"timeout_{timeout_minutes}m",
                     moderator_id=interaction.user.id
                 )
                 session.add(incident)
                 await session.commit()
             
+            # Send notification to user
+            try:
+                user_embed = discord.Embed(
+                    title="⏰ Timeout",
+                    description=f"You have been timed out in **{interaction.guild.name}**.",
+                    color=discord.Color.red()
+                )
+                user_embed.add_field(name="Duration", value=f"{duration} {unit}", inline=True)
+                user_embed.add_field(name="Reason", value=reason, inline=False)
+                user_embed.add_field(name="Until", value=discord.utils.format_dt(timeout_until), inline=True)
+                await user.send(embed=user_embed)
+                dm_status = "✅ DM sent"
+            except discord.Forbidden:
+                dm_status = "❌ DM failed (disabled)"
+            
+            # Response to moderator
             embed = discord.Embed(
                 title="⏰ User Timed Out",
-                description=f"{user.mention} has been timed out for {duration_text}.",
-                color=discord.Color.orange()
+                description=f"Successfully timed out {user.mention}.",
+                color=discord.Color.red()
             )
+            embed.add_field(name="Duration", value=f"{duration} {unit}", inline=True)
+            embed.add_field(name="Until", value=discord.utils.format_dt(timeout_until), inline=True)
             embed.add_field(name="Reason", value=reason, inline=False)
-            embed.add_field(name="Until", value=discord.utils.format_dt(timeout_until, 'F'), inline=True)
+            embed.add_field(name="DM Status", value=dm_status, inline=True)
             
-            # Log action
-            await self.bot.log_action(
-                interaction.guild_id,
-                "User Timeout",
-                interaction.user,
-                user,
-                f"Duration: {duration_text}, Reason: {reason}"
-            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
             
         except discord.Forbidden:
             embed = discord.Embed(
@@ -203,149 +263,58 @@ class ModerationCog(commands.Cog):
                 description="I don't have permission to timeout this user.",
                 color=discord.Color.red()
             )
-        except Exception as e:
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+        except discord.HTTPException as e:
             embed = discord.Embed(
-                title="❌ Error",
-                description=f"Failed to timeout user: {str(e)}",
+                title="❌ Timeout Failed",
+                description=f"Failed to timeout user: {e}",
                 color=discord.Color.red()
             )
-        
-        await interaction.response.send_message(embed=embed, ephemeral=True)
-    
-    @app_commands.command(name="incidents", description="View recent moderation incidents (Moderator only)")
-    @app_commands.describe(
-        user="Filter by specific user",
-        incident_type="Filter by incident type",
-        limit="Number of incidents to show"
-    )
-    @app_commands.choices(incident_type=[
-        app_commands.Choice(name="All", value="all"),
-        app_commands.Choice(name="Spam", value="spam"),
-        app_commands.Choice(name="Swear Filter", value="swear"),
-        app_commands.Choice(name="Manual Reports", value="manual_report"),
-        app_commands.Choice(name="Warnings", value="manual_warn"),
-        app_commands.Choice(name="Timeouts", value="manual_timeout")
-    ])
-    async def view_incidents(
-        self, 
-        interaction: discord.Interaction, 
-        user: Optional[discord.Member] = None,
-        incident_type: str = "all",
-        limit: int = 10
-    ):
-        """View recent moderation incidents."""
-        if not PermissionChecker.is_moderator(interaction.user):
-            embed = PermissionChecker.get_permission_error_embed(
-                "view moderation incidents",
-                "Administrator, Manage Server, Manage Roles, Manage Messages, or Moderate Members"
-            )
             await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
-        
-        if limit > 25:
-            limit = 25  # Discord embed limit
-        
-        async with get_session() as session:
-            query = select(ModerationIncident).where(ModerationIncident.guild_id == interaction.guild_id)
-            
-            if user:
-                query = query.where(ModerationIncident.user_id == user.id)
-            
-            if incident_type != "all":
-                query = query.where(ModerationIncident.type == incident_type)
-            
-            result = await session.execute(
-                query.order_by(ModerationIncident.created_at.desc()).limit(limit)
-            )
-            incidents = result.scalars().all()
-        
-        if not incidents:
-            filter_text = ""
-            if user:
-                filter_text += f" for {user.display_name}"
-            if incident_type != "all":
-                filter_text += f" ({incident_type})"
-            
-            embed = discord.Embed(
-                title="📋 Moderation Incidents",
-                description=f"No incidents found{filter_text}.",
-                color=discord.Color.blue()
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
-        
-        title = "📋 Recent Moderation Incidents"
-        if user:
-            title += f" - {user.display_name}"
-        if incident_type != "all":
-            title += f" ({incident_type.title()})"
-        
-        embed = discord.Embed(
-            title=title,
-            description=f"Showing {len(incidents)} recent incident(s).",
-            color=discord.Color.orange()
-        )
-        
-        for incident in incidents:
-            target_user = interaction.guild.get_member(incident.user_id)
-            target_name = target_user.display_name if target_user else f"User {incident.user_id}"
-            
-            moderator = interaction.guild.get_member(incident.moderator_id) if incident.moderator_id else None
-            moderator_name = moderator.display_name if moderator else "System"
-            
-            channel = interaction.guild.get_channel(incident.channel_id)
-            channel_name = channel.mention if channel else f"Channel {incident.channel_id}"
-            
-            embed.add_field(
-                name=f"{incident.type.replace('_', ' ').title()} - {discord.utils.format_dt(incident.created_at, 'R')}",
-                value=(
-                    f"**User:** {target_name}\n"
-                    f"**Channel:** {channel_name}\n"
-                    f"**Action:** {incident.action_taken or 'None'}\n"
-                    f"**Moderator:** {moderator_name}\n"
-                    f"**Reason:** {incident.reason[:100] if incident.reason else 'No reason provided'}{'...' if incident.reason and len(incident.reason) > 100 else ''}"
-                ),
-                inline=False
-            )
-        
-        embed.set_footer(text=f"Guild ID: {interaction.guild_id}")
-        
-        await interaction.response.send_message(embed=embed, ephemeral=True)
     
-    @app_commands.command(name="report", description="Report inappropriate content")
-    async def report_content(self, interaction: discord.Interaction):
-        """Open content reporting interface."""
-        modal = ReportModal()
-        await interaction.response.send_modal(modal)
+    @timeout_user.autocomplete('unit')
+    async def timeout_unit_autocomplete(self, interaction: discord.Interaction, current: str):
+        """Autocomplete for timeout units."""
+        units = ['minutes', 'hours', 'days']
+        return [
+            app_commands.Choice(name=unit, value=unit)
+            for unit in units if current.lower() in unit.lower()
+        ]
     
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-        """Handle message for auto-moderation."""
+        """Handle message events for auto-moderation."""
+        # Skip if message is from a bot or not in a guild
         if message.author.bot or not message.guild:
             return
         
-        # Get moderation config
-        config_cache = getattr(self.bot, 'config_cache', None)
-        if not config_cache:
+        # Skip if message is from DMs
+        if isinstance(message.channel, discord.DMChannel):
             return
         
-        moderation_config = await config_cache.get_moderation_config(message.guild.id)
+        # Get moderation config
+        if not hasattr(self.bot, 'config_cache'):
+            return
+        
+        config = await self.bot.config_cache.get_moderation_config(message.guild.id)
+        if not config:
+            return
+        
+        # Check if user is exempt (staff role)
+        staff_roles = config.get('staff_roles', [])
+        if any(str(role.id) in staff_roles for role in message.author.roles):
+            return
         
         # Check if channel is watched
-        watch_channels = moderation_config.get('watch_channels', [])
-        if watch_channels and message.channel.id not in watch_channels:
-            return
-        
-        # Check staff exemptions
-        staff_roles = moderation_config.get('staff_roles', [])
-        if staff_roles and PermissionChecker.has_role(message.author, staff_roles):
-            return
+        watch_channels = config.get('watch_channels', [])
+        if watch_channels and str(message.channel.id) not in watch_channels:
+            return  # Only moderate watched channels if specified
         
         # Check spam filter
-        await self.check_spam_filter(message, moderation_config)
+        await self.check_spam_filter(message, config)
         
         # Check swear filter
-        await self.check_swear_filter(message, moderation_config)
+        await self.check_swear_filter(message, config)
     
     async def check_spam_filter(self, message: discord.Message, config: dict):
         """Check message against spam filter."""
@@ -399,8 +368,8 @@ class ModerationCog(commands.Cog):
         
         # Compile patterns if not cached
         if guild_id not in self.swear_patterns:
-            swear_list = swear_config.get('swear_list', [])
-            allow_list = swear_config.get('allow_list', [])
+            swear_list = config.get('swear_list', [])
+            allow_list = config.get('allow_list', [])
             
             # Convert wildcard patterns to regex
             patterns = []
@@ -469,28 +438,42 @@ class ModerationCog(commands.Cog):
                     "Please avoid sending too many messages quickly or using excessive mentions."
                 )
             except discord.Forbidden:
-                pass
+                pass  # User has DMs disabled
+        
         elif action == 'timeout':
             try:
-                timeout_until = discord.utils.utcnow() + timedelta(minutes=5)
-                await message.author.timeout(timeout_until, reason="Spam detection")
+                timeout_until = discord.utils.utcnow() + timedelta(minutes=10)
+                await message.author.timeout(
+                    timeout_until, 
+                    reason="Auto-moderation: Spam detected"
+                )
+                
+                try:
+                    await message.author.send(
+                        f"⏰ **Auto-Timeout** - {message.guild.name}\n\n"
+                        "You have been timed out for 10 minutes due to spam detection. "
+                        f"Timeout expires: {discord.utils.format_dt(timeout_until)}"
+                    )
+                except discord.Forbidden:
+                    pass  # User has DMs disabled
+                    
             except discord.Forbidden:
-                pass
+                pass  # No permission to timeout
     
     async def handle_swear_violation(self, message: discord.Message, config: dict, matches: List[str]):
         """Handle swear filter violation."""
         swear_config = config.get('swear', {})
-        delete_on_match = swear_config.get('delete_on_match', True)
         action = swear_config.get('action', 'warn')
+        delete_on_match = swear_config.get('delete_on_match', True)
         
         # Delete message if configured
         if delete_on_match:
             try:
                 await message.delete()
             except discord.NotFound:
-                pass
+                pass  # Message already deleted
             except discord.Forbidden:
-                pass
+                pass  # No permission to delete
         
         # Create incident record
         async with get_session() as session:
@@ -507,25 +490,49 @@ class ModerationCog(commands.Cog):
             session.add(incident)
             await session.commit()
         
-        # Take action
+        # Take action based on configuration
         if action == 'warn':
             try:
                 await message.author.send(
                     f"⚠️ **Language Warning** - {message.guild.name}\n\n"
                     "Your message contained inappropriate language and has been removed. "
-                    "Please review the server rules and keep your language appropriate."
+                    "Please be mindful of the server rules regarding language."
                 )
             except discord.Forbidden:
-                pass
+                pass  # User has DMs disabled
+        
         elif action == 'timeout':
             timeout_duration = swear_config.get('timeout_duration_minutes', 10)
             try:
                 timeout_until = discord.utils.utcnow() + timedelta(minutes=timeout_duration)
-                await message.author.timeout(timeout_until, reason="Inappropriate language")
+                await message.author.timeout(
+                    timeout_until,
+                    reason="Auto-moderation: Inappropriate language"
+                )
+                
+                try:
+                    await message.author.send(
+                        f"⏰ **Auto-Timeout** - {message.guild.name}\n\n"
+                        f"You have been timed out for {timeout_duration} minutes due to inappropriate language. "
+                        f"Timeout expires: {discord.utils.format_dt(timeout_until)}"
+                    )
+                except discord.Forbidden:
+                    pass  # User has DMs disabled
+                    
             except discord.Forbidden:
-                pass
+                pass  # No permission to timeout
+    
+    @commands.Cog.listener()
+    async def on_guild_remove(self, guild: discord.Guild):
+        """Clean up data when bot leaves a guild."""
+        # Clean up spam tracker
+        if guild.id in self.spam_tracker:
+            del self.spam_tracker[guild.id]
+        
+        # Clean up swear patterns
+        if guild.id in self.swear_patterns:
+            del self.swear_patterns[guild.id]
 
 
 async def setup(bot):
-    """Setup function for the cog."""
     await bot.add_cog(ModerationCog(bot))

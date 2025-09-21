@@ -195,7 +195,7 @@ class ContextMenus(commands.Cog):
             result = await session.execute(
                 select(User).where(
                     and_(
-                        User.discord_user_id == member.id,
+                        User.user_id == member.id,
                         User.guild_id == interaction.guild_id
                     )
                 )

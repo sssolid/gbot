@@ -1,5 +1,5 @@
 """
-Main bot class with event handlers and cog loading - UPDATED
+Main bot class with event handlers and cog loading - FIXED VERSION
 """
 import os
 import logging
@@ -9,7 +9,7 @@ import discord
 from discord.ext import commands
 from sqlalchemy import select
 
-from database import GuildConfig, get_session
+from database import GuildConfig, get_session, check_database_health, init_database
 from utils.cache import ConfigCache
 from utils.permissions import PermissionChecker
 
@@ -24,14 +24,29 @@ class GuildBot(commands.Bot):
         self.database_url = database_url
         self.config_cache = ConfigCache()
         self.permission_checker = PermissionChecker()
+        self._ready = False
         
     async def setup_hook(self):
         """Called when the bot is starting up."""
         logger.info("Bot setup started")
         
+        # Initialize database first
+        try:
+            await init_database(self.database_url)
+            logger.info("Database connection established")
+            
+            # Test database health
+            if await check_database_health():
+                logger.info("Database health check passed")
+            else:
+                logger.error("Database health check failed")
+                
+        except Exception as e:
+            logger.error(f"Database initialization failed: {e}")
+            raise
+        
         # Load all cogs
         cogs = [
-            'cogs.general',        # NEW: General utility commands
             'cogs.onboarding',
             'cogs.profiles', 
             'cogs.polls',
@@ -54,180 +69,250 @@ class GuildBot(commands.Bot):
         except Exception as e:
             logger.error(f"Failed to load context menus: {e}")
         
-        # Sync app commands
-        try:
-            synced = await self.tree.sync()
-            logger.info(f"Synced {len(synced)} command(s)")
-        except Exception as e:
-            logger.error(f"Failed to sync commands: {e}")
-        
-        # DEV: publish commands to your guild for instant availability
+        # DEV: Sync commands to specific guild for instant availability
         guild_id_str = os.getenv("GUILD_ID", "")
         if guild_id_str.isdigit():
             guild_id = int(guild_id_str)
-            gobj = discord.Object(id=guild_id)
-            # keep global registration AND mirror to your guild for fast updates
-            self.tree.copy_global_to(guild=gobj)
-            synced = await self.tree.sync(guild=gobj)
-            logger.info(f"Guild-scoped sync: {len(synced)} commands → {guild_id}")
-        else:
-            # fallback: global sync
+            guild_obj = discord.Object(id=guild_id)
+            try:
+                # Copy global commands to guild and sync
+                self.tree.copy_global_to(guild=guild_obj)
+                synced = await self.tree.sync(guild=guild_obj)
+                logger.info(f"Guild-scoped sync: {len(synced)} commands → {guild_id}")
+            except Exception as e:
+                logger.error(f"Failed to sync guild commands: {e}")
+        
+        # Always sync globally as well
+        try:
             synced = await self.tree.sync()
             logger.info(f"Global sync: {len(synced)} commands")
+        except Exception as e:
+            logger.error(f"Failed to sync global commands: {e}")
     
     async def on_ready(self):
         """Called when the bot is ready."""
-        logger.info(f"{self.user} is ready!")
+        if self._ready:
+            return  # Prevent multiple ready events
+        
+        self._ready = True
+        logger.info(f"{self.user} is ready and online!")
+        logger.info(f"Connected to {len(self.guilds)} guilds")
+        
+        # Set bot status
+        activity = discord.Activity(
+            type=discord.ActivityType.watching,
+            name="guild management | /help"
+        )
+        await self.change_presence(activity=activity, status=discord.Status.online)
         
         # Restore persistent views for all guilds
         await self.restore_persistent_views()
-    
-    async def on_guild_join(self, guild: discord.Guild):
-        """Called when the bot joins a new guild."""
-        logger.info(f"Joined guild: {guild.name} ({guild.id})")
-        await self.ensure_guild_config(guild.id)
-    
-    async def on_member_join(self, member: discord.Member):
-        """Called when a new member joins."""
-        if member.bot:
-            return
-            
-        # Send welcome message with onboarding button
-        guild_config = await self.get_guild_config(member.guild.id)
-        if guild_config and guild_config.welcome_channel_id:
-            welcome_channel = self.get_channel(guild_config.welcome_channel_id)
-            if welcome_channel:
-                from views.onboarding import WelcomeView
-                embed = discord.Embed(
-                    title=f"Welcome to {member.guild.name}!",
-                    description=f"Hello {member.mention}! Please complete our onboarding process to get started.",
-                    color=discord.Color.green()
-                )
-                await welcome_channel.send(embed=embed, view=WelcomeView())
-    
-    async def ensure_guild_config(self, guild_id: int) -> GuildConfig:
-        """Ensure a guild config exists for the given guild."""
-        async with get_session() as session:
-            result = await session.execute(
-                select(GuildConfig).where(GuildConfig.guild_id == guild_id)
-            )
-            config = result.scalar_one_or_none()
-            
-            if not config:
-                config = GuildConfig(guild_id=guild_id)
-                session.add(config)
-                await session.commit()
-                logger.info(f"Created guild config for guild {guild_id}")
-            
-            return config
-    
-    async def get_guild_config(self, guild_id: int) -> Optional[GuildConfig]:
-        """Get guild configuration."""
-        return await self.config_cache.get_guild_config(guild_id)
+        
+        # Log guild information
+        for guild in self.guilds:
+            logger.info(f"Guild: {guild.name} ({guild.id}) - {guild.member_count} members")
     
     async def restore_persistent_views(self):
         """Restore persistent views for all guilds."""
+        logger.info("Restoring persistent views...")
+        
+        # Import views
         from views.panels import AdminDashboard, MemberHub
         from views.onboarding import QuickOnboardingActionView
         
-        logger.info("Restoring persistent views...")
-        
-        async with get_session() as session:
-            result = await session.execute(select(GuildConfig))
-            configs = result.scalars().all()
+        try:
+            # Add persistent views to the bot
+            self.add_view(AdminDashboard())
+            self.add_view(MemberHub())
             
-            for config in configs:
-                guild = self.get_guild(config.guild_id)
-                if not guild:
-                    continue
-                
-                # Restore Admin Dashboard
-                if config.admin_dashboard_channel_id and config.admin_dashboard_message_id:
-                    channel = guild.get_channel(config.admin_dashboard_channel_id)
-                    if channel:
-                        try:
-                            message = await channel.fetch_message(config.admin_dashboard_message_id)
-                            self.add_view(AdminDashboard(), message_id=config.admin_dashboard_message_id)
-                        except discord.NotFound:
-                            logger.warning(f"Admin dashboard message not found for guild {guild.id}")
-                        except Exception as e:
-                            logger.error(f"Error restoring admin dashboard for guild {guild.id}: {e}")
-                
-                # Restore Member Hub
-                if config.member_hub_channel_id and config.member_hub_message_id:
-                    channel = guild.get_channel(config.member_hub_channel_id)
-                    if channel:
-                        try:
-                            message = await channel.fetch_message(config.member_hub_message_id)
-                            self.add_view(MemberHub(), message_id=config.member_hub_message_id)
-                        except discord.NotFound:
-                            logger.warning(f"Member hub message not found for guild {guild.id}")
-                        except Exception as e:
-                            logger.error(f"Error restoring member hub for guild {guild.id}: {e}")
-        
-        # Also restore poll views and onboarding notification views
-        await self.restore_poll_views()
-        await self.restore_onboarding_notification_views()
-        
-        logger.info("Persistent views restored")
+            # Add onboarding action views (these are dynamic, but we still need to register the type)
+            # We'll register a placeholder that can handle any onboarding session ID
+            placeholder_view = QuickOnboardingActionView(0)  # Dummy ID
+            self.add_view(placeholder_view)
+            
+            logger.info("Persistent views restored successfully")
+            
+        except Exception as e:
+            logger.error(f"Failed to restore persistent views: {e}")
     
-    async def restore_poll_views(self):
-        """Restore poll voting views."""
-        from views.polls import PollVoteView
-        from database import Poll
+    async def on_guild_join(self, guild: discord.Guild):
+        """Called when the bot joins a new guild."""
+        logger.info(f"Joined new guild: {guild.name} ({guild.id})")
         
-        async with get_session() as session:
-            # Get active polls
-            result = await session.execute(
-                select(Poll).where(Poll.status == 'active')
+        # Create basic guild config
+        try:
+            await self.config_cache.update_guild_config(guild.id)
+            logger.info(f"Created config for guild {guild.id}")
+        except Exception as e:
+            logger.error(f"Failed to create config for guild {guild.id}: {e}")
+        
+        # Send welcome message to guild owner or first text channel
+        try:
+            embed = discord.Embed(
+                title="🎉 Thanks for adding Guild Management Bot!",
+                description=(
+                    "I'm here to help manage your guild with powerful features:\n\n"
+                    "• **Onboarding System** - Custom questions and role assignment\n"
+                    "• **Character Profiles** - Member character management\n"
+                    "• **Polls & Voting** - Community engagement tools\n"
+                    "• **Auto-Moderation** - Spam and content filtering\n"
+                    "• **Announcements** - Scheduled server announcements\n\n"
+                    "**Get Started:**\n"
+                    "1. Use `/setup` to configure basic settings\n"
+                    "2. Deploy control panels with `/deploy_panels`\n"
+                    "3. Check out `/help` for all available commands"
+                ),
+                color=discord.Color.green()
             )
-            active_polls = result.scalars().all()
             
-            for poll in active_polls:
-                if poll.message_id:
-                    try:
-                        view = PollVoteView(poll.id, poll.options, poll.is_anonymous)
-                        self.add_view(view, message_id=poll.message_id)
-                        logger.debug(f"Restored poll view for poll {poll.id}")
-                    except Exception as e:
-                        logger.error(f"Failed to restore poll view for poll {poll.id}: {e}")
+            embed.add_field(
+                name="🔗 Important Links",
+                value=(
+                    "• [Documentation](https://docs.example.com)\n"
+                    "• [Support Server](https://discord.gg/example)\n"
+                    "• [GitHub](https://github.com/example/repo)"
+                ),
+                inline=False
+            )
+            
+            embed.set_footer(text="Use /help to see all available commands")
+            
+            # Try to send to system channel, then any text channel
+            target_channel = (
+                guild.system_channel or
+                next((ch for ch in guild.text_channels if ch.permissions_for(guild.me).send_messages), None)
+            )
+            
+            if target_channel:
+                await target_channel.send(embed=embed)
+                logger.info(f"Sent welcome message to {guild.name}")
+                
+        except Exception as e:
+            logger.error(f"Failed to send welcome message to {guild.name}: {e}")
     
-    async def restore_onboarding_notification_views(self):
-        """Restore onboarding notification quick action views."""
-        from views.onboarding import QuickOnboardingActionView
-        from database import OnboardingSession
+    async def on_guild_remove(self, guild: discord.Guild):
+        """Called when the bot leaves a guild."""
+        logger.info(f"Left guild: {guild.name} ({guild.id})")
         
-        # Note: This would require storing message IDs for notification messages
-        # For now, we'll skip this as notification views are less critical
-        pass
+        # Clean up cached data
+        if hasattr(self, 'config_cache'):
+            self.config_cache.invalidate_guild_cache(guild.id)
     
-    async def log_action(self, guild_id: int, action: str, actor: discord.Member, 
-                        target: Optional[discord.Member] = None, details: str = ""):
-        """Log an action to the guild's log channel."""
-        guild_config = await self.get_guild_config(guild_id)
-        if not guild_config or not guild_config.logs_channel_id:
-            return
-        
-        log_channel = self.get_channel(guild_config.logs_channel_id)
-        if not log_channel:
-            return
+    async def on_application_command_error(self, interaction: discord.Interaction, error: Exception):
+        """Handle application command errors."""
+        logger.error(f"Command error in {interaction.command}: {error}", exc_info=True)
         
         embed = discord.Embed(
-            title=f"🔄 {action}",
-            color=discord.Color.blue(),
-            timestamp=discord.utils.utcnow()
+            title="❌ Command Error",
+            description="An error occurred while processing your command.",
+            color=discord.Color.red()
         )
-        embed.add_field(name="Actor", value=actor.mention, inline=True)
         
-        if target:
-            embed.add_field(name="Target", value=target.mention, inline=True)
-        
-        if details:
-            embed.add_field(name="Details", value=details, inline=False)
-        
-        embed.set_footer(text=f"Guild ID: {guild_id}")
+        if isinstance(error, commands.MissingPermissions):
+            embed.description = "You don't have permission to use this command."
+        elif isinstance(error, commands.BotMissingPermissions):
+            embed.description = "I don't have the necessary permissions to execute this command."
+        elif isinstance(error, commands.CommandOnCooldown):
+            embed.description = f"This command is on cooldown. Try again in {error.retry_after:.2f} seconds."
+        else:
+            embed.description = "An unexpected error occurred. Please try again later."
         
         try:
-            await log_channel.send(embed=embed)
+            if interaction.response.is_done():
+                await interaction.followup.send(embed=embed, ephemeral=True)
+            else:
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+        except Exception:
+            pass  # Couldn't send error message
+    
+    async def on_error(self, event: str, *args, **kwargs):
+        """Handle general bot errors."""
+        logger.error(f"Bot error in event {event}", exc_info=True)
+    
+    async def get_guild_config(self, guild_id: int) -> Optional[GuildConfig]:
+        """Get guild configuration through cache."""
+        return await self.config_cache.get_guild_config(guild_id)
+    
+    async def update_guild_config(self, guild_id: int, **kwargs) -> GuildConfig:
+        """Update guild configuration through cache."""
+        return await self.config_cache.update_guild_config(guild_id, **kwargs)
+    
+    async def log_action(self, guild_id: int, action: str, moderator: discord.Member, 
+                        target: discord.Member, details: str = None):
+        """Log an administrative action."""
+        try:
+            guild_config = await self.get_guild_config(guild_id)
+            if guild_config and guild_config.logs_channel_id:
+                logs_channel = self.get_channel(guild_config.logs_channel_id)
+                if logs_channel:
+                    embed = discord.Embed(
+                        title=f"📋 {action}",
+                        color=discord.Color.blue(),
+                        timestamp=discord.utils.utcnow()
+                    )
+                    
+                    embed.add_field(
+                        name="Moderator",
+                        value=f"{moderator.mention}\n**ID:** {moderator.id}",
+                        inline=True
+                    )
+                    
+                    embed.add_field(
+                        name="Target",
+                        value=f"{target.mention}\n**ID:** {target.id}",
+                        inline=True
+                    )
+                    
+                    if details:
+                        embed.add_field(
+                            name="Details",
+                            value=details,
+                            inline=False
+                        )
+                    
+                    await logs_channel.send(embed=embed)
+                    
         except Exception as e:
-            logger.error(f"Failed to send log message: {e}")
+            logger.error(f"Failed to log action: {e}")
+    
+    async def close(self):
+        """Clean shutdown of the bot."""
+        logger.info("Bot shutting down...")
+        
+        # Close database connections
+        try:
+            from database import close_database
+            await close_database()
+            logger.info("Database connections closed")
+        except Exception as e:
+            logger.error(f"Error closing database: {e}")
+        
+        await super().close()
+        logger.info("Bot shutdown complete")
+
+
+# Utility function to create bot instance
+def create_bot(database_url: str) -> GuildBot:
+    """Create and configure the bot instance."""
+    
+    # Configure intents
+    intents = discord.Intents.default()
+    intents.message_content = True  # Required for moderation
+    intents.members = True  # Required for member management
+    intents.guilds = True
+    
+    # Create bot instance
+    bot = GuildBot(
+        database_url=database_url,
+        command_prefix=commands.when_mentioned_or('!'),  # Fallback prefix
+        intents=intents,
+        case_insensitive=True,
+        help_command=None,  # We'll create our own help command
+        allowed_mentions=discord.AllowedMentions(
+            roles=False,
+            everyone=False,
+            users=True
+        )
+    )
+    
+    return bot

@@ -43,7 +43,7 @@ class ProfilesCog(commands.Cog):
             result = await session.execute(
                 select(User).where(
                     and_(
-                        User.discord_user_id == target_user.id,
+                        User.user_id == target_user.id,
                         User.guild_id == interaction.guild_id
                     )
                 )
@@ -132,7 +132,7 @@ class ProfilesCog(commands.Cog):
             result = await session.execute(
                 select(User).where(
                     and_(
-                        User.discord_user_id == interaction.user.id,
+                        User.user_id == interaction.user.id,
                         User.guild_id == interaction.guild_id
                     )
                 )

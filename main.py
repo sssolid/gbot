@@ -1,65 +1,72 @@
 """
-Discord Guild Management Bot - Main Entry Point
+Main entry point for the Guild Management Bot - FIXED VERSION
 """
+import os
+import sys
 import asyncio
 import logging
-import os
-from pathlib import Path
-
-import discord
-from discord.ext import commands
-
-from bot import GuildBot
-from database import init_database
-
 from dotenv import load_dotenv
-import os
 
-# Load variables from .env into the environment
+# Load environment variables
 load_dotenv()
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('bot.log'),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
 
-def setup_logging():
-    """Configure logging for the bot."""
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.FileHandler('bot.log'),
-            logging.StreamHandler()
-        ]
-    )
+logger = logging.getLogger(__name__)
+
+# Suppress some noisy loggers
+logging.getLogger('discord.http').setLevel(logging.WARNING)
+logging.getLogger('discord.gateway').setLevel(logging.WARNING)
+logging.getLogger('discord.client').setLevel(logging.WARNING)
 
 
 async def main():
-    """Main entry point for the bot."""
-    setup_logging()
-    
-    # Load environment variables
+    """Main bot startup function."""
+    # Validate required environment variables
     token = os.getenv('DISCORD_TOKEN')
     if not token:
-        raise ValueError("DISCORD_TOKEN environment variable is required")
+        logger.error("DISCORD_TOKEN environment variable is required!")
+        sys.exit(1)
     
+    # Get database URL
     database_url = os.getenv('DATABASE_URL', 'sqlite:///guild_bot.sqlite')
     
-    # Initialize database
-    await init_database(database_url)
+    # Import and create bot
+    from bot import create_bot
     
-    # Create bot instance
-    intents = discord.Intents.default()
-    intents.message_content = True
-    intents.members = True
+    logger.info("Creating bot instance...")
+    bot = create_bot(database_url)
     
-    bot = GuildBot(
-        command_prefix='!',
-        intents=intents,
-        database_url=database_url
-    )
-    
-    # Start the bot
-    async with bot:
-        await bot.start(token)
+    try:
+        logger.info("Starting Guild Management Bot...")
+        logger.info(f"Database URL: {database_url}")
+        
+        # Start the bot
+        async with bot:
+            await bot.start(token)
+            
+    except KeyboardInterrupt:
+        logger.info("Received keyboard interrupt, shutting down...")
+    except Exception as e:
+        logger.error(f"Fatal error: {e}", exc_info=True)
+        sys.exit(1)
+    finally:
+        logger.info("Bot stopped")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        pass
+    except Exception as e:
+        logger.error(f"Failed to start bot: {e}", exc_info=True)
+        sys.exit(1)

@@ -25,7 +25,7 @@ class CharacterManagerView(discord.ui.View):
             result = await session.execute(
                 select(User).where(
                     and_(
-                        User.discord_user_id == self.user_id,
+                        User.user_id == self.user_id,
                         User.guild_id == guild_id
                     )
                 )
@@ -33,7 +33,7 @@ class CharacterManagerView(discord.ui.View):
             user = result.scalar_one_or_none()
             
             if not user:
-                user = User(discord_user_id=self.user_id, guild_id=guild_id)
+                user = User(user_id=self.user_id, guild_id=guild_id)
                 session.add(user)
                 await session.commit()
                 await session.refresh(user)
@@ -196,7 +196,7 @@ class AddCharacterModal(discord.ui.Modal):
             result = await session.execute(
                 select(User).where(
                     and_(
-                        User.discord_user_id == self.user_id,
+                        User.user_id == self.user_id,
                         User.guild_id == interaction.guild_id
                     )
                 )
@@ -204,7 +204,7 @@ class AddCharacterModal(discord.ui.Modal):
             user = result.scalar_one_or_none()
             
             if not user:
-                user = User(discord_user_id=self.user_id, guild_id=interaction.guild_id)
+                user = User(user_id=self.user_id, guild_id=interaction.guild_id)
                 session.add(user)
                 await session.commit()
                 await session.refresh(user)
@@ -499,7 +499,7 @@ class ProfileAdminView(discord.ui.View):
             result = await session.execute(
                 select(User).where(
                     and_(
-                        User.discord_user_id == user.id,
+                        User.user_id == user.id,
                         User.guild_id == interaction.guild_id
                     )
                 )
