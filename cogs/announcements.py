@@ -111,10 +111,10 @@ class AnnouncementsCog(commands.Cog):
                 announcement = Announcement(
                     guild_id=interaction.guild_id,
                     author_id=interaction.user.id,
-                    channel_id=interaction.channel.id,
+                    target_channel_id=interaction.channel.id,
                     message_id=announcement_message.id,
                     content=message,
-                    posted_at=datetime.utcnow()
+                    created_at=datetime.utcnow()
                 )
                 session.add(announcement)
                 await session.commit()
@@ -167,7 +167,7 @@ class AnnouncementsCog(commands.Cog):
                 .where(
                     and_(
                         Announcement.guild_id == interaction.guild_id,
-                        Announcement.posted_at.is_(None),
+                        Announcement.created_at.is_(None),
                         Announcement.scheduled_for.isnot(None)
                     )
                 )
@@ -191,8 +191,8 @@ class AnnouncementsCog(commands.Cog):
         )
         
         for announcement in scheduled_announcements[:10]:  # Show first 10
-            channel = interaction.guild.get_channel(announcement.channel_id)
-            channel_name = channel.mention if channel else f"Channel {announcement.channel_id}"
+            channel = interaction.guild.get_channel(announcement.target_channel_id)
+            channel_name = channel.mention if channel else f"Channel {announcement.target_channel_id}"
             
             embed.add_field(
                 name=f"Scheduled for {discord.utils.format_dt(announcement.scheduled_for, 'R')}",
@@ -234,7 +234,7 @@ class AnnouncementsCog(commands.Cog):
                     and_(
                         Announcement.id == announcement_id,
                         Announcement.guild_id == interaction.guild_id,
-                        Announcement.posted_at.is_(None)
+                        Announcement.created_at.is_(None)
                     )
                 )
             )
@@ -291,10 +291,10 @@ class AnnouncementsCog(commands.Cog):
                 .where(
                     and_(
                         Announcement.guild_id == interaction.guild_id,
-                        Announcement.posted_at.isnot(None)
+                        Announcement.created_at.isnot(None)
                     )
                 )
-                .order_by(Announcement.posted_at.desc())
+                .order_by(Announcement.created_at.desc())
                 .limit(limit)
             )
             announcements = result.scalars().all()
@@ -318,16 +318,16 @@ class AnnouncementsCog(commands.Cog):
             author = interaction.guild.get_member(announcement.author_id)
             author_name = author.display_name if author else f"User {announcement.author_id}"
             
-            channel = interaction.guild.get_channel(announcement.channel_id)
-            channel_name = channel.mention if channel else f"Channel {announcement.channel_id}"
+            channel = interaction.guild.get_channel(announcement.target_channel_id)
+            channel_name = channel.mention if channel else f"Channel {announcement.target_channel_id}"
             
             # Create jump link if message still exists
             jump_link = ""
             if announcement.message_id:
-                jump_link = f"\n[Jump to message](https://discord.com/channels/{announcement.guild_id}/{announcement.channel_id}/{announcement.message_id})"
+                jump_link = f"\n[Jump to message](https://discord.com/channels/{announcement.guild_id}/{announcement.target_channel_id}/{announcement.message_id})"
             
             embed.add_field(
-                name=f"📢 {discord.utils.format_dt(announcement.posted_at, 'R')}",
+                name=f"📢 {discord.utils.format_dt(announcement.created_at, 'R')}",
                 value=(
                     f"**Author:** {author_name}\n"
                     f"**Channel:** {channel_name}\n"
@@ -350,7 +350,7 @@ class AnnouncementsCog(commands.Cog):
                     select(Announcement)
                     .where(
                         and_(
-                            Announcement.posted_at.is_(None),
+                            Announcement.created_at.is_(None),
                             Announcement.scheduled_for.isnot(None),
                             Announcement.scheduled_for <= current_time
                         )
@@ -376,7 +376,7 @@ class AnnouncementsCog(commands.Cog):
             if not guild:
                 return
             
-            channel = guild.get_channel(announcement.channel_id)
+            channel = guild.get_channel(announcement.target_channel_id)
             if not channel:
                 # Channel no longer exists, mark as failed
                 async with get_session() as session:
@@ -416,7 +416,7 @@ class AnnouncementsCog(commands.Cog):
                 )
                 db_announcement = result.scalar_one()
                 db_announcement.message_id = message.id
-                db_announcement.posted_at = datetime.utcnow()
+                db_announcement.created_at = datetime.utcnow()
                 db_announcement.scheduled_for = None
                 await session.commit()
             

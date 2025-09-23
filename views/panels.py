@@ -296,6 +296,6 @@ class MemberHub(discord.ui.View):
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
         
-        from views.polls import PollCreationModal
-        modal = PollCreationModal()
+        from views.polls import PollBuilderModal
+        modal = PollBuilderModal()
         await interaction.response.send_modal(modal)

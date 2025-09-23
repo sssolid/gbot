@@ -1,134 +1,34 @@
 """
-Profiles cog for the Guild Management Bot
+Enhanced character profiles cog for the Guild Management Bot - MO2 focused
 """
 import discord
 from discord import app_commands
 from discord.ext import commands
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, func
+from typing import Optional
 
-from database import User, Character, get_session
-from views.profiles import CharacterManagerView
+from database import User, Character, get_session, get_character_statistics
+from views.profiles import CharacterManagerView, CharacterStatsView, AdminCharacterBrowserView
 from utils.permissions import PermissionChecker
 
 
 class ProfilesCog(commands.Cog):
-    """Handles character profile commands."""
-    
+    """Enhanced character profile management with MO2 integration."""
+
     def __init__(self, bot):
         self.bot = bot
-    
+
     @app_commands.command(name="characters", description="Manage your character profiles")
     async def characters_command(self, interaction: discord.Interaction):
-        """Open character management interface."""
+        """Manage user's character profiles."""
         view = CharacterManagerView(interaction.user.id)
         await view.show_characters(interaction)
-    
-    @app_commands.command(name="profile", description="View a user's character profile")
-    @app_commands.describe(user="User whose profile to view")
-    async def profile_command(self, interaction: discord.Interaction, user: discord.Member = None):
-        """View character profile for yourself or another user."""
-        target_user = user or interaction.user
-        
-        if target_user.bot:
-            embed = discord.Embed(
-                title="❌ Bot Account",
-                description="Profiles are not available for bot accounts.",
-                color=discord.Color.red()
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
-        
-        # Load user's characters
-        async with get_session() as session:
-            result = await session.execute(
-                select(User).where(
-                    and_(
-                        User.user_id == target_user.id,
-                        User.guild_id == interaction.guild_id
-                    )
-                )
-            )
-            db_user = result.scalar_one_or_none()
-            
-            if not db_user:
-                if target_user == interaction.user:
-                    embed = discord.Embed(
-                        title="👤 Your Profile",
-                        description="You haven't created any characters yet. Use `/characters` to get started!",
-                        color=discord.Color.blue()
-                    )
-                else:
-                    embed = discord.Embed(
-                        title=f"👤 {target_user.display_name}'s Profile",
-                        description="This user hasn't created any characters yet.",
-                        color=discord.Color.blue()
-                    )
-                await interaction.response.send_message(embed=embed, ephemeral=True)
-                return
-            
-            result = await session.execute(
-                select(Character).where(Character.user_id == db_user.id)
-                .order_by(Character.is_main.desc(), Character.created_at)
-            )
-            characters = result.scalars().all()
-        
-        if target_user == interaction.user:
-            embed = discord.Embed(
-                title="👤 Your Character Profile",
-                color=discord.Color.blue()
-            )
-        else:
-            embed = discord.Embed(
-                title=f"👤 {target_user.display_name}'s Profile",
-                color=discord.Color.blue()
-            )
-        
-        if not characters:
-            if target_user == interaction.user:
-                embed.description = "You haven't created any characters yet. Use `/characters` to create one!"
-            else:
-                embed.description = "This user hasn't created any characters yet."
-        else:
-            for char in characters[:5]:  # Show up to 5 characters
-                main_indicator = "⭐ " if char.is_main else ""
-                archetype_text = f" ({char.archetype})" if char.archetype else ""
-                
-                value = f"**{main_indicator}{char.name}**{archetype_text}"
-                if char.build_notes:
-                    value += f"\n*{char.build_notes[:100]}{'...' if len(char.build_notes) > 100 else ''}*"
-                
-                embed.add_field(
-                    name=f"Character {len([f for f in embed.fields]) + 1}",
-                    value=value,
-                    inline=False
-                )
-            
-            if len(characters) > 5:
-                embed.add_field(
-                    name="",
-                    value=f"*...and {len(characters) - 5} more character(s)*",
-                    inline=False
-                )
-        
-        embed.add_field(
-            name="Member Since",
-            value=discord.utils.format_dt(target_user.joined_at, 'D') if target_user.joined_at else "Unknown",
-            inline=True
-        )
-        
-        embed.set_thumbnail(url=target_user.display_avatar.url)
-        
-        # Add management button for own profile
-        view = None
-        if target_user == interaction.user and characters:
-            view = QuickProfileView(interaction.user.id)
-        
-        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
-    
+
     @app_commands.command(name="main_character", description="View your main character")
     async def main_character_command(self, interaction: discord.Interaction):
-        """Display the user's main character."""
+        """Display user's main character."""
         async with get_session() as session:
+            # Get user
             result = await session.execute(
                 select(User).where(
                     and_(
@@ -138,16 +38,16 @@ class ProfilesCog(commands.Cog):
                 )
             )
             db_user = result.scalar_one_or_none()
-            
+
             if not db_user:
                 embed = discord.Embed(
-                    title="👤 No Main Character",
-                    description="You haven't created any characters yet. Use `/characters` to create one!",
+                    title="👤 No Characters",
+                    description="You haven't created any characters yet!\nUse `/characters` to create one!",
                     color=discord.Color.blue()
                 )
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
-            
+
             result = await session.execute(
                 select(Character).where(
                     and_(
@@ -157,7 +57,7 @@ class ProfilesCog(commands.Cog):
                 )
             )
             main_character = result.scalar_one_or_none()
-        
+
         if not main_character:
             embed = discord.Embed(
                 title="👤 No Main Character",
@@ -169,37 +69,69 @@ class ProfilesCog(commands.Cog):
                 title=f"⭐ Your Main Character",
                 color=discord.Color.green()
             )
-            
+
             embed.add_field(
                 name="Name",
                 value=main_character.name,
                 inline=True
             )
-            
+
+            if main_character.race:
+                embed.add_field(
+                    name="Race",
+                    value=main_character.race,
+                    inline=True
+                )
+
             if main_character.archetype:
                 embed.add_field(
                     name="Archetype",
                     value=main_character.archetype,
                     inline=True
                 )
-            
+
+            if main_character.subtype:
+                embed.add_field(
+                    name="Specialization",
+                    value=main_character.subtype,
+                    inline=True
+                )
+
+            if main_character.professions:
+                prof_list = main_character.professions if isinstance(main_character.professions, list) else []
+                if prof_list:
+                    embed.add_field(
+                        name="Professions/Skills",
+                        value=", ".join(prof_list),
+                        inline=False
+                    )
+
+            if main_character.build_url:
+                embed.add_field(
+                    name="Build Link",
+                    value=f"[View Build]({main_character.build_url})",
+                    inline=True
+                )
+
             embed.add_field(
                 name="Created",
                 value=discord.utils.format_dt(main_character.created_at, 'R'),
                 inline=True
             )
-            
+
             if main_character.build_notes:
                 embed.add_field(
                     name="Build Notes",
                     value=main_character.build_notes,
                     inline=False
                 )
-        
+
+            embed.set_thumbnail(url=interaction.user.display_avatar.url)
+
         await interaction.response.send_message(embed=embed, ephemeral=True)
-    
+
     @app_commands.command(name="character_stats", description="View character statistics for the server (Admin only)")
-    async def character_stats(self, interaction: discord.Interaction):
+    async def character_stats_command(self, interaction: discord.Interaction):
         """Show character statistics for the server."""
         if not PermissionChecker.is_admin(interaction.user):
             embed = PermissionChecker.get_permission_error_embed(
@@ -208,78 +140,254 @@ class ProfilesCog(commands.Cog):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
-        
-        async with get_session() as session:
-            # Count users with characters
-            result = await session.execute(
-                select(User).where(User.guild_id == interaction.guild_id)
+
+        stats = await get_character_statistics(interaction.guild_id)
+        view = CharacterStatsView(stats)
+        await view.show_stats(interaction)
+
+    @app_commands.command(name="guild_roster", description="View guild character roster (Admin only)")
+    async def guild_roster_command(self, interaction: discord.Interaction):
+        """Show the guild's character roster for planning purposes."""
+        if not PermissionChecker.is_admin(interaction.user):
+            embed = PermissionChecker.get_permission_error_embed(
+                "view guild roster",
+                "Administrator, Manage Server, or Manage Roles"
             )
-            users_with_profiles = result.scalars().all()
-            
-            # Count total characters
-            total_characters = 0
-            archetype_counts = {}
-            
-            for user in users_with_profiles:
-                result = await session.execute(
-                    select(Character).where(Character.user_id == user.id)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        view = AdminCharacterBrowserView()
+        await view.show_admin_characters(interaction)
+
+    @app_commands.command(name="view_profile", description="View someone's character profile")
+    @app_commands.describe(member="The member whose profile you want to view")
+    async def view_profile_command(self, interaction: discord.Interaction, member: discord.Member):
+        """View another member's character profile."""
+        if member.bot:
+            embed = discord.Embed(
+                title="❌ Bot Account",
+                description="Profiles are not available for bot accounts.",
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        async with get_session() as session:
+            result = await session.execute(
+                select(User).where(
+                    and_(
+                        User.user_id == member.id,
+                        User.guild_id == interaction.guild_id
+                    )
                 )
-                user_characters = result.scalars().all()
-                total_characters += len(user_characters)
-                
-                for char in user_characters:
-                    if char.archetype:
-                        archetype_counts[char.archetype] = archetype_counts.get(char.archetype, 0) + 1
-        
+            )
+            db_user = result.scalar_one_or_none()
+
+            if not db_user:
+                embed = discord.Embed(
+                    title="👤 No Profile",
+                    description=f"{member.mention} hasn't created any characters yet.",
+                    color=discord.Color.blue()
+                )
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+                return
+
+            result = await session.execute(
+                select(Character).where(Character.user_id == db_user.id)
+                .order_by(Character.is_main.desc(), Character.created_at)
+            )
+            characters = result.scalars().all()
+
+        if not characters:
+            embed = discord.Embed(
+                title="👤 No Characters",
+                description=f"{member.mention} hasn't created any characters yet.",
+                color=discord.Color.blue()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        # Show profile with main character prominent
+        main_char = next((c for c in characters if c.is_main), characters[0])
+
         embed = discord.Embed(
-            title="📊 Character Statistics",
+            title=f"👤 {member.display_name}'s Profile",
             color=discord.Color.blue()
         )
-        
+
+        embed.set_thumbnail(url=member.display_avatar.url)
+
+        # Main character section
+        main_char_text = f"**{main_char.name}**"
+        if main_char.race:
+            main_char_text += f" ({main_char.race})"
+        if main_char.archetype:
+            main_char_text += f" - {main_char.archetype}"
+        if main_char.subtype:
+            main_char_text += f" ({main_char.subtype})"
+
         embed.add_field(
-            name="📈 Overview",
-            value=(
-                f"**Users with profiles:** {len(users_with_profiles)}\n"
-                f"**Total characters:** {total_characters}\n"
-                f"**Average per user:** {total_characters / len(users_with_profiles):.1f}" if users_with_profiles else "0"
-            ),
+            name="⭐ Main Character",
+            value=main_char_text,
             inline=False
         )
-        
-        if archetype_counts:
-            # Show top 10 archetypes
-            sorted_archetypes = sorted(archetype_counts.items(), key=lambda x: x[1], reverse=True)[:10]
-            archetype_text = []
-            
-            for archetype, count in sorted_archetypes:
-                percentage = (count / total_characters * 100) if total_characters > 0 else 0
-                archetype_text.append(f"**{archetype}:** {count} ({percentage:.1f}%)")
-            
+
+        if main_char.professions:
+            prof_list = main_char.professions if isinstance(main_char.professions, list) else []
+            if prof_list:
+                embed.add_field(
+                    name="🛠️ Main Professions",
+                    value=", ".join(prof_list[:5]) + ("..." if len(prof_list) > 5 else ""),
+                    inline=True
+                )
+
+        if main_char.build_url:
             embed.add_field(
-                name="🎭 Popular Archetypes",
-                value="\n".join(archetype_text),
+                name="🔗 Build Link",
+                value=f"[View Build]({main_char.build_url})",
+                inline=True
+            )
+
+        # Other characters
+        other_chars = [c for c in characters if not c.is_main]
+        if other_chars:
+            other_char_names = []
+            for char in other_chars[:5]:  # Show up to 5 alts
+                char_text = char.name
+                if char.race:
+                    char_text += f" ({char.race})"
+                other_char_names.append(char_text)
+
+            if len(other_chars) > 5:
+                other_char_names.append(f"... and {len(other_chars) - 5} more")
+
+            embed.add_field(
+                name="🎭 Other Characters",
+                value="\n".join(other_char_names),
                 inline=False
             )
-        
-        embed.set_footer(text=f"Data for {interaction.guild.name}")
-        
+
+        # Summary stats
+        embed.add_field(
+            name="📊 Summary",
+            value=f"**Total Characters:** {len(characters)}",
+            inline=True
+        )
+
+        if db_user.timezone:
+            embed.add_field(
+                name="🌍 Timezone",
+                value=db_user.timezone,
+                inline=True
+            )
+
+        embed.set_footer(text=f"Profile created {discord.utils.format_dt(db_user.created_at, 'R')}")
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @app_commands.command(name="admin_manage_profile", description="Manage a member's profile (Admin only)")
+    @app_commands.describe(member="The member whose profile to manage")
+    async def admin_manage_profile_command(self, interaction: discord.Interaction, member: discord.Member):
+        """Admin command to manage member profiles."""
+        if not PermissionChecker.is_admin(interaction.user):
+            embed = PermissionChecker.get_permission_error_embed(
+                "manage member profiles",
+                "Administrator, Manage Server, or Manage Roles"
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        if member.bot:
+            embed = discord.Embed(
+                title="❌ Bot Account",
+                description="Profiles are not available for bot accounts.",
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        view = AdminCharacterBrowserView(member)
+        await view.show_admin_characters(interaction)
+
+    @app_commands.command(name="find_characters", description="Find characters by race/archetype (Admin only)")
+    @app_commands.describe(
+        race="Filter by character race",
+        archetype="Filter by character archetype"
+    )
+    async def find_characters_command(self, interaction: discord.Interaction,
+                                    race: Optional[str] = None,
+                                    archetype: Optional[str] = None):
+        """Find characters matching specific criteria."""
+        if not PermissionChecker.is_admin(interaction.user):
+            embed = PermissionChecker.get_permission_error_embed(
+                "search characters",
+                "Administrator, Manage Server, or Manage Roles"
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        async with get_session() as session:
+            query = select(Character).where(Character.guild_id == interaction.guild_id)
+
+            filters = []
+            if race:
+                query = query.where(Character.race.ilike(f"%{race}%"))
+                filters.append(f"Race: {race}")
+
+            if archetype:
+                query = query.where(Character.archetype.ilike(f"%{archetype}%"))
+                filters.append(f"Archetype: {archetype}")
+
+            query = query.order_by(Character.is_main.desc(), Character.name)
+            result = await session.execute(query)
+            characters = result.scalars().all()
+
+        embed = discord.Embed(
+            title="🔍 Character Search Results",
+            color=discord.Color.blue()
+        )
+
+        if filters:
+            embed.description = f"**Filters:** {', '.join(filters)}"
+
+        if not characters:
+            embed.add_field(
+                name="No Results",
+                value="No characters found matching the criteria.",
+                inline=False
+            )
+        else:
+            char_list = []
+            for char in characters[:20]:  # Limit to 20 results
+                # Get the owner
+                char_user = await session.get(User, char.user_id)
+                if char_user:
+                    member = interaction.guild.get_member(char_user.user_id)
+                    owner_name = member.display_name if member else "Unknown"
+                else:
+                    owner_name = "Unknown"
+
+                main_indicator = "⭐ " if char.is_main else ""
+                race_text = f" ({char.race})" if char.race else ""
+                archetype_text = f" - {char.archetype}" if char.archetype else ""
+
+                char_list.append(f"{main_indicator}**{char.name}**{race_text}{archetype_text} - *{owner_name}*")
+
+            embed.add_field(
+                name=f"Found {len(characters)} character(s)",
+                value="\n".join(char_list),
+                inline=False
+            )
+
+            if len(characters) > 20:
+                embed.add_field(
+                    name="Note",
+                    value=f"Showing first 20 of {len(characters)} results.",
+                    inline=False
+                )
+
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
-class QuickProfileView(discord.ui.View):
-    """Quick actions for user's own profile."""
-    
-    def __init__(self, user_id: int):
-        super().__init__(timeout=300)
-        self.user_id = user_id
-    
-    @discord.ui.button(label="Manage Characters", style=discord.ButtonStyle.primary, emoji="✏️")
-    async def manage_characters(self, interaction: discord.Interaction, button: discord.ui.Button):
-        """Open character management interface."""
-        view = CharacterManagerView(self.user_id)
-        await view.show_characters(interaction)
-
-
 async def setup(bot):
-    """Setup function for the cog."""
     await bot.add_cog(ProfilesCog(bot))

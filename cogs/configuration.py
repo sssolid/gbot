@@ -1,22 +1,62 @@
 """
-Configuration cog for the Guild Management Bot
+Enhanced configuration cog for the Guild Management Bot
 """
 import discord
 from discord import app_commands
 from discord.ext import commands
+from typing import Optional
 
-from views.configuration import get_config_view
+from views.configuration import get_config_view, ConfigurationView
 from utils.permissions import PermissionChecker
+from database import get_guild_config, GuildConfig
 
 
 class ConfigurationCog(commands.Cog):
-    """Handles configuration commands."""
-    
+    """Enhanced configuration management with proper timezone handling."""
+
     def __init__(self, bot):
         self.bot = bot
-    
+
+    @app_commands.command(name="setup", description="Initial server setup wizard (Admin only)")
+    async def setup_command(self, interaction: discord.Interaction):
+        """Run the initial setup wizard."""
+        if not PermissionChecker.is_admin(interaction.user):
+            embed = PermissionChecker.get_permission_error_embed(
+                "run setup",
+                "Administrator, Manage Server, or Manage Roles"
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        view = SetupWizardView()
+
+        embed = discord.Embed(
+            title="🛠️ Guild Management Bot Setup",
+            description="Welcome! Let's get your server configured with the Guild Management Bot.",
+            color=discord.Color.blue()
+        )
+
+        embed.add_field(
+            name="Setup Steps",
+            value="1. **Basic Configuration** - Set essential channels and roles\n"
+                  "2. **Deploy Panels** - Add control panels to your server\n"
+                  "3. **Onboarding Setup** - Configure member onboarding\n"
+                  "4. **Moderation Setup** - Set up auto-moderation",
+            inline=False
+        )
+
+        embed.add_field(
+            name="Getting Started",
+            value="Click the buttons below to configure different aspects of the bot.",
+            inline=False
+        )
+
+        embed.set_footer(text="💡 You can access these settings anytime with /config")
+
+        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
     @app_commands.command(name="deploy_panels", description="Deploy bot control panels (Admin only)")
-    async def deploy_panels(self, interaction: discord.Interaction):
+    async def deploy_panels_command(self, interaction: discord.Interaction):
         """Deploy the main bot panels."""
         if not PermissionChecker.is_admin(interaction.user):
             embed = PermissionChecker.get_permission_error_embed(
@@ -25,11 +65,11 @@ class ConfigurationCog(commands.Cog):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
-        
+
         from views.configuration import PanelManagementView
         view = PanelManagementView()
         await view.show_settings(interaction)
-    
+
     @app_commands.command(name="config", description="Open configuration menu (Admin only)")
     @app_commands.describe(
         section="Configuration section to open"
@@ -51,283 +91,182 @@ class ConfigurationCog(commands.Cog):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
-        
+
         view = get_config_view(section)
-        
-        section_names = {
-            "config_guild_basics": "Guild Basics",
-            "config_onboarding_questions": "Onboarding Questions", 
-            "config_onboarding_rules": "Onboarding Rules",
-            "config_poll_settings": "Poll Settings",
-            "config_moderation": "Moderation Settings",
-            "config_panels": "Panel Management"
-        }
-        
-        section_name = section_names.get(section, "Configuration")
-        
-        # Different sections have different show methods
-        if section == "config_guild_basics":
+
+        if hasattr(view, 'show_settings'):
             await view.show_settings(interaction)
-        elif section == "config_onboarding_questions":
+        elif hasattr(view, 'show_questions'):
             await view.show_questions(interaction)
-        elif section == "config_onboarding_rules":
+        elif hasattr(view, 'show_rules'):
             await view.show_rules(interaction)
-        elif section == "config_panels":
-            await view.show_settings(interaction)
         else:
-            await view.show_settings(interaction)
-    
-    @app_commands.command(name="setup", description="Initial bot setup wizard (Admin only)")
-    async def setup_wizard(self, interaction: discord.Interaction):
-        """Run initial setup wizard."""
-        if not PermissionChecker.is_admin(interaction.user):
-            embed = PermissionChecker.get_permission_error_embed(
-                "run setup wizard",
-                "Administrator, Manage Server, or Manage Roles"
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
-        
-        embed = discord.Embed(
-            title="🛠️ Bot Setup Wizard",
-            description="Welcome to the Guild Management Bot! Let's get you set up.",
-            color=discord.Color.blue()
-        )
-        
-        embed.add_field(
-            name="🔧 Step 1: Basic Configuration",
-            value="Set up channels, roles, and basic settings",
-            inline=False
-        )
-        
-        embed.add_field(
-            name="📋 Step 2: Deploy Panels",
-            value="Deploy the Admin Dashboard and Member Hub",
-            inline=False
-        )
-        
-        embed.add_field(
-            name="❓ Step 3: Configure Onboarding",
-            value="Set up questions and rules for new members",
-            inline=False
-        )
-        
-        embed.add_field(
-            name="🛡️ Step 4: Moderation Settings",
-            value="Configure spam filters and moderation tools",
-            inline=False
-        )
-        
-        view = SetupWizardView()
-        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
-    
+            # Fallback to general config menu
+            config_view = ConfigurationView()
+            await config_view.show_configuration_menu(interaction)
+
     @app_commands.command(name="info", description="Show bot information and status")
-    async def info(self, interaction: discord.Interaction):
-        """Show bot information."""
+    async def info_command(self, interaction: discord.Interaction):
+        """Show bot information and current configuration."""
+        guild_config = await get_guild_config(interaction.guild_id)
+
         embed = discord.Embed(
             title="🤖 Guild Management Bot",
-            description="A comprehensive Discord bot for gaming guild management",
+            description="Comprehensive guild management with UI-first design",
             color=discord.Color.blue()
         )
-        
-        # Bot stats
+
+        # Bot status
         embed.add_field(
-            name="📊 Statistics",
-            value=(
-                f"**Guilds:** {len(self.bot.guilds)}\n"
-                f"**Users:** {len(self.bot.users)}\n"
-                f"**Commands:** {len(self.bot.tree.get_commands())}"
-            ),
+            name="📊 Bot Status",
+            value=f"**Latency:** {round(self.bot.latency * 1000)}ms\n"
+                  f"**Guilds:** {len(self.bot.guilds)}\n"
+                  f"**Version:** 2.0.0",
             inline=True
         )
-        
-        # Features
-        embed.add_field(
-            name="🔹 Features",
-            value=(
-                "• UI-first design (no command memorization)\n"
-                "• Onboarding with role suggestions\n"
-                "• Character profile management\n"
-                "• Poll system with anonymous voting\n"
-                "• Auto-moderation (spam/swear filters)\n"
-                "• Announcement system\n"
-                "• Admin approval workflows"
-            ),
-            inline=True
-        )
-        
-        # Configuration status for this guild
-        guild_config = await self.bot.get_guild_config(interaction.guild_id)
-        
+
+        # Guild configuration status
         config_status = []
         if guild_config:
             if guild_config.welcome_channel_id:
-                config_status.append("✅ Welcome channel set")
-            else:
-                config_status.append("❌ Welcome channel not set")
-            
+                config_status.append("✅ Welcome Channel")
             if guild_config.logs_channel_id:
-                config_status.append("✅ Logs channel set")
-            else:
-                config_status.append("❌ Logs channel not set")
-            
-            if guild_config.admin_dashboard_message_id:
-                config_status.append("✅ Admin dashboard deployed")
-            else:
-                config_status.append("❌ Admin dashboard not deployed")
-            
-            if guild_config.member_hub_message_id:
-                config_status.append("✅ Member hub deployed")
-            else:
-                config_status.append("❌ Member hub not deployed")
-        else:
-            config_status = ["❌ No configuration found"]
-        
+                config_status.append("✅ Logs Channel")
+            if guild_config.announcements_channel_id:
+                config_status.append("✅ Announcements Channel")
+            if guild_config.default_member_role_id:
+                config_status.append("✅ Default Member Role")
+            if guild_config.admin_dashboard_channel_id:
+                config_status.append("✅ Admin Dashboard")
+            if guild_config.member_hub_channel_id:
+                config_status.append("✅ Member Hub")
+
+        if not config_status:
+            config_status.append("⚠️ No configuration found")
+
         embed.add_field(
-            name="⚙️ Guild Configuration",
-            value="\n".join(config_status),
+            name="⚙️ Configuration",
+            value="\n".join(config_status[:10]),  # Limit to 10 items
+            inline=True
+        )
+
+        # Features
+        embed.add_field(
+            name="🌟 Key Features",
+            value="• Enhanced Onboarding with MO2 support\n"
+                  "• Character Profile Management\n"
+                  "• Message Logging & Audit\n"
+                  "• Poll System\n"
+                  "• Admin Dashboard\n"
+                  "• Member Hub",
             inline=False
         )
-        
-        if PermissionChecker.is_admin(interaction.user):
+
+        # Timezone info
+        if guild_config and guild_config.timezone_offset is not None:
+            offset = guild_config.timezone_offset
+            offset_str = f"UTC{'+' if offset >= 0 else ''}{offset}:00"
             embed.add_field(
-                name="🔧 Admin Actions",
-                value="Use `/setup` to configure the bot or `/config` to access specific settings.",
-                inline=False
+                name="🌍 Server Timezone",
+                value=offset_str,
+                inline=True
             )
-        
-        embed.set_footer(text=f"Bot latency: {round(self.bot.latency * 1000)}ms")
-        
+
+        embed.set_footer(text=f"Bot ID: {self.bot.user.id}")
+
         if self.bot.user.avatar:
             embed.set_thumbnail(url=self.bot.user.avatar.url)
-        
+
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 class SetupWizardView(discord.ui.View):
-    """Setup wizard view for initial configuration."""
-    
+    """Enhanced setup wizard view for initial configuration."""
+
     def __init__(self):
         super().__init__(timeout=300)
-    
+
     @discord.ui.button(label="Basic Configuration", style=discord.ButtonStyle.primary, emoji="🔧")
     async def basic_config(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Open basic configuration."""
         from views.configuration import GuildBasicsView
         view = GuildBasicsView()
         await view.show_settings(interaction)
-    
+
     @discord.ui.button(label="Deploy Panels", style=discord.ButtonStyle.primary, emoji="📋")
     async def deploy_panels(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Deploy control panels."""
         from views.configuration import PanelManagementView
         view = PanelManagementView()
         await view.show_settings(interaction)
-    
+
     @discord.ui.button(label="Onboarding Setup", style=discord.ButtonStyle.secondary, emoji="❓")
     async def onboarding_setup(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Set up onboarding."""
         from views.configuration import OnboardingQuestionsView
         view = OnboardingQuestionsView()
         await view.show_questions(interaction)
-    
+
     @discord.ui.button(label="Moderation Setup", style=discord.ButtonStyle.secondary, emoji="🛡️")
     async def moderation_setup(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Set up moderation."""
-        from views.moderation import ModerationCenterView
-        view = ModerationCenterView()
-        
         embed = discord.Embed(
             title="🛡️ Moderation Setup",
-            description="Configure auto-moderation features for your server.",
+            description="Enhanced moderation features are configured automatically.\n\n**Features enabled:**\n• Message logging for audit purposes\n• Context menu moderation tools\n• Incident tracking",
             color=discord.Color.orange()
         )
-        
-        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
-    
+
+        embed.add_field(
+            name="Auto-Moderation",
+            value="Advanced filtering can be configured through the admin dashboard once deployed.",
+            inline=False
+        )
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
     @discord.ui.button(label="Help & Documentation", style=discord.ButtonStyle.secondary, emoji="📚")
     async def help_docs(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Show help and documentation."""
         embed = discord.Embed(
             title="📚 Help & Documentation",
-            description="Everything you need to know about the Guild Management Bot",
-            color=discord.Color.blue()
+            description="Guild Management Bot - Quick Reference",
+            color=discord.Color.green()
         )
-        
+
         embed.add_field(
-            name="🎛️ Control Panels",
-            value=(
-                "The bot operates through two main panels:\n"
-                "• **Admin Dashboard** - For administrators to manage the server\n"
-                "• **Member Hub** - For members to access features\n\n"
-                "Deploy these panels using the 'Deploy Panels' button above."
-            ),
+            name="🎛️ Admin Commands",
+            value="• `/setup` - Initial configuration wizard\n"
+                  "• `/config` - Access configuration sections\n"
+                  "• `/deploy_panels` - Deploy control panels\n"
+                  "• `/character_stats` - View guild character stats",
             inline=False
         )
-        
+
         embed.add_field(
-            name="📝 Onboarding System",
-            value=(
-                "• Create custom questions for new members\n"
-                "• Set up rules to automatically suggest roles\n"
-                "• Administrators approve/deny applications\n"
-                "• No automatic role assignment - admin approval required"
-            ),
+            name="👤 Member Commands",
+            value="• `/characters` - Manage character profiles\n"
+                  "• `/main_character` - View your main character\n"
+                  "• `/view_profile @user` - View someone's profile",
             inline=False
         )
-        
+
         embed.add_field(
-            name="👤 Character Profiles",
-            value=(
-                "• Members can create multiple gaming characters\n"
-                "• Set one character as 'main'\n"
-                "• Include archetype/class and build notes\n"
-                "• Admins can view and manage all profiles"
-            ),
+            name="🎯 Key Features",
+            value="• **Enhanced Onboarding**: MO2-specific questions with timezone support\n"
+                  "• **Character Profiles**: Detailed MO2 character management\n"
+                  "• **Message Logging**: Complete audit trail\n"
+                  "• **Admin Dashboard**: Centralized control panel",
             inline=False
         )
-        
+
         embed.add_field(
-            name="📊 Polls & Announcements",
-            value=(
-                "• Create polls with up to 10 options\n"
-                "• Support for anonymous voting\n"
-                "• Rich announcement system with scheduling\n"
-                "• All actions logged for transparency"
-            ),
+            name="🆘 Support",
+            value="Use the control panels for most tasks. Right-click messages/users for quick actions.",
             inline=False
         )
-        
-        embed.add_field(
-            name="🛡️ Moderation",
-            value=(
-                "• Spam filter with configurable thresholds\n"
-                "• Swear filter with custom word lists\n"
-                "• Staff role exemptions\n"
-                "• Channel-specific moderation\n"
-                "• Incident logging and reporting"
-            ),
-            inline=False
-        )
-        
-        embed.add_field(
-            name="🔧 Getting Started",
-            value=(
-                "1. Run `/setup` to begin configuration\n"
-                "2. Set basic settings (channels, roles)\n"
-                "3. Deploy the Admin Dashboard and Member Hub\n"
-                "4. Configure onboarding questions\n"
-                "5. Set up moderation if desired\n"
-                "6. Test features with your team"
-            ),
-            inline=False
-        )
-        
-        embed.set_footer(text="For more help, contact your bot administrator")
-        
+
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 async def setup(bot):
-    """Setup function for the cog."""
     await bot.add_cog(ConfigurationCog(bot))

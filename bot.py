@@ -9,7 +9,7 @@ import discord
 from discord.ext import commands
 from sqlalchemy import select
 
-from database import GuildConfig, get_session, check_database_health, init_database
+from database import GuildConfig, get_session, init_database
 from utils.cache import ConfigCache
 from utils.permissions import PermissionChecker
 
@@ -34,12 +34,6 @@ class GuildBot(commands.Bot):
         try:
             await init_database(self.database_url)
             logger.info("Database connection established")
-            
-            # Test database health
-            if await check_database_health():
-                logger.info("Database health check passed")
-            else:
-                logger.error("Database health check failed")
                 
         except Exception as e:
             logger.error(f"Database initialization failed: {e}")

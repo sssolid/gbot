@@ -1,8 +1,10 @@
 """
 Context menu commands for the Guild Management Bot
 """
+from typing import cast
+
 import discord
-from discord import app_commands, InteractionMessage
+from discord import app_commands, InteractionResponse
 from discord.ext import commands
 from sqlalchemy import select, and_
 
@@ -56,14 +58,16 @@ class ContextMenus(commands.Cog):
                     "create polls",
                     "Administrator, Manage Server, Manage Roles, or designated poll creator role"
                 )
-                await interaction.response.send_message(embed=embed, ephemeral=True)
+                response = cast(InteractionResponse, interaction.response)
+                await response.send_message(embed=embed, ephemeral=True)
                 return
         elif not PermissionChecker.is_admin(interaction.user):
             embed = PermissionChecker.get_permission_error_embed(
                 "create polls",
                 "Administrator, Manage Server, or Manage Roles"
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            response = cast(InteractionResponse, interaction.response)
+            await response.send_message(embed=embed, ephemeral=True)
             return
         
         # Use message content as poll question
@@ -75,12 +79,14 @@ class ContextMenus(commands.Cog):
                 description="The selected message has no text content to use as a poll question.",
                 color=discord.Color.red()
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            response = cast(InteractionResponse, interaction.response)
+            await response.send_message(embed=embed, ephemeral=True)
             return
         
         from views.polls import PollOptionsModal
         modal = PollOptionsModal(question)
-        await interaction.response.send_modal(modal)
+        response = cast(InteractionResponse, interaction.response)
+        await response.send_modal(modal)
     
     async def moderate_message(self, interaction: discord.Interaction, message: discord.Message):
         """Open moderation interface for the selected message."""
@@ -89,7 +95,8 @@ class ContextMenus(commands.Cog):
                 "moderate messages",
                 "Administrator, Manage Server, Manage Roles, Manage Messages, or Moderate Members"
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            response = cast(InteractionResponse, interaction.response)
+            await response.send_message(embed=embed, ephemeral=True)
             return
         
         view = MessageModerationView(message)
@@ -132,8 +139,9 @@ class ContextMenus(commands.Cog):
             value=f"[Jump to message]({message.jump_url})",
             inline=True
         )
-        
-        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
+        response = cast(InteractionResponse, interaction.response)
+        await response.send_message(embed=embed, view=view, ephemeral=True)
     
     async def manage_user_roles(self, interaction: discord.Interaction, member: discord.Member):
         """Open role management interface for the selected user."""
@@ -142,7 +150,8 @@ class ContextMenus(commands.Cog):
                 "manage user roles",
                 "Administrator, Manage Server, or Manage Roles"
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            response = cast(InteractionResponse, interaction.response)
+            await response.send_message(embed=embed, ephemeral=True)
             return
         
         if member.bot:
@@ -151,7 +160,8 @@ class ContextMenus(commands.Cog):
                 description="Role management is not available for bot accounts.",
                 color=discord.Color.red()
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            response = cast(InteractionResponse, interaction.response)
+            await response.send_message(embed=embed, ephemeral=True)
             return
         
         from views.moderation import UserRoleManagerView
@@ -176,8 +186,9 @@ class ContextMenus(commands.Cog):
                 value="No roles assigned",
                 inline=False
             )
-        
-        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
+        response = cast(InteractionResponse, interaction.response)
+        await response.send_message(embed=embed, view=view, ephemeral=True)
     
     async def view_user_profile(self, interaction: discord.Interaction, member: discord.Member):
         """View user's character profile."""
@@ -187,7 +198,8 @@ class ContextMenus(commands.Cog):
                 description="Profiles are not available for bot accounts.",
                 color=discord.Color.red()
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            response = cast(InteractionResponse, interaction.response)
+            await response.send_message(embed=embed, ephemeral=True)
             return
         
         # Load user's characters
@@ -208,7 +220,8 @@ class ContextMenus(commands.Cog):
                     description=f"{member.mention} hasn't created any characters yet.",
                     color=discord.Color.blue()
                 )
-                await interaction.response.send_message(embed=embed, ephemeral=True)
+                response = cast(InteractionResponse, interaction.response)
+                await response.send_message(embed=embed, ephemeral=True)
                 return
             
             result = await session.execute(
@@ -259,9 +272,11 @@ class ContextMenus(commands.Cog):
         if PermissionChecker.is_admin(interaction.user):
             from views.profiles import UserProfileAdminView
             view = UserProfileAdminView(member, characters)
-            await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+            response = cast(InteractionResponse, interaction.response)
+            await response.send_message(embed=embed, view=view, ephemeral=True)
         else:
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            response = cast(InteractionResponse, interaction.response)
+            await response.send_message(embed=embed, ephemeral=True)
     
     async def cog_unload(self):
         """Clean up when cog is unloaded."""
@@ -318,14 +333,15 @@ class MessageModerationView(discord.ui.View):
                 description=f"Failed to delete message: {str(e)}",
                 color=discord.Color.red()
             )
-        
-        await interaction.response.edit_message(embed=embed, view=None)
+        response = cast(InteractionResponse, interaction.response)
+        await response.edit_message(embed=embed, view=None)
     
     @discord.ui.button(label="Warn User", style=discord.ButtonStyle.secondary, emoji="⚠️")
     async def warn_user(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Warn the user who sent the message."""
         modal = WarnUserModal(self.message)
-        await interaction.response.send_modal(modal)
+        response = cast(InteractionResponse, interaction.response)
+        await response.send_modal(modal)
     
     @discord.ui.button(label="Timeout User", style=discord.ButtonStyle.secondary, emoji="⏰")
     async def timeout_user(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -337,8 +353,9 @@ class MessageModerationView(discord.ui.View):
             description=f"Select timeout duration for {self.message.author.mention}:",
             color=discord.Color.orange()
         )
-        
-        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
+        response = cast(InteractionResponse, interaction.response)
+        await response.send_message(embed=embed, view=view, ephemeral=True)
 
 
 class WarnUserModal(discord.ui.Modal):
@@ -411,8 +428,9 @@ class WarnUserModal(discord.ui.Modal):
             self.message.author,
             f"Reason: {reason}"
         )
-        
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        response = cast(InteractionResponse, interaction.response)
+        await response.send_message(embed=embed, ephemeral=True)
 
 
 class TimeoutUserView(discord.ui.View):
@@ -441,7 +459,8 @@ class TimeoutUserView(discord.ui.View):
         
         # Open reason modal
         modal = TimeoutReasonModal(self.message, duration_minutes)
-        await interaction.response.send_modal(modal)
+        response = cast(InteractionResponse, interaction.response)
+        await response.send_modal(modal)
 
 
 class TimeoutReasonModal(discord.ui.Modal):
@@ -529,8 +548,9 @@ class TimeoutReasonModal(discord.ui.Modal):
                 description=f"Failed to timeout user: {str(e)}",
                 color=discord.Color.red()
             )
-        
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        response = cast(InteractionResponse, interaction.response)
+        await response.send_message(embed=embed, ephemeral=True)
 
 
 async def setup(bot):
