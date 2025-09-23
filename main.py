@@ -2,13 +2,12 @@
 Enhanced main entry point for the Guild Management Bot
 """
 import asyncio
-import os
 import logging
+import os
 from datetime import datetime, timezone
-from dotenv import load_dotenv
 
 import discord
-from discord.ext import commands
+from dotenv import load_dotenv
 
 from bot import GuildBot
 from database import init_database

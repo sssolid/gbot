@@ -1,10 +1,11 @@
 """
 Poll creation and management views for the Guild Management Bot
 """
+from datetime import datetime, timedelta
+from typing import List
+
 import discord
 from sqlalchemy import select, and_, func
-from typing import List, Dict, Any, Optional
-from datetime import datetime, timedelta
 
 from database import Poll, PollVote, get_session
 

@@ -1,17 +1,15 @@
 """
 Database models and setup for the Guild Management Bot - FIXED VERSION
 """
-import json
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from sqlalchemy import (
     BigInteger, Boolean, Column, DateTime, ForeignKey, Integer,
-    JSON, String, Text, Index, text
+    JSON, String, Text, Index
 )
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
@@ -379,7 +377,7 @@ async def get_user_onboarding_session(guild_id: int, user_id: int, state: str = 
 
 async def get_recent_moderation_incidents(guild_id: int, limit: int = 50) -> List[ModerationIncident]:
     """Get recent moderation incidents for a guild."""
-    from sqlalchemy import select, and_
+    from sqlalchemy import select
 
     async with get_session() as session:
         result = await session.execute(

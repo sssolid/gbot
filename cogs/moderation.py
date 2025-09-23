@@ -1,18 +1,18 @@
 """
 Moderation cog for the Guild Management Bot - FIXED VERSION
 """
+import asyncio
+import re
+from datetime import datetime, timedelta
+from typing import Dict, List
+
 import discord
 from discord import app_commands
 from discord.ext import commands
-from sqlalchemy import select
-from typing import Dict, List, Set
-from datetime import datetime, timedelta
-import re
-import asyncio
 
 from database import ModerationIncident, get_session
+from utils.permissions import require_moderator, require_admin
 from views.moderation import ModerationCenterView
-from utils.permissions import PermissionChecker, require_moderator, require_admin
 
 
 class ModerationCog(commands.Cog):

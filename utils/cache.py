@@ -1,9 +1,9 @@
 """
 Configuration caching utilities for the Guild Management Bot
 """
-import json
 import logging
 from typing import Any, Dict, Optional
+
 from sqlalchemy import select
 
 from database import GuildConfig, ConfigKV, get_session

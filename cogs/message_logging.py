@@ -1,12 +1,12 @@
 """
 Message logging cog for audit purposes - Enhanced logging system
 """
+from typing import Optional, List, Dict, Any
+
 import discord
 from discord.ext import commands
-from typing import Optional, List, Dict, Any
-from datetime import datetime, timezone
 
-from database import log_message_action, get_session, GuildConfig
+from database import log_message_action, get_session
 
 
 class MessageLoggingCog(commands.Cog):
@@ -140,7 +140,7 @@ class MessageLoggingCog(commands.Cog):
                               limit: int = 50) -> List[Dict[str, Any]]:
         """Search message logs with various filters."""
         from database import MessageLog
-        from sqlalchemy import select, and_, or_
+        from sqlalchemy import select
 
         async with get_session() as session:
             query = select(MessageLog).where(MessageLog.guild_id == guild_id)

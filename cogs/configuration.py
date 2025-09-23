@@ -4,11 +4,10 @@ Enhanced configuration cog for the Guild Management Bot
 import discord
 from discord import app_commands
 from discord.ext import commands
-from typing import Optional
 
-from views.configuration import get_config_view, ConfigurationView
+from database import get_guild_config
 from utils.permissions import PermissionChecker
-from database import get_guild_config, GuildConfig
+from views.configuration import get_config_view, ConfigurationView
 
 
 class ConfigurationCog(commands.Cog):

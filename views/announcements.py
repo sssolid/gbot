@@ -1,13 +1,12 @@
 """
 Announcement system for the Guild Management Bot
 """
-import discord
-from sqlalchemy import select
-from typing import Optional
 from datetime import datetime, timedelta
 
+import discord
+from sqlalchemy import select
+
 from database import Announcement, get_session
-from utils.permissions import PermissionChecker
 
 
 class AnnouncementModal(discord.ui.Modal):

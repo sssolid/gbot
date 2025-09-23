@@ -1,13 +1,13 @@
 """
 Enhanced onboarding views and modals for the Guild Management Bot - FIXED VERSION
 """
-import discord
-from sqlalchemy import select, and_, update
-from typing import Dict, List, Any, Optional
 from datetime import datetime, timezone
+from typing import Dict, List, Any, Optional
 
-from database import OnboardingQuestion, OnboardingSession, OnboardingRule, get_session, GuildConfig
-from utils.permissions import PermissionChecker
+import discord
+from sqlalchemy import select, and_
+
+from database import OnboardingQuestion, OnboardingSession, get_session, GuildConfig
 from utils.constants import TIMEZONES, MO2_RACES, MO2_ARCHETYPES, MO2_PROFESSIONS
 
 

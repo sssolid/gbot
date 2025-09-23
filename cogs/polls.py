@@ -1,16 +1,16 @@
 """
 Polls cog for the Guild Management Bot
 """
+from datetime import datetime
+
 import discord
 from discord import app_commands
 from discord.ext import commands
 from sqlalchemy import select, and_, func
-from typing import List
-from datetime import datetime
 
 from database import Poll, PollVote, get_session
-from views.polls import PollBuilderModal
 from utils.permissions import PermissionChecker
+from views.polls import PollBuilderModal
 
 
 class PollsCog(commands.Cog):

@@ -1,13 +1,9 @@
 """
 Role management views for the Guild Management Bot
 """
-import discord
-from sqlalchemy import select, and_
-from typing import List, Optional
-from datetime import datetime
+from typing import List
 
-from database import get_session, User, Character
-from utils.permissions import PermissionChecker
+import discord
 
 
 class RoleManagerView(discord.ui.View):

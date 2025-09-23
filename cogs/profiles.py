@@ -1,15 +1,16 @@
 """
 Enhanced character profiles cog for the Guild Management Bot - MO2 focused
 """
+from typing import Optional
+
 import discord
 from discord import app_commands
 from discord.ext import commands
-from sqlalchemy import select, and_, func
-from typing import Optional
+from sqlalchemy import select, and_
 
 from database import User, Character, get_session, get_character_statistics
-from views.profiles import CharacterManagerView, CharacterStatsView, AdminCharacterBrowserView
 from utils.permissions import PermissionChecker
+from views.profiles import CharacterManagerView, CharacterStatsView, AdminCharacterBrowserView
 
 
 class ProfilesCog(commands.Cog):

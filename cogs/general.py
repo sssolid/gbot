@@ -1,12 +1,12 @@
 """
 General utility commands for the Guild Management Bot
 """
+import random
+import re
+
 import discord
 from discord import app_commands
 from discord.ext import commands
-import random
-import re
-from typing import List, Tuple
 
 
 class GeneralCog(commands.Cog):

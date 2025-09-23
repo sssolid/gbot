@@ -2,10 +2,8 @@
 Main persistent panel views for the Guild Management Bot - MINIMAL FIX
 """
 import discord
-from discord.ext import commands
-from typing import Optional
 
-from utils.permissions import PermissionChecker, require_admin
+from utils.permissions import PermissionChecker
 
 
 class AdminDashboard(discord.ui.View):

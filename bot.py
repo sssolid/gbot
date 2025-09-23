@@ -1,15 +1,14 @@
 """
 Main bot class with event handlers and cog loading - FIXED VERSION
 """
-import os
 import logging
+import os
 from typing import Optional
 
 import discord
 from discord.ext import commands
-from sqlalchemy import select
 
-from database import GuildConfig, get_session, init_database
+from database import GuildConfig, init_database
 from utils.cache import ConfigCache
 from utils.permissions import PermissionChecker
 

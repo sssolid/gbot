@@ -1,7 +1,6 @@
 """
 Constants for the Guild Management Bot - Mortal Online 2 specific data
 """
-from typing import Dict, List
 
 # Mortal Online 2 Character Data
 MO2_RACES = [

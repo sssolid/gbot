@@ -1,13 +1,13 @@
 """
 Enhanced character profile management views for the Guild Management Bot - MO2 Focused
 """
-import discord
-from sqlalchemy import select, and_, update, delete, func
-from typing import List, Optional, Dict, Any
 from datetime import datetime, timezone
+from typing import List, Optional, Dict, Any
 
-from database import User, Character, CharacterArchetype, get_session, get_character_statistics
-from utils.permissions import PermissionChecker
+import discord
+from sqlalchemy import select, and_, update, delete
+
+from database import User, Character, get_session, get_character_statistics
 from utils.constants import MO2_RACES, MO2_ARCHETYPES, MO2_PROFESSIONS
 
 

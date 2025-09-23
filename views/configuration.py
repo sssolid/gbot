@@ -1,18 +1,18 @@
 """
 Configuration management views for the Guild Management Bot - FIXED VERSION
 """
+from datetime import datetime, timezone
+from typing import List, Optional, cast
+
 import discord
 from discord import InteractionResponse
-from sqlalchemy import select, and_, update, delete
-from typing import Dict, List, Any, Optional, cast
-from datetime import datetime, timezone
+from sqlalchemy import select, update, delete
 
 from database import (
-    GuildConfig, OnboardingQuestion, OnboardingRule,
-    get_session, CharacterArchetype
+    GuildConfig, OnboardingQuestion, get_session
 )
-from utils.permissions import PermissionChecker, require_admin
 from utils.constants import QUESTION_TYPES, COMMON_MAPPINGS, TIMEZONES, MO2_RACES, MO2_ARCHETYPES
+from utils.permissions import PermissionChecker
 
 
 def get_config_view(config_type: str):
