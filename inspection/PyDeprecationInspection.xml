@@ -1,0 +1,302 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>91</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>31</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>117</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>40</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>346</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>36</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>398</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>419</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>54</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/moderation.py</file>
+  <line>39</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/moderation.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>40</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/moderation.py</file>
+  <line>329</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/moderation.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>32</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>140</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>24</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>196</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>38</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>48</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>31</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>157</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>38</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>191</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>38</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>219</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>38</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>239</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>31</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>262</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>38</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>300</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>38</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>334</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>361</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>463</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>638</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>659</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>53</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>227</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>30</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>380</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>501</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>24</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>538</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyDeprecationInspection" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated function, class, or module</problem_class>
+  <description>datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).</description>
+  <highlighted_element>utcnow</highlighted_element>
+  <language>Python</language>
+  <offset>38</offset>
+  <length>6</length>
+</problem>
+</problems>

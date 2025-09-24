@@ -1,0 +1,3998 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/bot.py</file>
+  <line>214</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/bot.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'is_done' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>is_done</highlighted_element>
+  <language>Python</language>
+  <offset>36</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/bot.py</file>
+  <line>217</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/bot.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>35</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>39</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_modal' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_modal</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>49</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>72</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>83</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>151</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>161</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>184</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>216</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>227</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>249</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>271</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>282</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>308</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/announcements.py</file>
+  <line>340</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/configuration.py</file>
+  <line>27</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/configuration.py</file>
+  <line>55</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/configuration.py</file>
+  <line>65</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/configuration.py</file>
+  <line>91</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/configuration.py</file>
+  <line>179</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/configuration.py</file>
+  <line>224</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/configuration.py</file>
+  <line>267</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/general.py</file>
+  <line>56</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/general.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/general.py</file>
+  <line>76</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/general.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/general.py</file>
+  <line>83</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/general.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/general.py</file>
+  <line>243</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/general.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/general.py</file>
+  <line>264</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/general.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/general.py</file>
+  <line>273</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/general.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/general.py</file>
+  <line>295</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/general.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/general.py</file>
+  <line>310</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/general.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/general.py</file>
+  <line>319</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/general.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/general.py</file>
+  <line>341</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/general.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/general.py</file>
+  <line>392</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/general.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/moderation.py</file>
+  <line>88</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/moderation.py</file>
+  <line>100</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/moderation.py</file>
+  <line>110</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/moderation.py</file>
+  <line>154</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/moderation.py</file>
+  <line>173</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/moderation.py</file>
+  <line>183</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/moderation.py</file>
+  <line>199</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/moderation.py</file>
+  <line>210</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/moderation.py</file>
+  <line>258</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/moderation.py</file>
+  <line>266</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/moderation.py</file>
+  <line>273</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/onboarding.py</file>
+  <line>61</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/onboarding.py</file>
+  <line>68</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/onboarding.py</file>
+  <line>114</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'gray' for class 'Colour'</description>
+  <highlighted_element>gray</highlighted_element>
+  <language>Python</language>
+  <offset>76</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/onboarding.py</file>
+  <line>130</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'processed_at' for class 'OnboardingSession'</description>
+  <highlighted_element>processed_at</highlighted_element>
+  <language>Python</language>
+  <offset>30</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/onboarding.py</file>
+  <line>133</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'processed_at' for class 'OnboardingSession'</description>
+  <highlighted_element>processed_at</highlighted_element>
+  <language>Python</language>
+  <offset>65</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/onboarding.py</file>
+  <line>137</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/onboarding.py</file>
+  <line>147</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>38</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>45</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>49</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_modal' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_modal</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>72</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>77</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'option_index' for class 'PollVote'</description>
+  <highlighted_element>option_index</highlighted_element>
+  <language>Python</language>
+  <offset>32</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>79</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'option_index' for class 'PollVote'</description>
+  <highlighted_element>option_index</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>85</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'is_anonymous' for class 'Poll'</description>
+  <highlighted_element>is_anonymous</highlighted_element>
+  <language>Python</language>
+  <offset>24</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>87</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'option_index' for class 'PollVote'</description>
+  <highlighted_element>option_index</highlighted_element>
+  <language>Python</language>
+  <offset>36</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>98</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'question' for class 'Poll'</description>
+  <highlighted_element>question</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>118</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'is_anonymous' for class 'Poll'</description>
+  <highlighted_element>is_anonymous</highlighted_element>
+  <language>Python</language>
+  <offset>28</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>136</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'is_anonymous' for class 'Poll'</description>
+  <highlighted_element>is_anonymous</highlighted_element>
+  <language>Python</language>
+  <offset>62</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>137</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'status' for class 'Poll'</description>
+  <highlighted_element>status</highlighted_element>
+  <language>Python</language>
+  <offset>50</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>139</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'closes_at' for class 'Poll'</description>
+  <highlighted_element>closes_at</highlighted_element>
+  <language>Python</language>
+  <offset>16</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>140</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'closes_at' for class 'Poll'</description>
+  <highlighted_element>closes_at</highlighted_element>
+  <language>Python</language>
+  <offset>40</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>141</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'closes_at' for class 'Poll'</description>
+  <highlighted_element>closes_at</highlighted_element>
+  <language>Python</language>
+  <offset>82</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>143</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'closes_at' for class 'Poll'</description>
+  <highlighted_element>closes_at</highlighted_element>
+  <language>Python</language>
+  <offset>82</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>145</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'author_id' for class 'Poll'</description>
+  <highlighted_element>author_id</highlighted_element>
+  <language>Python</language>
+  <offset>51</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>151</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>162</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>182</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>191</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>209</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'question' for class 'Poll'</description>
+  <highlighted_element>question</highlighted_element>
+  <language>Python</language>
+  <offset>56</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>210</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>'Embed' object has no attribute 'color'</description>
+  <highlighted_element>color</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>218</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'question' for class 'Poll'</description>
+  <highlighted_element>question</highlighted_element>
+  <language>Python</language>
+  <offset>38</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>228</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'question' for class 'Poll'</description>
+  <highlighted_element>question</highlighted_element>
+  <language>Python</language>
+  <offset>33</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>231</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>240</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'author_id' for class 'Poll'</description>
+  <highlighted_element>author_id</highlighted_element>
+  <language>Python</language>
+  <offset>29</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>253</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>263</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'status' for class 'Poll'</description>
+  <highlighted_element>status</highlighted_element>
+  <language>Python</language>
+  <offset>40</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>274</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'question' for class 'Poll'</description>
+  <highlighted_element>question</highlighted_element>
+  <language>Python</language>
+  <offset>44</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>274</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'question' for class 'Poll'</description>
+  <highlighted_element>question</highlighted_element>
+  <language>Python</language>
+  <offset>77</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>276</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'status' for class 'Poll'</description>
+  <highlighted_element>status</highlighted_element>
+  <language>Python</language>
+  <offset>40</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>293</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>314</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'status' for class 'Poll'</description>
+  <highlighted_element>status</highlighted_element>
+  <language>Python</language>
+  <offset>41</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>328</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>365</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/profiles.py</file>
+  <line>49</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/profiles.py</file>
+  <line>132</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/profiles.py</file>
+  <line>142</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/profiles.py</file>
+  <line>157</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/profiles.py</file>
+  <line>173</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/profiles.py</file>
+  <line>193</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/profiles.py</file>
+  <line>208</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/profiles.py</file>
+  <line>287</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/profiles.py</file>
+  <line>298</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/profiles.py</file>
+  <line>307</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/profiles.py</file>
+  <line>327</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/profiles.py</file>
+  <line>390</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/context_menus.py</file>
+  <line>167</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/context_menus.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'UserRoleManagerView' in 'moderation.py'</description>
+  <highlighted_element>UserRoleManagerView</highlighted_element>
+  <language>Python</language>
+  <offset>37</offset>
+  <length>19</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/context_menus.py</file>
+  <line>273</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/context_menus.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="INFO_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Module 'UserProfileAdminView' not found</description>
+  <highlighted_element>UserProfileAdminView</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>20</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/database.py</file>
+  <line>309</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/database.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'dispose' for class 'None'</description>
+  <highlighted_element>dispose</highlighted_element>
+  <language>Python</language>
+  <offset>22</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/utils/permissions.py</file>
+  <line>112</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/utils/permissions.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/utils/permissions.py</file>
+  <line>128</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/utils/permissions.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>37</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>62</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>168</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>202</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>230</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>273</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>278</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>284</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>294</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>401</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>454</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'is_done' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>is_done</highlighted_element>
+  <language>Python</language>
+  <offset>73</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>455</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>511</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_modal' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_modal</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>549</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>585</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>609</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>629</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>687</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/announcements.py</file>
+  <line>707</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>162</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>173</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>184</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>195</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>206</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>217</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>228</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>270</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>290</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>300</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>341</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>387</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>403</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_modal' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_modal</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>413</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>441</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>447</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>522</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>556</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_modal' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_modal</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>608</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'is_done' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>is_done</highlighted_element>
+  <language>Python</language>
+  <offset>73</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>609</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>639</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>682</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>690</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>710</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>741</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_modal' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_modal</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>754</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>775</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>826</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>852</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>863</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>888</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>923</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>952</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>981</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>991</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>1000</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>1010</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>1019</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>1054</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send' in 'AppCommandChannel | AppCommandThread'</description>
+  <highlighted_element>send</highlighted_element>
+  <language>Python</language>
+  <offset>36</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>1083</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>1118</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send' in 'AppCommandChannel | AppCommandThread'</description>
+  <highlighted_element>send</highlighted_element>
+  <language>Python</language>
+  <offset>36</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/configuration.py</file>
+  <line>1147</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/configuration.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>223</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'is_done' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>is_done</highlighted_element>
+  <language>Python</language>
+  <offset>73</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>224</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>259</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>416</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'is_done' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>is_done</highlighted_element>
+  <language>Python</language>
+  <offset>73</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>417</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>457</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>537</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>542</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_modal' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_modal</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>593</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>602</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>620</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>649</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>668</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>681</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>793</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'is_done' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>is_done</highlighted_element>
+  <language>Python</language>
+  <offset>73</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>794</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>810</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>837</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>853</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>886</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>904</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>916</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>929</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>1027</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'is_done' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>is_done</highlighted_element>
+  <language>Python</language>
+  <offset>73</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>1028</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>1044</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>1071</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>1087</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>1120</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>1138</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>1151</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>1180</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>1206</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'action_taken' for class 'ModerationIncident'</description>
+  <highlighted_element>action_taken</highlighted_element>
+  <language>Python</language>
+  <offset>44</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>1237</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'is_done' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>is_done</highlighted_element>
+  <language>Python</language>
+  <offset>73</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/moderation.py</file>
+  <line>1238</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/moderation.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>27</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>172</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'is_done' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>is_done</highlighted_element>
+  <language>Python</language>
+  <offset>73</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>173</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>241</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'is_done' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>is_done</highlighted_element>
+  <language>Python</language>
+  <offset>73</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>242</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>319</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>541</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_modal' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_modal</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>610</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>659</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>688</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>701</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>789</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'is_done' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>is_done</highlighted_element>
+  <language>Python</language>
+  <offset>73</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>790</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>810</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>821</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>829</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>833</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_modal' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_modal</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>876</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>972</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>987</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>1062</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>1089</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>1118</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/onboarding.py</file>
+  <line>1131</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/panels.py</file>
+  <line>28</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/panels.py</file>
+  <line>43</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/panels.py</file>
+  <line>61</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/panels.py</file>
+  <line>65</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_modal' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_modal</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/panels.py</file>
+  <line>80</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/panels.py</file>
+  <line>100</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/panels.py</file>
+  <line>103</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'PollManagerView' in 'polls.py'</description>
+  <highlighted_element>PollManagerView</highlighted_element>
+  <language>Python</language>
+  <offset>32</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/panels.py</file>
+  <line>121</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/panels.py</file>
+  <line>145</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/panels.py</file>
+  <line>160</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/panels.py</file>
+  <line>163</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'ProfileAdminView' in 'profiles.py'</description>
+  <highlighted_element>ProfileAdminView</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>16</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/panels.py</file>
+  <line>181</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/panels.py</file>
+  <line>202</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/panels.py</file>
+  <line>259</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/panels.py</file>
+  <line>294</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/panels.py</file>
+  <line>299</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_modal' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_modal</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>50</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>59</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>72</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>153</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>173</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>196</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>201</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>210</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>223</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>295</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>313</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>320</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>373</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>376</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'status' for class 'Poll'</description>
+  <highlighted_element>status</highlighted_element>
+  <language>Python</language>
+  <offset>20</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>377</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>380</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'closes_at' for class 'Poll'</description>
+  <highlighted_element>closes_at</highlighted_element>
+  <language>Python</language>
+  <offset>20</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>380</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'closes_at' for class 'Poll'</description>
+  <highlighted_element>closes_at</highlighted_element>
+  <language>Python</language>
+  <offset>59</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>381</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>424</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>436</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>441</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'option_index' for class 'PollVote'</description>
+  <highlighted_element>option_index</highlighted_element>
+  <language>Python</language>
+  <offset>32</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>443</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'option_index' for class 'PollVote'</description>
+  <highlighted_element>option_index</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>449</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'is_anonymous' for class 'Poll'</description>
+  <highlighted_element>is_anonymous</highlighted_element>
+  <language>Python</language>
+  <offset>24</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>451</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'option_index' for class 'PollVote'</description>
+  <highlighted_element>option_index</highlighted_element>
+  <language>Python</language>
+  <offset>36</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>462</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'question' for class 'Poll'</description>
+  <highlighted_element>question</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>480</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'is_anonymous' for class 'Poll'</description>
+  <highlighted_element>is_anonymous</highlighted_element>
+  <language>Python</language>
+  <offset>28</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>498</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'is_anonymous' for class 'Poll'</description>
+  <highlighted_element>is_anonymous</highlighted_element>
+  <language>Python</language>
+  <offset>62</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>500</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'closes_at' for class 'Poll'</description>
+  <highlighted_element>closes_at</highlighted_element>
+  <language>Python</language>
+  <offset>16</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>501</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'closes_at' for class 'Poll'</description>
+  <highlighted_element>closes_at</highlighted_element>
+  <language>Python</language>
+  <offset>40</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>502</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'closes_at' for class 'Poll'</description>
+  <highlighted_element>closes_at</highlighted_element>
+  <language>Python</language>
+  <offset>82</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>506</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'author_id' for class 'Poll'</description>
+  <highlighted_element>author_id</highlighted_element>
+  <language>Python</language>
+  <offset>51</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>510</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>521</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>530</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>534</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>558</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'question' for class 'Poll'</description>
+  <highlighted_element>question</highlighted_element>
+  <language>Python</language>
+  <offset>33</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>561</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>575</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'option_index' for class 'PollVote'</description>
+  <highlighted_element>option_index</highlighted_element>
+  <language>Python</language>
+  <offset>36</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>577</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved attribute reference 'option_index' for class 'PollVote'</description>
+  <highlighted_element>option_index</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>615</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'question' in 'Poll | None'</description>
+  <highlighted_element>question</highlighted_element>
+  <language>Python</language>
+  <offset>43</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>616</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>'Embed' object has no attribute 'color'</description>
+  <highlighted_element>color</highlighted_element>
+  <language>Python</language>
+  <offset>22</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>642</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_modal' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_modal</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>672</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>681</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/polls.py</file>
+  <line>694</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/polls.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>66</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>97</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>106</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>149</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>155</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_modal' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_modal</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>236</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>375</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>389</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>397</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_modal' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_modal</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>410</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>428</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>446</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>514</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>563</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'edit_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>edit_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>577</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>608</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>614</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_modal' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_modal</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>627</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>688</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>724</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>735</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>793</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>860</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>39</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>82</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>142</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>172</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>209</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>221</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>239</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>247</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>254</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>262</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>273</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>309</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>327</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>335</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>342</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>365</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>371</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_modal' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_modal</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>377</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_modal' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_modal</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>418</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>434</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>39</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>458</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>474</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'defer' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>defer</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/roles.py</file>
+  <line>518</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/roles.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'send_message' in '() -&gt; InteractionResponse'</description>
+  <highlighted_element>send_message</highlighted_element>
+  <language>Python</language>
+  <offset>35</offset>
+  <length>12</length>
+</problem>
+</problems>

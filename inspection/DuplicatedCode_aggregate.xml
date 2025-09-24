@@ -1,0 +1,73 @@
+<root>
+<duplicate cost="1" hash="0">
+  <fragment file="file://$PROJECT_DIR$/cogs/onboarding.py" line="24" start="806" end="2011" />
+  <fragment file="file://$PROJECT_DIR$/views/panels.py" line="228" start="8691" end="9907" />
+</duplicate>
+<duplicate cost="1" hash="0">
+  <fragment file="file://$PROJECT_DIR$/cogs/polls.py" line="56" start="2174" end="2853" />
+  <fragment file="file://$PROJECT_DIR$/cogs/polls.py" line="166" start="7146" end="7825" />
+</duplicate>
+<duplicate cost="1" hash="0">
+  <fragment file="file://$PROJECT_DIR$/cogs/polls.py" line="95" start="3740" end="5660" />
+  <fragment file="file://$PROJECT_DIR$/views/polls.py" line="459" start="18109" end="19942" />
+</duplicate>
+<duplicate cost="1" hash="0">
+  <fragment file="file://$PROJECT_DIR$/cogs/profiles.py" line="80" start="2846" end="3463" />
+  <fragment file="file://$PROJECT_DIR$/views/profiles.py" line="116" start="4503" end="4836" />
+</duplicate>
+<duplicate cost="1" hash="0">
+  <fragment file="file://$PROJECT_DIR$/cogs/profiles.py" line="101" start="3477" end="4082" />
+  <fragment file="file://$PROJECT_DIR$/views/profiles.py" line="128" start="4959" end="5425" />
+</duplicate>
+<duplicate cost="1" hash="0">
+  <fragment file="file://$PROJECT_DIR$/views/announcements.py" line="156" start="5759" end="6344" />
+  <fragment file="file://$PROJECT_DIR$/views/announcements.py" line="190" start="7074" end="7659" />
+  <fragment file="file://$PROJECT_DIR$/views/announcements.py" line="218" start="8228" end="8814" />
+</duplicate>
+<duplicate cost="1" hash="0">
+  <fragment file="file://$PROJECT_DIR$/views/announcements.py" line="179" start="6689" end="7659" />
+  <fragment file="file://$PROJECT_DIR$/views/announcements.py" line="207" start="7843" end="8814" />
+</duplicate>
+<duplicate cost="1" hash="0">
+  <fragment file="file://$PROJECT_DIR$/views/announcements.py" line="181" start="6728" end="7578" />
+  <fragment file="file://$PROJECT_DIR$/views/announcements.py" line="209" start="7882" end="8733" />
+  <fragment file="file://$PROJECT_DIR$/views/announcements.py" line="252" start="9629" end="10524" />
+</duplicate>
+<duplicate cost="1" hash="0">
+  <fragment file="file://$PROJECT_DIR$/views/announcements.py" line="277" start="10756" end="11664" />
+  <fragment file="file://$PROJECT_DIR$/views/polls.py" line="200" start="7875" end="8875" />
+</duplicate>
+<duplicate cost="1" hash="0">
+  <fragment file="file://$PROJECT_DIR$/views/announcements.py" line="487" start="19675" end="20164" />
+  <fragment file="file://$PROJECT_DIR$/views/moderation.py" line="1218" start="45397" end="45914" />
+</duplicate>
+<duplicate cost="1" hash="0">
+  <fragment file="file://$PROJECT_DIR$/views/moderation.py" line="161" start="5224" end="5683" />
+  <fragment file="file://$PROJECT_DIR$/views/moderation.py" line="355" start="12936" end="13395" />
+</duplicate>
+<duplicate cost="1" hash="0">
+  <fragment file="file://$PROJECT_DIR$/views/moderation.py" line="215" start="7872" end="8389" />
+  <fragment file="file://$PROJECT_DIR$/views/moderation.py" line="408" start="15105" end="15622" />
+  <fragment file="file://$PROJECT_DIR$/views/moderation.py" line="785" start="29087" end="29604" />
+  <fragment file="file://$PROJECT_DIR$/views/moderation.py" line="1019" start="37799" end="38316" />
+</duplicate>
+<duplicate cost="1" hash="0">
+  <fragment file="file://$PROJECT_DIR$/views/moderation.py" line="220" start="8028" end="8389" />
+  <fragment file="file://$PROJECT_DIR$/views/moderation.py" line="413" start="15261" end="15622" />
+  <fragment file="file://$PROJECT_DIR$/views/moderation.py" line="790" start="29243" end="29604" />
+  <fragment file="file://$PROJECT_DIR$/views/moderation.py" line="1024" start="37955" end="38316" />
+  <fragment file="file://$PROJECT_DIR$/views/moderation.py" line="1234" start="46110" end="46472" />
+</duplicate>
+<duplicate cost="1" hash="0">
+  <fragment file="file://$PROJECT_DIR$/views/onboarding.py" line="327" start="12812" end="15202" />
+  <fragment file="file://$PROJECT_DIR$/views/onboarding.py" line="460" start="17401" end="19831" />
+</duplicate>
+<duplicate cost="1" hash="0">
+  <fragment file="file://$PROJECT_DIR$/views/polls.py" line="39" start="1150" end="2020" />
+  <fragment file="file://$PROJECT_DIR$/views/polls.py" line="663" start="26488" end="27325" />
+</duplicate>
+<duplicate cost="1" hash="0">
+  <fragment file="file://$PROJECT_DIR$/views/polls.py" line="138" start="5057" end="5793" />
+  <fragment file="file://$PROJECT_DIR$/views/polls.py" line="158" start="5979" end="6715" />
+</duplicate>
+</root>
