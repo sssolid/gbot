@@ -61,12 +61,14 @@ class MessageLoggingCog(commands.Cog):
                 if await self.is_logging_enabled(message.guild.id):
                     await self.log_message(message, "bulk_deleted")
 
-    async def is_logging_enabled(self, guild_id: int) -> bool:
+    @staticmethod
+    async def is_logging_enabled(guild_id: int) -> bool:
         """Check if message logging is enabled for the guild."""
         # For now, logging is always enabled. Could be made configurable later.
         return True
 
-    async def log_message(self, message: discord.Message, action: str, original_content: Optional[str] = None):
+    @staticmethod
+    async def log_message(message: discord.Message, action: str, original_content: Optional[str] = None):
         """Log a message action to the database."""
         try:
             # Prepare attachment data
@@ -112,7 +114,8 @@ class MessageLoggingCog(commands.Cog):
         except Exception as e:
             print(f"Error logging message: {e}")
 
-    async def get_message_history(self, guild_id: int, message_id: int) -> List[Dict[str, Any]]:
+    @staticmethod
+    async def get_message_history(guild_id: int, message_id: int) -> List[Dict[str, Any]]:
         """Get the full history of a message."""
         from database import MessageLog
         from sqlalchemy import select
@@ -135,7 +138,8 @@ class MessageLoggingCog(commands.Cog):
                 for log in result.scalars().all()
             ]
 
-    async def search_messages(self, guild_id: int, user_id: Optional[int] = None,
+    @staticmethod
+    async def search_messages(guild_id: int, user_id: Optional[int] = None,
                               channel_id: Optional[int] = None, content_search: Optional[str] = None,
                               limit: int = 50) -> List[Dict[str, Any]]:
         """Search message logs with various filters."""

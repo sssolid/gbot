@@ -73,7 +73,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/cogs/general.py</file>
-  <line>361</line>
+  <line>362</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/general.py" />
   <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
@@ -85,26 +85,26 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/cogs/message_logging.py</file>
-  <line>64</line>
+  <line>65</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/message_logging.py" />
   <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
   <description>Parameter 'guild_id' value is not used</description>
   <highlighted_element>guild_id: int</highlighted_element>
   <language>Python</language>
-  <offset>39</offset>
+  <offset>33</offset>
   <length>13</length>
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/cogs/message_logging.py</file>
-  <line>115</line>
+  <line>118</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/message_logging.py" />
   <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
   <description>Parameter 'guild_id' value is not used</description>
   <highlighted_element>guild_id: int</highlighted_element>
   <language>Python</language>
-  <offset>40</offset>
+  <offset>34</offset>
   <length>13</length>
 </problem>
 <problem>
@@ -120,44 +120,8 @@
   <length>32</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/context_menus.py</file>
-  <line>297</line>
-  <module>guildbot</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/context_menus.py" />
-  <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
-  <description>Parameter 'button' value is not used</description>
-  <highlighted_element>button: discord.ui.Button</highlighted_element>
-  <language>Python</language>
-  <offset>69</offset>
-  <length>25</length>
-</problem>
-<problem>
-  <file>file://$PROJECT_DIR$/context_menus.py</file>
-  <line>340</line>
-  <module>guildbot</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/context_menus.py" />
-  <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
-  <description>Parameter 'button' value is not used</description>
-  <highlighted_element>button: discord.ui.Button</highlighted_element>
-  <language>Python</language>
-  <offset>64</offset>
-  <length>25</length>
-</problem>
-<problem>
-  <file>file://$PROJECT_DIR$/context_menus.py</file>
-  <line>347</line>
-  <module>guildbot</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/context_menus.py" />
-  <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
-  <description>Parameter 'button' value is not used</description>
-  <highlighted_element>button: discord.ui.Button</highlighted_element>
-  <language>Python</language>
-  <offset>67</offset>
-  <length>25</length>
-</problem>
-<problem>
   <file>file://$PROJECT_DIR$/views/announcements.py</file>
-  <line>620</line>
+  <line>621</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
   <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
@@ -169,7 +133,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/announcements.py</file>
-  <line>690</line>
+  <line>691</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
   <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
@@ -445,19 +409,19 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
-  <line>246</line>
+  <line>247</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
   <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
   <description>Parameter 'guild_id' value is not used</description>
   <highlighted_element>guild_id: int</highlighted_element>
   <language>Python</language>
-  <offset>47</offset>
+  <offset>41</offset>
   <length>13</length>
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
-  <line>296</line>
+  <line>297</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
   <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
@@ -469,7 +433,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
-  <line>308</line>
+  <line>309</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
   <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
@@ -481,7 +445,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
-  <line>538</line>
+  <line>539</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
   <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
@@ -493,7 +457,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
-  <line>890</line>
+  <line>891</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
   <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
@@ -505,7 +469,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
-  <line>980</line>
+  <line>981</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
   <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
@@ -517,7 +481,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
-  <line>1079</line>
+  <line>1080</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
   <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
@@ -529,7 +493,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
-  <line>1122</line>
+  <line>1123</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
   <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
@@ -537,138 +501,6 @@
   <highlighted_element>button: discord.ui.Button</highlighted_element>
   <language>Python</language>
   <offset>73</offset>
-  <length>25</length>
-</problem>
-<problem>
-  <file>file://$PROJECT_DIR$/views/panels.py</file>
-  <line>21</line>
-  <module>guildbot</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
-  <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
-  <description>Parameter 'button' value is not used</description>
-  <highlighted_element>button: discord.ui.Button</highlighted_element>
-  <language>Python</language>
-  <offset>71</offset>
-  <length>25</length>
-</problem>
-<problem>
-  <file>file://$PROJECT_DIR$/views/panels.py</file>
-  <line>54</line>
-  <module>guildbot</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
-  <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
-  <description>Parameter 'button' value is not used</description>
-  <highlighted_element>button: discord.ui.Button</highlighted_element>
-  <language>Python</language>
-  <offset>68</offset>
-  <length>25</length>
-</problem>
-<problem>
-  <file>file://$PROJECT_DIR$/views/panels.py</file>
-  <line>73</line>
-  <module>guildbot</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
-  <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
-  <description>Parameter 'button' value is not used</description>
-  <highlighted_element>button: discord.ui.Button</highlighted_element>
-  <language>Python</language>
-  <offset>67</offset>
-  <length>25</length>
-</problem>
-<problem>
-  <file>file://$PROJECT_DIR$/views/panels.py</file>
-  <line>93</line>
-  <module>guildbot</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
-  <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
-  <description>Parameter 'button' value is not used</description>
-  <highlighted_element>button: discord.ui.Button</highlighted_element>
-  <language>Python</language>
-  <offset>67</offset>
-  <length>25</length>
-</problem>
-<problem>
-  <file>file://$PROJECT_DIR$/views/panels.py</file>
-  <line>114</line>
-  <module>guildbot</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
-  <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
-  <description>Parameter 'button' value is not used</description>
-  <highlighted_element>button: discord.ui.Button</highlighted_element>
-  <language>Python</language>
-  <offset>72</offset>
-  <length>25</length>
-</problem>
-<problem>
-  <file>file://$PROJECT_DIR$/views/panels.py</file>
-  <line>153</line>
-  <module>guildbot</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
-  <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
-  <description>Parameter 'button' value is not used</description>
-  <highlighted_element>button: discord.ui.Button</highlighted_element>
-  <language>Python</language>
-  <offset>69</offset>
-  <length>25</length>
-</problem>
-<problem>
-  <file>file://$PROJECT_DIR$/views/panels.py</file>
-  <line>174</line>
-  <module>guildbot</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
-  <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
-  <description>Parameter 'button' value is not used</description>
-  <highlighted_element>button: discord.ui.Button</highlighted_element>
-  <language>Python</language>
-  <offset>68</offset>
-  <length>25</length>
-</problem>
-<problem>
-  <file>file://$PROJECT_DIR$/views/panels.py</file>
-  <line>195</line>
-  <module>guildbot</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
-  <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
-  <description>Parameter 'button' value is not used</description>
-  <highlighted_element>button: discord.ui.Button</highlighted_element>
-  <language>Python</language>
-  <offset>68</offset>
-  <length>25</length>
-</problem>
-<problem>
-  <file>file://$PROJECT_DIR$/views/panels.py</file>
-  <line>222</line>
-  <module>guildbot</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
-  <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
-  <description>Parameter 'button' value is not used</description>
-  <highlighted_element>button: discord.ui.Button</highlighted_element>
-  <language>Python</language>
-  <offset>71</offset>
-  <length>25</length>
-</problem>
-<problem>
-  <file>file://$PROJECT_DIR$/views/panels.py</file>
-  <line>268</line>
-  <module>guildbot</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
-  <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
-  <description>Parameter 'button' value is not used</description>
-  <highlighted_element>button: discord.ui.Button</highlighted_element>
-  <language>Python</language>
-  <offset>68</offset>
-  <length>25</length>
-</problem>
-<problem>
-  <file>file://$PROJECT_DIR$/views/panels.py</file>
-  <line>280</line>
-  <module>guildbot</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/panels.py" />
-  <problem_class id="PyUnusedLocalInspection" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused local symbols</problem_class>
-  <description>Parameter 'button' value is not used</description>
-  <highlighted_element>button: discord.ui.Button</highlighted_element>
-  <language>Python</language>
-  <offset>66</offset>
   <length>25</length>
 </problem>
 <problem>

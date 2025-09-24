@@ -1,5 +1,5 @@
 """
-Main persistent panel views for the Guild Management Bot - MINIMAL FIX
+Main persistent panel views for the Guild Management Bot
 """
 import discord
 
@@ -8,17 +8,17 @@ from utils.permissions import PermissionChecker
 
 class AdminDashboard(discord.ui.View):
     """Persistent Admin Dashboard panel."""
-    
+
     def __init__(self):
         super().__init__(timeout=None)
-    
+
     @discord.ui.button(
         label="Onboarding Queue",
-        style=discord.ButtonStyle.primary,
+        style=discord.ButtonStyle.primary, # type: ignore[arg-type]
         emoji="📋",
         custom_id="admin_dashboard:onboarding_queue"
     )
-    async def onboarding_queue(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def onboarding_queue(self, interaction: discord.Interaction, _button: discord.ui.Button):
         """Open the onboarding queue."""
         if not PermissionChecker.is_admin(interaction.user):
             embed = PermissionChecker.get_permission_error_embed(
@@ -27,31 +27,31 @@ class AdminDashboard(discord.ui.View):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
-        
+
         from views.onboarding import OnboardingQueueView
-        
+
         # Create and load the queue view
         queue_view = OnboardingQueueView()
-        
+
         # Show loading message first
         embed = discord.Embed(
             title="📋 Loading Onboarding Queue...",
             description="Please wait while we fetch the pending applications.",
             color=discord.Color.blue()
         )
-        
+
         await interaction.response.send_message(embed=embed, ephemeral=True)
-        
+
         # Load and show the actual queue
         await queue_view.show_queue(interaction)
-    
+
     @discord.ui.button(
         label="Announcements",
-        style=discord.ButtonStyle.secondary,
+        style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
         emoji="📢",
         custom_id="admin_dashboard:announcements"
     )
-    async def announcements(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def announcements(self, interaction: discord.Interaction, _button: discord.ui.Button):
         """Open announcement composer."""
         if not PermissionChecker.is_admin(interaction.user):
             embed = PermissionChecker.get_permission_error_embed(
@@ -60,17 +60,17 @@ class AdminDashboard(discord.ui.View):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
-        
+
         from views.announcements import AnnouncementModal
         await interaction.response.send_modal(AnnouncementModal())
-    
+
     @discord.ui.button(
         label="Promotions & Roles",
-        style=discord.ButtonStyle.secondary,
+        style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
         emoji="🎭",
         custom_id="admin_dashboard:role_manager"
     )
-    async def role_manager(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def role_manager(self, interaction: discord.Interaction, _button: discord.ui.Button):
         """Open role management interface."""
         if not PermissionChecker.is_admin(interaction.user):
             embed = PermissionChecker.get_permission_error_embed(
@@ -79,18 +79,18 @@ class AdminDashboard(discord.ui.View):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
-        
+
         from views.roles import RoleManagerView
         view = RoleManagerView()
         await view.show_role_interface(interaction)
-    
+
     @discord.ui.button(
         label="Polls Manager",
-        style=discord.ButtonStyle.secondary,
+        style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
         emoji="📊",
         custom_id="admin_dashboard:poll_manager"
     )
-    async def poll_manager(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def poll_manager(self, interaction: discord.Interaction, _button: discord.ui.Button):
         """Open poll management interface."""
         if not PermissionChecker.is_admin(interaction.user):
             embed = PermissionChecker.get_permission_error_embed(
@@ -99,19 +99,19 @@ class AdminDashboard(discord.ui.View):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
-        
+
         from views.polls import PollManagerView
         view = PollManagerView()
         await view.show_poll_manager(interaction)
-    
+
     @discord.ui.button(
         label="Moderation Center",
-        style=discord.ButtonStyle.secondary,
+        style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
         emoji="🛡️",
         custom_id="admin_dashboard:moderation_center",
         row=1
     )
-    async def moderation_center(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def moderation_center(self, interaction: discord.Interaction, _button: discord.ui.Button):
         """Open moderation center."""
         if not PermissionChecker.is_admin(interaction.user):
             embed = PermissionChecker.get_permission_error_embed(
@@ -120,16 +120,16 @@ class AdminDashboard(discord.ui.View):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
-        
+
         from views.moderation import ModerationCenterView
         view = ModerationCenterView()
-        
+
         embed = discord.Embed(
             title="🛡️ Moderation Center",
             description="Configure and monitor server moderation features",
             color=discord.Color.red()
         )
-        
+
         embed.add_field(
             name="Available Options",
             value=(
@@ -141,16 +141,16 @@ class AdminDashboard(discord.ui.View):
             ),
             inline=False
         )
-        
+
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
-    
+
     @discord.ui.button(
         label="Profiles Admin",
-        style=discord.ButtonStyle.secondary,
+        style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
         emoji="👤",
         custom_id="admin_dashboard:profiles_admin"
     )
-    async def profiles_admin(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def profiles_admin(self, interaction: discord.Interaction, _button: discord.ui.Button):
         """Open profiles administration."""
         if not PermissionChecker.is_admin(interaction.user):
             embed = PermissionChecker.get_permission_error_embed(
@@ -159,19 +159,19 @@ class AdminDashboard(discord.ui.View):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
-        
+
         from views.profiles import ProfileAdminView
         view = ProfileAdminView()
         await view.show_admin_interface(interaction)
-    
+
     @discord.ui.button(
         label="Configuration",
-        style=discord.ButtonStyle.secondary,
+        style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
         emoji="⚙️",
         custom_id="admin_dashboard:configuration",
         row=2
     )
-    async def configuration(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def configuration(self, interaction: discord.Interaction, _button: discord.ui.Button):
         """Open configuration interface."""
         if not PermissionChecker.is_admin(interaction.user):
             embed = PermissionChecker.get_permission_error_embed(
@@ -180,19 +180,19 @@ class AdminDashboard(discord.ui.View):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
-        
+
         from views.configuration import ConfigurationView
         view = ConfigurationView()
         await view.show_configuration_menu(interaction)
-    
+
     @discord.ui.button(
         label="Deploy Panels",
-        style=discord.ButtonStyle.secondary,
+        style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
         emoji="🚀",
         custom_id="admin_dashboard:deploy_panels",
         row=2
     )
-    async def deploy_panels(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def deploy_panels(self, interaction: discord.Interaction, _button: discord.ui.Button):
         """Deploy control panels."""
         if not PermissionChecker.is_admin(interaction.user):
             embed = PermissionChecker.get_permission_error_embed(
@@ -201,7 +201,7 @@ class AdminDashboard(discord.ui.View):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
-        
+
         from views.configuration import PanelManagementView
         view = PanelManagementView()
         await view.show_settings(interaction)
@@ -209,22 +209,22 @@ class AdminDashboard(discord.ui.View):
 
 class MemberHub(discord.ui.View):
     """Persistent Member Hub panel."""
-    
+
     def __init__(self):
         super().__init__(timeout=None)
-    
+
     @discord.ui.button(
         label="Start Onboarding",
-        style=discord.ButtonStyle.primary,
+        style=discord.ButtonStyle.primary, # type: ignore[arg-type]
         emoji="🚀",
         custom_id="member_hub:start_onboarding"
     )
-    async def start_onboarding(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def start_onboarding(self, interaction: discord.Interaction, _button: discord.ui.Button):
         """Start the onboarding process."""
         # Check if user has an existing session
         from database import get_session, OnboardingSession
         from sqlalchemy import select, and_
-        
+
         async with get_session() as session:
             result = await session.execute(
                 select(OnboardingSession)
@@ -237,7 +237,7 @@ class MemberHub(discord.ui.View):
                 )
             )
             existing_session = result.scalar_one_or_none()
-        
+
         if existing_session:
             embed = discord.Embed(
                 title="📝 Continue Onboarding",
@@ -250,41 +250,41 @@ class MemberHub(discord.ui.View):
                 description="Welcome! Let's get you set up in this server.",
                 color=discord.Color.green()
             )
-        
+
         from views.onboarding import OnboardingWizard
         wizard = OnboardingWizard(existing_session.id if existing_session else None)
         await wizard.load_questions(interaction.guild_id)
         await wizard.load_session(interaction.user.id, interaction.guild_id)
-        
+
         await interaction.response.send_message(embed=embed, ephemeral=True)
         await wizard.show_current_question(interaction)
-    
+
     @discord.ui.button(
         label="My Characters",
-        style=discord.ButtonStyle.secondary,
+        style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
         emoji="👤",
         custom_id="member_hub:my_characters"
     )
-    async def my_characters(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def my_characters(self, interaction: discord.Interaction, _button: discord.ui.Button):
         """Manage character profiles."""
         from views.profiles import CharacterManagerView
         view = CharacterManagerView(interaction.user.id)
         await view.show_characters(interaction)
-    
+
     @discord.ui.button(
         label="Create Poll",
-        style=discord.ButtonStyle.secondary,
+        style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
         emoji="📊",
         custom_id="member_hub:create_poll"
     )
-    async def create_poll(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def create_poll(self, interaction: discord.Interaction, _button: discord.ui.Button):
         """Create a poll (if user has permission)."""
         # Check if user has poll creation permission
         can_create_polls = (
             PermissionChecker.is_admin(interaction.user) or
             any(role.name.lower() in ['member', 'verified'] for role in interaction.user.roles)
         )
-        
+
         if not can_create_polls:
             embed = discord.Embed(
                 title="❌ Permission Denied",
@@ -293,7 +293,90 @@ class MemberHub(discord.ui.View):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
-        
+
         from views.polls import PollBuilderModal
         modal = PollBuilderModal()
         await interaction.response.send_modal(modal)
+
+    @discord.ui.button(
+        label="Report Message",
+        style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
+        emoji="🚨",
+        custom_id="member_hub:report_message"
+    )
+    async def report_message(self, interaction: discord.Interaction, _button: discord.ui.Button):
+        """Report a message to moderators."""
+        embed = discord.Embed(
+            title="🚨 Report a Message",
+            description="Please provide the message link and reason for reporting.",
+            color=discord.Color.orange()
+        )
+
+        embed.add_field(
+            name="How to get a message link:",
+            value="Right-click on a message → 'Copy Message Link'",
+            inline=False
+        )
+
+        from views.moderation import ReportMessageModal
+        modal = ReportMessageModal()
+        await interaction.response.send_modal(modal)
+
+    @discord.ui.button(
+        label="Server Info & Rules",
+        style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
+        emoji="📜",
+        custom_id="member_hub:server_info",
+        row=1
+    )
+    async def server_info(self, interaction: discord.Interaction, _button: discord.ui.Button):
+        """Show server information and rules."""
+        embed = discord.Embed(
+            title=f"📜 {interaction.guild.name} - Server Information",
+            description="Welcome to our guild! Here's what you need to know:",
+            color=discord.Color.blue()
+        )
+
+        # Server stats
+        embed.add_field(
+            name="📊 Server Stats",
+            value=(
+                f"**Members:** {len(interaction.guild.members)}\n"
+                f"**Created:** {discord.utils.format_dt(interaction.guild.created_at, 'D')}\n"
+                f"**Owner:** {interaction.guild.owner.mention if interaction.guild.owner else 'Unknown'}"
+            ),
+            inline=True
+        )
+
+        # Get rules channel if configured
+        from database import get_session, GuildConfig
+        from sqlalchemy import select
+
+        async with get_session() as session:
+            result = await session.execute(
+                select(GuildConfig.rules_channel_id)
+                .where(GuildConfig.guild_id == interaction.guild_id)
+            )
+            config = result.scalar_one_or_none()
+
+            if config and config:
+                rules_channel = interaction.guild.get_channel(config)
+                if rules_channel:
+                    embed.add_field(
+                        name="📋 Server Rules",
+                        value=f"Please read our rules in {rules_channel.mention}",
+                        inline=True
+                    )
+
+        embed.add_field(
+            name="🚀 Getting Started",
+            value=(
+                "1. Complete onboarding if you haven't already\n"
+                "2. Create your character profile\n"
+                "3. Introduce yourself to the community\n"
+                "4. Join in on polls and discussions!"
+            ),
+            inline=False
+        )
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)

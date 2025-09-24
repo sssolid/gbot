@@ -1,7 +1,7 @@
 """
 Polls cog for the Guild Management Bot
 """
-from datetime import datetime
+import datetime
 
 import discord
 from discord import app_commands
@@ -137,7 +137,7 @@ class PollsCog(commands.Cog):
         embed.add_field(name="Status", value=poll.status.title(), inline=True)
         
         if poll.closes_at:
-            if datetime.utcnow() < poll.closes_at:
+            if datetime.datetime.now(datetime.UTC) < poll.closes_at:
                 embed.add_field(name="Closes", value=discord.utils.format_dt(poll.closes_at, 'R'), inline=True)
             else:
                 embed.add_field(name="Closed", value=discord.utils.format_dt(poll.closes_at, 'R'), inline=True)
@@ -193,7 +193,7 @@ class PollsCog(commands.Cog):
             
             # Close the poll
             poll.status = 'closed'
-            poll.closed_at = datetime.utcnow()
+            poll.closed_at = datetime.datetime.now(datetime.UTC)
             await session.commit()
         
         # Try to update the original poll message

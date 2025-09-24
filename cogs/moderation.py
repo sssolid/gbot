@@ -3,7 +3,7 @@ Moderation cog for the Guild Management Bot - FIXED VERSION
 """
 import asyncio
 import re
-from datetime import datetime, timedelta
+import datetime
 from typing import Dict, List
 
 import discord
@@ -36,13 +36,13 @@ class ModerationCog(commands.Cog):
         while True:
             try:
                 await asyncio.sleep(300)  # Clean up every 5 minutes
-                current_time = datetime.utcnow()
+                current_time = datetime.datetime.now(datetime.UTC)
                 
                 for guild_id in list(self.spam_tracker.keys()):
                     for user_id in list(self.spam_tracker[guild_id].keys()):
                         for channel_id in list(self.spam_tracker[guild_id][user_id].keys()):
                             # Remove messages older than 5 minutes
-                            cutoff_time = current_time - timedelta(minutes=5)
+                            cutoff_time = current_time - datetime.timedelta(minutes=5)
                             self.spam_tracker[guild_id][user_id][channel_id] = [
                                 msg_time for msg_time in self.spam_tracker[guild_id][user_id][channel_id]
                                 if msg_time > cutoff_time
@@ -118,7 +118,7 @@ class ModerationCog(commands.Cog):
                 channel_id=interaction.channel_id,
                 type="manual_warn",
                 reason=reason,
-                action_taken="warn",
+                action="warn",
                 moderator_id=interaction.user.id
             )
             session.add(incident)
@@ -210,7 +210,7 @@ class ModerationCog(commands.Cog):
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
         
-        timeout_until = discord.utils.utcnow() + timedelta(minutes=timeout_minutes)
+        timeout_until = discord.utils.utcnow() + datetime.timedelta(minutes=timeout_minutes)
         
         try:
             await user.timeout(timeout_until, reason=f"Timed out by {interaction.user}: {reason}")
@@ -223,7 +223,7 @@ class ModerationCog(commands.Cog):
                     channel_id=interaction.channel_id,
                     type="manual_timeout",
                     reason=reason,
-                    action_taken=f"timeout_{timeout_minutes}m",
+                    action=f"timeout_{timeout_minutes}m",
                     moderator_id=interaction.user.id
                 )
                 session.add(incident)
@@ -326,7 +326,7 @@ class ModerationCog(commands.Cog):
         channel_id = message.channel.id
         guild_id = message.guild.id
         
-        current_time = datetime.utcnow()
+        current_time = datetime.datetime.now(datetime.UTC)
         window_seconds = spam_config.get('window_seconds', 10)
         max_messages = spam_config.get('max_messages', 5)
         max_mentions = spam_config.get('max_mentions', 3)
@@ -340,7 +340,7 @@ class ModerationCog(commands.Cog):
             self.spam_tracker[guild_id][user_id][channel_id] = []
         
         # Clean old messages
-        cutoff_time = current_time - timedelta(seconds=window_seconds)
+        cutoff_time = current_time - datetime.timedelta(seconds=window_seconds)
         self.spam_tracker[guild_id][user_id][channel_id] = [
             msg_time for msg_time in self.spam_tracker[guild_id][user_id][channel_id]
             if msg_time > cutoff_time
@@ -399,8 +399,9 @@ class ModerationCog(commands.Cog):
                     return  # Allowed by whitelist
                 
                 await self.handle_swear_violation(message, config, matches)
-    
-    async def handle_spam_violation(self, message: discord.Message, config: dict, message_count: int, mention_count: int):
+
+    @staticmethod
+    async def handle_spam_violation(message: discord.Message, config: dict, message_count: int, mention_count: int):
         """Handle spam filter violation."""
         spam_config = config.get('spam', {})
         action = spam_config.get('action', 'delete')
@@ -423,8 +424,8 @@ class ModerationCog(commands.Cog):
                 message_id=message.id,
                 type="spam",
                 reason=f"Spam detected: {message_count} messages, {mention_count} mentions",
-                message_snapshot={"content": message.content, "author": str(message.author)},
-                action_taken=action
+                message_content=message.content,
+                action=action
             )
             session.add(incident)
             await session.commit()
@@ -442,7 +443,7 @@ class ModerationCog(commands.Cog):
         
         elif action == 'timeout':
             try:
-                timeout_until = discord.utils.utcnow() + timedelta(minutes=10)
+                timeout_until = discord.utils.utcnow() + datetime.timedelta(minutes=10)
                 await message.author.timeout(
                     timeout_until, 
                     reason="Auto-moderation: Spam detected"
@@ -459,8 +460,9 @@ class ModerationCog(commands.Cog):
                     
             except discord.Forbidden:
                 pass  # No permission to timeout
-    
-    async def handle_swear_violation(self, message: discord.Message, config: dict, matches: List[str]):
+
+    @staticmethod
+    async def handle_swear_violation(message: discord.Message, config: dict, matches: List[str]):
         """Handle swear filter violation."""
         swear_config = config.get('swear', {})
         action = swear_config.get('action', 'warn')
@@ -484,8 +486,8 @@ class ModerationCog(commands.Cog):
                 message_id=message.id,
                 type="swear",
                 reason=f"Inappropriate language detected: {', '.join(matches)}",
-                message_snapshot={"content": message.content, "author": str(message.author)},
-                action_taken=action
+                message_content=message.content,
+                action=action
             )
             session.add(incident)
             await session.commit()
@@ -504,7 +506,7 @@ class ModerationCog(commands.Cog):
         elif action == 'timeout':
             timeout_duration = swear_config.get('timeout_duration_minutes', 10)
             try:
-                timeout_until = discord.utils.utcnow() + timedelta(minutes=timeout_duration)
+                timeout_until = discord.utils.utcnow() + datetime.timedelta(minutes=timeout_duration)
                 await message.author.timeout(
                     timeout_until,
                     reason="Auto-moderation: Inappropriate language"

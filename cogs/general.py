@@ -139,8 +139,9 @@ class GeneralCog(commands.Cog):
             'total': total,
             'breakdown': ' '.join(breakdown_parts) if len(breakdown_parts) > 1 else breakdown_parts[0] if breakdown_parts else str(total)
         }
-    
-    def roll_dice_group(self, dice_group: str) -> dict:
+
+    @staticmethod
+    def roll_dice_group(dice_group: str) -> dict:
         """Roll a single group of dice (e.g., '3d6kh2')."""
         # Parse keep highest/lowest
         keep_highest = None

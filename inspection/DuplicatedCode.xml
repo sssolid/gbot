@@ -13,6 +13,18 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>26</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="DuplicatedCode" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Duplicated code fragment</problem_class>
+  <description>Duplicate code: lines 26-46</description>
+  <highlighted_element>bot = interaction.client</highlighted_element>
+  <language>Python</language>
+  <offset>8</offset>
+  <length>24</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
   <line>56</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
@@ -70,6 +82,18 @@
   <language>Python</language>
   <offset>12</offset>
   <length>30</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/context_menus.py</file>
+  <line>49</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/context_menus.py" />
+  <problem_class id="DuplicatedCode" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Duplicated code fragment</problem_class>
+  <description>Duplicate code: lines 49-69</description>
+  <highlighted_element>bot = interaction.client</highlighted_element>
+  <language>Python</language>
+  <offset>8</offset>
+  <length>24</length>
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/announcements.py</file>
@@ -241,11 +265,11 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
-  <line>327</line>
+  <line>328</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
   <problem_class id="DuplicatedCode" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Duplicated code fragment</problem_class>
-  <description>Duplicate code: lines 327-391</description>
+  <description>Duplicate code: lines 328-392</description>
   <highlighted_element>class SingleSelectView(discord.ui.View):</highlighted_element>
   <language>Python</language>
   <offset>0</offset>
@@ -253,11 +277,11 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
-  <line>460</line>
+  <line>461</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
   <problem_class id="DuplicatedCode" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Duplicated code fragment</problem_class>
-  <description>Duplicate code: lines 460-522</description>
+  <description>Duplicate code: lines 461-523</description>
   <highlighted_element>class ArchetypeSelectView(discord.ui.View):</highlighted_element>
   <language>Python</language>
   <offset>0</offset>

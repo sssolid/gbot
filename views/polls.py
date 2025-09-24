@@ -1,7 +1,7 @@
 """
 Poll creation and management views for the Guild Management Bot
 """
-from datetime import datetime, timedelta
+import datetime
 from typing import List
 
 import discord
@@ -27,7 +27,7 @@ class PollBuilderModal(discord.ui.Modal):
         self.options_input = discord.ui.TextInput(
             label="Options (one per line)",
             placeholder="Option 1\nOption 2\nOption 3",
-            style=discord.TextStyle.paragraph,
+            style=discord.TextStyle.paragraph, # type: ignore[arg-type]
             required=True,
             max_length=1000
         )
@@ -92,7 +92,7 @@ class PollSettingsView(discord.ui.View):
         # Anonymous toggle
         anon_button = discord.ui.Button(
             label=f"Anonymous: {'ON' if self.is_anonymous else 'OFF'}",
-            style=discord.ButtonStyle.success if self.is_anonymous else discord.ButtonStyle.secondary,
+            style=discord.ButtonStyle.success if self.is_anonymous else discord.ButtonStyle.secondary, # type: ignore[arg-type]
             emoji="🎭" if self.is_anonymous else "👤"
         )
         anon_button.callback = self.toggle_anonymous
@@ -117,7 +117,7 @@ class PollSettingsView(discord.ui.View):
         # Channel selector
         channel_select = discord.ui.ChannelSelect(
             placeholder="Select channel to post poll...",
-            channel_types=[discord.ChannelType.text, discord.ChannelType.news]
+            channel_types=[discord.ChannelType.text, discord.ChannelType.news] # type: ignore[arg-type]
         )
         channel_select.callback = self.select_channel
         self.add_item(channel_select)
@@ -126,7 +126,7 @@ class PollSettingsView(discord.ui.View):
         if self.target_channel:
             create_button = discord.ui.Button(
                 label="Create Poll",
-                style=discord.ButtonStyle.primary,
+                style=discord.ButtonStyle.primary, # type: ignore[arg-type]
                 emoji="📊"
             )
             create_button.callback = self.create_poll
@@ -224,18 +224,18 @@ class PollSettingsView(discord.ui.View):
             return
         
         # Calculate close time
-        close_time = datetime.utcnow() + timedelta(hours=self.duration_hours)
+        close_time = datetime.datetime.now(datetime.UTC) + datetime.timedelta(hours=self.duration_hours)
         
         # Create poll in database
         async with get_session() as session:
             poll = Poll(
                 guild_id=interaction.guild_id,
                 channel_id=channel.id,
-                author_id=interaction.user.id,
+                creator_id=interaction.user.id,
                 question=self.question,
                 options=self.options,
-                is_anonymous=self.is_anonymous,
-                closes_at=close_time
+                anonymous=self.is_anonymous,
+                ends_at=close_time
             )
             session.add(poll)
             await session.commit()
@@ -333,7 +333,7 @@ class PollVoteView(discord.ui.View):
         for i, option in enumerate(options[:20]):  # Limit to 20 options for safety
             button = discord.ui.Button(
                 label=f"{chr(127462 + i)} {option[:50]}",  # Regional indicator emojis
-                style=discord.ButtonStyle.secondary,
+                style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
                 custom_id=f"poll_vote_{poll_id}_{i}",
                 row=i // 5
             )
@@ -344,7 +344,7 @@ class PollVoteView(discord.ui.View):
         if len(options) <= 15:  # Leave room for management buttons
             results_button = discord.ui.Button(
                 label="View Results",
-                style=discord.ButtonStyle.primary,
+                style=discord.ButtonStyle.primary, # type: ignore[arg-type]
                 emoji="📈",
                 custom_id=f"poll_results_{poll_id}",
                 row=4
@@ -354,7 +354,7 @@ class PollVoteView(discord.ui.View):
             
             close_button = discord.ui.Button(
                 label="Close Poll",
-                style=discord.ButtonStyle.danger,
+                style=discord.ButtonStyle.danger, # type: ignore[arg-type]
                 emoji="🔒",
                 custom_id=f"poll_close_{poll_id}",
                 row=4
@@ -377,7 +377,7 @@ class PollVoteView(discord.ui.View):
                 await interaction.response.send_message("This poll is no longer active.", ephemeral=True)
                 return
             
-            if poll.closes_at and datetime.utcnow() > poll.closes_at:
+            if poll.closes_at and datetime.datetime.now(datetime.UTC) > poll.closes_at:
                 await interaction.response.send_message("This poll has expired.", ephemeral=True)
                 return
             
@@ -402,7 +402,7 @@ class PollVoteView(discord.ui.View):
                 vote = PollVote(
                     poll_id=self.poll_id,
                     user_id=interaction.user.id,
-                    option_index=option_index
+                    options=option_index
                 )
                 session.add(vote)
                 await session.commit()
@@ -498,7 +498,7 @@ class PollVoteView(discord.ui.View):
         embed.add_field(name="Anonymous", value="Yes" if poll.is_anonymous else "No", inline=True)
         
         if poll.closes_at:
-            if datetime.utcnow() < poll.closes_at:
+            if datetime.datetime.now(datetime.UTC) < poll.closes_at:
                 embed.add_field(name="Closes", value=discord.utils.format_dt(poll.closes_at, 'R'), inline=True)
             else:
                 embed.add_field(name="Status", value="Expired", inline=True)
@@ -535,7 +535,7 @@ class PollVoteView(discord.ui.View):
                 return
             
             poll.status = 'closed'
-            poll.closed_at = datetime.utcnow()
+            poll.closed_at = datetime.datetime.now(datetime.UTC)
             await session.commit()
         
         # Update the poll message
@@ -632,7 +632,7 @@ class CreatePollFromMessage(discord.ui.View):
         super().__init__(timeout=300)
         self.message_content = message_content
     
-    @discord.ui.button(label="Create Poll", style=discord.ButtonStyle.primary, emoji="📊")
+    @discord.ui.button(label="Create Poll", style=discord.ButtonStyle.primary, emoji="📊") # type: ignore[arg-type]
     async def create_poll(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Create a poll using the message content as the question."""
         # Truncate message content for question
@@ -652,7 +652,7 @@ class PollOptionsModal(discord.ui.Modal):
         self.options_input = discord.ui.TextInput(
             label="Options (one per line)",
             placeholder="Option 1\nOption 2\nOption 3",
-            style=discord.TextStyle.paragraph,
+            style=discord.TextStyle.paragraph, # type: ignore[arg-type]
             required=True,
             max_length=1000
         )

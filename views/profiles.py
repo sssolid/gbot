@@ -148,7 +148,7 @@ class CharacterManagerView(discord.ui.View):
 
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
-    @discord.ui.button(label="Create Character", style=discord.ButtonStyle.primary, emoji="➕")
+    @discord.ui.button(label="Create Character", style=discord.ButtonStyle.primary, emoji="➕") # type: ignore[arg-type]
     async def create_character(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Create a new character with enhanced form."""
         modal = EnhancedCharacterCreationModal(self.user_id)
@@ -201,7 +201,7 @@ class EnhancedCharacterCreationModal(discord.ui.Modal):
         self.notes_input = discord.ui.TextInput(
             label="Build Notes (Optional)",
             placeholder="Describe your character's playstyle, goals, etc.",
-            style=discord.TextStyle.paragraph,
+            style=discord.TextStyle.paragraph, # type: ignore[arg-type]
             required=False,
             max_length=1000
         )
@@ -344,7 +344,7 @@ class CharacterDetailsSelectionView(discord.ui.View):
             # Skip button for professions
             skip_button = discord.ui.Button(
                 label="Skip Professions",
-                style=discord.ButtonStyle.secondary,
+                style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
                 emoji="⏭️"
             )
             skip_button.callback = self.skip_professions
@@ -354,7 +354,7 @@ class CharacterDetailsSelectionView(discord.ui.View):
         if self.step >= 4:
             create_button = discord.ui.Button(
                 label="Create Character",
-                style=discord.ButtonStyle.success,
+                style=discord.ButtonStyle.success, # type: ignore[arg-type]
                 emoji="✅"
             )
             create_button.callback = self.create_character
@@ -570,7 +570,7 @@ class CharacterActionView(discord.ui.View):
         super().__init__(timeout=300)
         self.character = character
 
-    @discord.ui.button(label="Set as Main", style=discord.ButtonStyle.primary, emoji="⭐")
+    @discord.ui.button(label="Set as Main", style=discord.ButtonStyle.primary, emoji="⭐") # type: ignore[arg-type]
     async def set_main(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Set character as main."""
         if self.character.is_main:
@@ -607,13 +607,13 @@ class CharacterActionView(discord.ui.View):
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @discord.ui.button(label="Edit", style=discord.ButtonStyle.secondary, emoji="✏️")
+    @discord.ui.button(label="Edit", style=discord.ButtonStyle.secondary, emoji="✏️") # type: ignore[arg-type]
     async def edit_character(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Edit character details."""
         modal = EnhancedCharacterEditModal(self.character)
         await interaction.response.send_modal(modal)
 
-    @discord.ui.button(label="Delete", style=discord.ButtonStyle.danger, emoji="🗑️")
+    @discord.ui.button(label="Delete", style=discord.ButtonStyle.danger, emoji="🗑️") # type: ignore[arg-type]
     async def delete_character(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Delete character."""
         view = CharacterDeletionView(self.character)
@@ -651,7 +651,7 @@ class EnhancedCharacterEditModal(discord.ui.Modal):
         self.notes_input = discord.ui.TextInput(
             label="Build Notes",
             default=character.build_notes or "",
-            style=discord.TextStyle.paragraph,
+            style=discord.TextStyle.paragraph, # type: ignore[arg-type]
             required=False,
             max_length=1000
         )
@@ -695,7 +695,7 @@ class CharacterDeletionView(discord.ui.View):
         super().__init__(timeout=300)
         self.character = character
 
-    @discord.ui.button(label="Confirm Delete", style=discord.ButtonStyle.danger, emoji="🗑️")
+    @discord.ui.button(label="Confirm Delete", style=discord.ButtonStyle.danger, emoji="🗑️") # type: ignore[arg-type]
     async def confirm_delete(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Confirm character deletion."""
         was_main = self.character.is_main
@@ -723,7 +723,7 @@ class CharacterDeletionView(discord.ui.View):
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.secondary, emoji="❌")
+    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.secondary, emoji="❌") # type: ignore[arg-type]
     async def cancel_delete(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Cancel character deletion."""
         embed = discord.Embed(
@@ -792,7 +792,7 @@ class CharacterStatsView(discord.ui.View):
 
         await interaction.response.send_message(embed=embed, view=self, ephemeral=True)
 
-    @discord.ui.button(label="Refresh Stats", style=discord.ButtonStyle.secondary, emoji="🔄")
+    @discord.ui.button(label="Refresh Stats", style=discord.ButtonStyle.secondary, emoji="🔄") # type: ignore[arg-type]
     async def refresh_stats(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Refresh character statistics."""
         new_stats = await get_character_statistics(interaction.guild_id)
@@ -888,7 +888,7 @@ class AdminCharacterBrowserView(discord.ui.View):
             )
             self.characters = result.scalars().all()
 
-    @discord.ui.button(label="Character Statistics", style=discord.ButtonStyle.primary, emoji="📊")
+    @discord.ui.button(label="Character Statistics", style=discord.ButtonStyle.primary, emoji="📊") # type: ignore[arg-type]
     async def show_character_stats(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Show detailed character statistics."""
         stats = await get_character_statistics(interaction.guild_id)

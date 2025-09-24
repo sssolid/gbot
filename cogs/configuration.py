@@ -185,28 +185,28 @@ class SetupWizardView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=300)
 
-    @discord.ui.button(label="Basic Configuration", style=discord.ButtonStyle.primary, emoji="🔧")
+    @discord.ui.button(label="Basic Configuration", style=discord.ButtonStyle.primary, emoji="🔧") # type: ignore[arg-type]
     async def basic_config(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Open basic configuration."""
         from views.configuration import GuildBasicsView
         view = GuildBasicsView()
         await view.show_settings(interaction)
 
-    @discord.ui.button(label="Deploy Panels", style=discord.ButtonStyle.primary, emoji="📋")
+    @discord.ui.button(label="Deploy Panels", style=discord.ButtonStyle.primary, emoji="📋") # type: ignore[arg-type]
     async def deploy_panels(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Deploy control panels."""
         from views.configuration import PanelManagementView
         view = PanelManagementView()
         await view.show_settings(interaction)
 
-    @discord.ui.button(label="Onboarding Setup", style=discord.ButtonStyle.secondary, emoji="❓")
+    @discord.ui.button(label="Onboarding Setup", style=discord.ButtonStyle.secondary, emoji="❓") # type: ignore[arg-type]
     async def onboarding_setup(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Set up onboarding."""
         from views.configuration import OnboardingQuestionsView
         view = OnboardingQuestionsView()
         await view.show_questions(interaction)
 
-    @discord.ui.button(label="Moderation Setup", style=discord.ButtonStyle.secondary, emoji="🛡️")
+    @discord.ui.button(label="Moderation Setup", style=discord.ButtonStyle.secondary, emoji="🛡️") # type: ignore[arg-type]
     async def moderation_setup(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Set up moderation."""
         embed = discord.Embed(
@@ -223,7 +223,7 @@ class SetupWizardView(discord.ui.View):
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @discord.ui.button(label="Help & Documentation", style=discord.ButtonStyle.secondary, emoji="📚")
+    @discord.ui.button(label="Help & Documentation", style=discord.ButtonStyle.secondary, emoji="📚") # type: ignore[arg-type]
     async def help_docs(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Show help and documentation."""
         embed = discord.Embed(

@@ -161,7 +161,7 @@ class GuildBasicsView(discord.ui.View):
         )
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @discord.ui.button(label="Set Logs Channel", style=discord.ButtonStyle.secondary, emoji="📋")
+    @discord.ui.button(label="Set Logs Channel", style=discord.ButtonStyle.secondary, emoji="📋") # type: ignore[arg-type]
     async def set_logs_channel_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Show logs channel selection."""
         view = ChannelSelectionView("logs", self)
@@ -172,7 +172,7 @@ class GuildBasicsView(discord.ui.View):
         )
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
-    @discord.ui.button(label="Set Announcements Channel", style=discord.ButtonStyle.secondary, emoji="📢")
+    @discord.ui.button(label="Set Announcements Channel", style=discord.ButtonStyle.secondary, emoji="📢") # type: ignore[arg-type]
     async def set_announcements_channel_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Show announcements channel selection."""
         view = ChannelSelectionView("announcements", self)
@@ -183,7 +183,7 @@ class GuildBasicsView(discord.ui.View):
         )
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
-    @discord.ui.button(label="Set Rules Channel", style=discord.ButtonStyle.secondary, emoji="📜")
+    @discord.ui.button(label="Set Rules Channel", style=discord.ButtonStyle.secondary, emoji="📜") # type: ignore[arg-type]
     async def set_rules_channel_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Show rules channel selection."""
         view = ChannelSelectionView("rules", self)
@@ -194,7 +194,7 @@ class GuildBasicsView(discord.ui.View):
         )
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
-    @discord.ui.button(label="Set General Channel", style=discord.ButtonStyle.secondary, emoji="💬")
+    @discord.ui.button(label="Set General Channel", style=discord.ButtonStyle.secondary, emoji="💬") # type: ignore[arg-type]
     async def set_general_channel_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Show general channel selection."""
         view = ChannelSelectionView("general", self)
@@ -205,7 +205,7 @@ class GuildBasicsView(discord.ui.View):
         )
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
-    @discord.ui.button(label="Set Member Role", style=discord.ButtonStyle.secondary, emoji="🎭", row=1)
+    @discord.ui.button(label="Set Member Role", style=discord.ButtonStyle.secondary, emoji="🎭", row=1) # type: ignore[arg-type]
     async def set_member_role_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Show member role selection."""
         view = RoleSelectionView(self)
@@ -216,7 +216,7 @@ class GuildBasicsView(discord.ui.View):
         )
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
-    @discord.ui.button(label="Set Timezone", style=discord.ButtonStyle.secondary, emoji="🌍", row=1)
+    @discord.ui.button(label="Set Timezone", style=discord.ButtonStyle.secondary, emoji="🌍", row=1) # type: ignore[arg-type]
     async def set_timezone_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Show timezone selection."""
         view = TimezoneSelectionView(self)
@@ -396,13 +396,13 @@ class OnboardingQuestionsView(discord.ui.View):
             )
             self.questions = result.scalars().all()
 
-    @discord.ui.button(label="Add Question", style=discord.ButtonStyle.primary, emoji="➕")
+    @discord.ui.button(label="Add Question", style=discord.ButtonStyle.primary, emoji="➕") # type: ignore[arg-type]
     async def add_question(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Add a new onboarding question."""
         modal = QuestionCreationModal()
         await interaction.response.send_modal(modal)
 
-    @discord.ui.button(label="Add Required Questions", style=discord.ButtonStyle.secondary, emoji="⚡")
+    @discord.ui.button(label="Add Required Questions", style=discord.ButtonStyle.secondary, emoji="⚡") # type: ignore[arg-type]
     async def add_required_questions(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Add required questions automatically."""
         await self.load_questions(interaction.guild_id)
@@ -440,7 +440,7 @@ class OnboardingQuestionsView(discord.ui.View):
         )
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @discord.ui.button(label="Edit Questions", style=discord.ButtonStyle.secondary, emoji="✏️")
+    @discord.ui.button(label="Edit Questions", style=discord.ButtonStyle.secondary, emoji="✏️") # type: ignore[arg-type]
     async def edit_questions(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Edit existing questions."""
         if not self.questions:
@@ -460,7 +460,7 @@ class QuestionCreationModal(discord.ui.Modal):
         self.prompt_input = discord.ui.TextInput(
             label="Question Prompt",
             placeholder="Enter the question you want to ask new members...",
-            style=discord.TextStyle.paragraph,
+            style=discord.TextStyle.paragraph, # type: ignore[arg-type]
             required=True,
             max_length=500
         )
@@ -623,7 +623,7 @@ class QuestionOptionsModal(discord.ui.Modal):
         self.options_input = discord.ui.TextInput(
             label="Options (one per line)",
             placeholder="Option 1\nOption 2\nOption 3\n...",
-            style=discord.TextStyle.paragraph,
+            style=discord.TextStyle.paragraph, # type: ignore[arg-type]
             required=True,
             max_length=1000
         )
@@ -721,26 +721,26 @@ class QuestionActionView(discord.ui.View):
         if question.is_active:
             self.toggle_button = discord.ui.Button(
                 label="Deactivate",
-                style=discord.ButtonStyle.danger,
+                style=discord.ButtonStyle.danger, # type: ignore[arg-type]
                 emoji="❌"
             )
         else:
             self.toggle_button = discord.ui.Button(
                 label="Activate",
-                style=discord.ButtonStyle.success,
+                style=discord.ButtonStyle.success, # type: ignore[arg-type]
                 emoji="✅"
             )
 
         self.toggle_button.callback = self.toggle_active
         self.add_item(self.toggle_button)
 
-    @discord.ui.button(label="Edit Prompt", style=discord.ButtonStyle.secondary, emoji="✏️")
+    @discord.ui.button(label="Edit Prompt", style=discord.ButtonStyle.secondary, emoji="✏️") # type: ignore[arg-type]
     async def edit_prompt(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Edit question prompt."""
         modal = EditPromptModal(self.question)
         await interaction.response.send_modal(modal)
 
-    @discord.ui.button(label="Delete", style=discord.ButtonStyle.danger, emoji="🗑️")
+    @discord.ui.button(label="Delete", style=discord.ButtonStyle.danger, emoji="🗑️") # type: ignore[arg-type]
     async def delete_question(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Delete the question."""
         view = DeleteConfirmationView(self.question)
@@ -785,7 +785,7 @@ class EditPromptModal(discord.ui.Modal):
         self.prompt_input = discord.ui.TextInput(
             label="Question Prompt",
             default=question.prompt,
-            style=discord.TextStyle.paragraph,
+            style=discord.TextStyle.paragraph, # type: ignore[arg-type]
             required=True,
             max_length=500
         )
@@ -833,7 +833,7 @@ class DeleteConfirmationView(discord.ui.View):
         super().__init__(timeout=300)
         self.question = question
 
-    @discord.ui.button(label="Confirm Delete", style=discord.ButtonStyle.danger, emoji="🗑️")
+    @discord.ui.button(label="Confirm Delete", style=discord.ButtonStyle.danger, emoji="🗑️") # type: ignore[arg-type]
     async def confirm_delete(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Confirm question deletion."""
         async with get_session() as session:
@@ -851,7 +851,7 @@ class DeleteConfirmationView(discord.ui.View):
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.secondary, emoji="❌")
+    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.secondary, emoji="❌") # type: ignore[arg-type]
     async def cancel_delete(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Cancel question deletion."""
         embed = discord.Embed(
@@ -980,7 +980,7 @@ class PanelManagementView(discord.ui.View):
 
         await interaction.response.send_message(embed=embed, view=self, ephemeral=True)
 
-    @discord.ui.button(label="Deploy Admin Dashboard", style=discord.ButtonStyle.primary, emoji="🎛️")
+    @discord.ui.button(label="Deploy Admin Dashboard", style=discord.ButtonStyle.primary, emoji="🎛️") # type: ignore[arg-type]
     async def deploy_admin_dashboard(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Deploy admin dashboard."""
         if not PermissionChecker.is_admin(interaction.user):
@@ -999,7 +999,7 @@ class PanelManagementView(discord.ui.View):
         )
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
-    @discord.ui.button(label="Deploy Member Hub", style=discord.ButtonStyle.secondary, emoji="👥")
+    @discord.ui.button(label="Deploy Member Hub", style=discord.ButtonStyle.secondary, emoji="👥") # type: ignore[arg-type]
     async def deploy_member_hub(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Deploy member hub."""
         if not PermissionChecker.is_admin(interaction.user):

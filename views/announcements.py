@@ -1,7 +1,7 @@
 """
 Announcement system for the Guild Management Bot
 """
-from datetime import datetime, timedelta
+import datetime
 
 import discord
 from sqlalchemy import select
@@ -18,7 +18,7 @@ class AnnouncementModal(discord.ui.Modal):
         self.content_input = discord.ui.TextInput(
             label="Announcement Content",
             placeholder="Enter your announcement text here...",
-            style=discord.TextStyle.paragraph,
+            style=discord.TextStyle.paragraph, # type: ignore[arg-type]
             required=True,
             max_length=2000
         )
@@ -45,7 +45,7 @@ class AnnouncementModal(discord.ui.Modal):
             title="📢 Announcement Preview",
             description=content,
             color=discord.Color.blue(),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.datetime.now(datetime.UTC)
         )
         preview_embed.set_author(
             name=interaction.user.display_name,
@@ -85,7 +85,7 @@ class AnnouncementSettingsView(discord.ui.View):
         # Channel selector
         channel_select = discord.ui.ChannelSelect(
             placeholder="Select channel to post announcement...",
-            channel_types=[discord.ChannelType.text, discord.ChannelType.news]
+            channel_types=[discord.ChannelType.text, discord.ChannelType.news] # type: ignore[arg-type]
         )
         channel_select.callback = self.select_channel
         self.add_item(channel_select)
@@ -110,7 +110,7 @@ class AnnouncementSettingsView(discord.ui.View):
         # Mentions toggle
         mentions_button = discord.ui.Button(
             label=f"@everyone: {'ON' if self.mentions_enabled else 'OFF'}",
-            style=discord.ButtonStyle.success if self.mentions_enabled else discord.ButtonStyle.secondary,
+            style=discord.ButtonStyle.success if self.mentions_enabled else discord.ButtonStyle.secondary, # type: ignore[arg-type]
             emoji="📣" if self.mentions_enabled else "🔇"
         )
         mentions_button.callback = self.toggle_mentions
@@ -119,7 +119,7 @@ class AnnouncementSettingsView(discord.ui.View):
         # Preview button
         preview_button = discord.ui.Button(
             label="Update Preview",
-            style=discord.ButtonStyle.secondary,
+            style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
             emoji="👁️"
         )
         preview_button.callback = self.update_preview
@@ -129,7 +129,7 @@ class AnnouncementSettingsView(discord.ui.View):
         if self.target_channel:
             post_button = discord.ui.Button(
                 label="Post Announcement",
-                style=discord.ButtonStyle.primary,
+                style=discord.ButtonStyle.primary, # type: ignore[arg-type]
                 emoji="📢"
             )
             post_button.callback = self.post_announcement
@@ -154,7 +154,7 @@ class AnnouncementSettingsView(discord.ui.View):
         embed.add_field(name="Target Channel", value=self.target_channel.mention, inline=True)
         
         if self.schedule_delay:
-            scheduled_time = datetime.utcnow() + timedelta(minutes=self.schedule_delay)
+            scheduled_time = datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=self.schedule_delay)
             embed.add_field(
                 name="Scheduled For",
                 value=discord.utils.format_dt(scheduled_time, 'F'),
@@ -188,7 +188,7 @@ class AnnouncementSettingsView(discord.ui.View):
             embed.add_field(name="Target Channel", value=self.target_channel.mention, inline=True)
         
         if self.schedule_delay:
-            scheduled_time = datetime.utcnow() + timedelta(minutes=self.schedule_delay)
+            scheduled_time = datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=self.schedule_delay)
             embed.add_field(
                 name="Scheduled For",
                 value=discord.utils.format_dt(scheduled_time, 'F'),
@@ -216,7 +216,7 @@ class AnnouncementSettingsView(discord.ui.View):
             embed.add_field(name="Target Channel", value=self.target_channel.mention, inline=True)
         
         if self.schedule_delay:
-            scheduled_time = datetime.utcnow() + timedelta(minutes=self.schedule_delay)
+            scheduled_time = datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=self.schedule_delay)
             embed.add_field(
                 name="Scheduled For", 
                 value=discord.utils.format_dt(scheduled_time, 'F'),
@@ -236,7 +236,7 @@ class AnnouncementSettingsView(discord.ui.View):
             title="📢 Server Announcement",
             description=self.content,
             color=discord.Color.blue(),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.datetime.now(datetime.UTC)
         )
         preview_embed.set_author(
             name=interaction.user.display_name,
@@ -259,7 +259,7 @@ class AnnouncementSettingsView(discord.ui.View):
             settings_embed.add_field(name="Target Channel", value=self.target_channel.mention, inline=True)
         
         if self.schedule_delay:
-            scheduled_time = datetime.utcnow() + timedelta(minutes=self.schedule_delay)
+            scheduled_time = datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=self.schedule_delay)
             settings_embed.add_field(
                 name="Scheduled For",
                 value=discord.utils.format_dt(scheduled_time, 'F'),
@@ -297,13 +297,13 @@ class AnnouncementSettingsView(discord.ui.View):
         # Create the announcement
         if self.schedule_delay:
             # Schedule for later
-            scheduled_time = datetime.utcnow() + timedelta(minutes=self.schedule_delay)
+            scheduled_time = datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=self.schedule_delay)
             
             async with get_session() as session:
                 announcement = Announcement(
                     guild_id=interaction.guild_id,
                     author_id=interaction.user.id,
-                    channel_id=channel.id,
+                    target_channel_id=channel.id,
                     content=self.content,
                     scheduled_for=scheduled_time
                 )
@@ -331,7 +331,7 @@ class AnnouncementSettingsView(discord.ui.View):
                     title="📢 Server Announcement",
                     description=self.content,
                     color=discord.Color.blue(),
-                    timestamp=datetime.utcnow()
+                    timestamp=datetime.datetime.now(datetime.UTC)
                 )
                 announcement_embed.set_author(
                     name=interaction.user.display_name,
@@ -355,10 +355,10 @@ class AnnouncementSettingsView(discord.ui.View):
                     announcement = Announcement(
                         guild_id=interaction.guild_id,
                         author_id=interaction.user.id,
-                        channel_id=channel.id,
+                        target_channel_id=channel.id,
                         message_id=announcement_message.id,
                         content=self.content,
-                        posted_at=datetime.utcnow()
+                        created_at=datetime.datetime.now(datetime.UTC)
                     )
                     session.add(announcement)
                     await session.commit()
@@ -460,7 +460,7 @@ class AnnouncementManagerView(discord.ui.View):
         """Load announcements from database."""
         async with get_session() as session:
             # Load recent announcements (last 30 days)
-            thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+            thirty_days_ago = datetime.datetime.now(datetime.UTC)- datetime.timedelta(days=30)
             result = await session.execute(
                 select(Announcement)
                 .where(Announcement.guild_id == guild_id)
@@ -476,7 +476,7 @@ class AnnouncementManagerView(discord.ui.View):
         # Create new announcement button
         create_button = discord.ui.Button(
             label="Create New",
-            style=discord.ButtonStyle.primary,
+            style=discord.ButtonStyle.primary, # type: ignore[arg-type]
             emoji="➕"
         )
         create_button.callback = self.create_new
@@ -485,12 +485,12 @@ class AnnouncementManagerView(discord.ui.View):
         # Navigation buttons
         per_page = 5
         if self.current_page > 0:
-            prev_button = discord.ui.Button(label="◀️ Previous", style=discord.ButtonStyle.secondary)
+            prev_button = discord.ui.Button(label="◀️ Previous", style=discord.ButtonStyle.secondary) # type: ignore[arg-type]
             prev_button.callback = self.previous_page
             self.add_item(prev_button)
         
         if (self.current_page + 1) * per_page < len(self.announcements):
-            next_button = discord.ui.Button(label="Next ▶️", style=discord.ButtonStyle.secondary)
+            next_button = discord.ui.Button(label="Next ▶️", style=discord.ButtonStyle.secondary) # type: ignore[arg-type]
             next_button.callback = self.next_page
             self.add_item(next_button)
         
@@ -499,13 +499,14 @@ class AnnouncementManagerView(discord.ui.View):
         if scheduled_count > 0:
             scheduled_button = discord.ui.Button(
                 label=f"Manage Scheduled ({scheduled_count})",
-                style=discord.ButtonStyle.secondary,
+                style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
                 emoji="⏰"
             )
             scheduled_button.callback = self.manage_scheduled
             self.add_item(scheduled_button)
-    
-    async def create_new(self, interaction: discord.Interaction):
+
+    @staticmethod
+    async def create_new(interaction: discord.Interaction):
         """Create a new announcement."""
         modal = AnnouncementModal()
         await interaction.response.send_modal(modal)
@@ -616,7 +617,7 @@ class SingleAnnouncementView(discord.ui.View):
         super().__init__(timeout=300)
         self.announcement = announcement
     
-    @discord.ui.button(label="Post Now", style=discord.ButtonStyle.primary, emoji="📤")
+    @discord.ui.button(label="Post Now", style=discord.ButtonStyle.primary, emoji="📤") # type: ignore[arg-type]
     async def post_now(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Post the scheduled announcement immediately."""
         channel = interaction.guild.get_channel(self.announcement.channel_id)
@@ -635,7 +636,7 @@ class SingleAnnouncementView(discord.ui.View):
                 title="📢 Server Announcement",
                 description=self.announcement.content,
                 color=discord.Color.blue(),
-                timestamp=datetime.utcnow()
+                timestamp=datetime.datetime.now(datetime.UTC)
             )
             
             author = interaction.guild.get_member(self.announcement.author_id)
@@ -656,7 +657,7 @@ class SingleAnnouncementView(discord.ui.View):
                 )
                 db_announcement = result.scalar_one()
                 db_announcement.message_id = message.id
-                db_announcement.posted_at = datetime.utcnow()
+                db_announcement.posted_at = datetime.datetime.now(datetime.UTC)
                 db_announcement.scheduled_for = None
                 await session.commit()
             
@@ -686,7 +687,7 @@ class SingleAnnouncementView(discord.ui.View):
         
         await interaction.response.edit_message(embed=embed, view=None)
     
-    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.danger, emoji="❌")
+    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.danger, emoji="❌") # type: ignore[arg-type]
     async def cancel_announcement(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Cancel the scheduled announcement."""
         # Delete from database

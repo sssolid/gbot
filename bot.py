@@ -84,62 +84,36 @@ class GuildBot(commands.Bot):
     
     async def on_ready(self):
         """Called when the bot is ready."""
-        if self._ready:
-            return  # Prevent multiple ready events
-        
-        self._ready = True
-        logger.info(f"{self.user} is ready and online!")
-        logger.info(f"Connected to {len(self.guilds)} guilds")
-        
-        # Set bot status
-        activity = discord.Activity(
-            type=discord.ActivityType.watching,
-            name="guild management | /help"
-        )
-        await self.change_presence(activity=activity, status=discord.Status.online)
-        
-        # Restore persistent views for all guilds
-        await self.restore_persistent_views()
-        
-        # Log guild information
-        for guild in self.guilds:
-            logger.info(f"Guild: {guild.name} ({guild.id}) - {guild.member_count} members")
-    
-    async def restore_persistent_views(self):
-        """Restore persistent views for all guilds."""
-        logger.info("Restoring persistent views...")
-        
-        # Import views
-        from views.panels import AdminDashboard, MemberHub
-        from views.onboarding import QuickOnboardingActionView
-        
-        try:
-            # Add persistent views to the bot
-            self.add_view(AdminDashboard())
-            self.add_view(MemberHub())
-            
-            # Add onboarding action views (these are dynamic, but we still need to register the type)
-            # We'll register a placeholder that can handle any onboarding session ID
-            placeholder_view = QuickOnboardingActionView(0)  # Dummy ID
-            self.add_view(placeholder_view)
-            
-            logger.info("Persistent views restored successfully")
-            
-        except Exception as e:
-            logger.error(f"Failed to restore persistent views: {e}")
-    
-    async def on_guild_join(self, guild: discord.Guild):
+        if not self._ready:
+            # Set activity
+            await self.change_presence(
+                activity=discord.Activity(
+                    type=discord.ActivityType.watching,
+                    name="for /setup | UI-first guild management"
+                ),
+                status=discord.Status.online # type: ignore[arg-type]
+            )
+
+            logger.info(f"Bot ready: {self.user} (ID: {self.user.id})")
+            logger.info(f"Connected to {len(self.guilds)} guilds")
+
+            # Load persistent views
+            try:
+                from views.panels import AdminDashboard, MemberHub
+                self.add_view(AdminDashboard())
+                self.add_view(MemberHub())
+                logger.info("Persistent views loaded successfully")
+            except Exception as e:
+                logger.error(f"Failed to load persistent views: {e}")
+
+            self._ready = True
+
+    @staticmethod
+    async def on_guild_join(guild: discord.Guild):
         """Called when the bot joins a new guild."""
-        logger.info(f"Joined new guild: {guild.name} ({guild.id})")
-        
-        # Create basic guild config
-        try:
-            await self.config_cache.update_guild_config(guild.id)
-            logger.info(f"Created config for guild {guild.id}")
-        except Exception as e:
-            logger.error(f"Failed to create config for guild {guild.id}: {e}")
-        
-        # Send welcome message to guild owner or first text channel
+        logger.info(f"Joined guild: {guild.name} ({guild.id})")
+
+        # Send welcome message
         try:
             embed = discord.Embed(
                 title="🎉 Thanks for adding Guild Management Bot!",
@@ -157,7 +131,7 @@ class GuildBot(commands.Bot):
                 ),
                 color=discord.Color.green()
             )
-            
+
             embed.add_field(
                 name="🔗 Important Links",
                 value=(
@@ -167,40 +141,41 @@ class GuildBot(commands.Bot):
                 ),
                 inline=False
             )
-            
+
             embed.set_footer(text="Use /help to see all available commands")
-            
+
             # Try to send to system channel, then any text channel
             target_channel = (
                 guild.system_channel or
                 next((ch for ch in guild.text_channels if ch.permissions_for(guild.me).send_messages), None)
             )
-            
+
             if target_channel:
                 await target_channel.send(embed=embed)
                 logger.info(f"Sent welcome message to {guild.name}")
-                
-        except Exception as e:
+
+        except (discord.Forbidden, discord.HTTPException, discord.NotFound) as e:
             logger.error(f"Failed to send welcome message to {guild.name}: {e}")
-    
+
     async def on_guild_remove(self, guild: discord.Guild):
         """Called when the bot leaves a guild."""
         logger.info(f"Left guild: {guild.name} ({guild.id})")
-        
+
         # Clean up cached data
         if hasattr(self, 'config_cache'):
             self.config_cache.invalidate_guild_cache(guild.id)
-    
-    async def on_application_command_error(self, interaction: discord.Interaction, error: Exception):
+
+    @staticmethod
+    async def on_application_command_error(interaction: discord.Interaction, error: Exception):
         """Handle application command errors."""
         logger.error(f"Command error in {interaction.command}: {error}", exc_info=True)
-        
+
         embed = discord.Embed(
             title="❌ Command Error",
             description="An error occurred while processing your command.",
             color=discord.Color.red()
         )
-        
+
         if isinstance(error, commands.MissingPermissions):
             embed.description = "You don't have permission to use this command."
         elif isinstance(error, commands.BotMissingPermissions):
@@ -209,28 +184,28 @@ class GuildBot(commands.Bot):
             embed.description = f"This command is on cooldown. Try again in {error.retry_after:.2f} seconds."
         else:
             embed.description = "An unexpected error occurred. Please try again later."
-        
+
         try:
             if interaction.response.is_done():
                 await interaction.followup.send(embed=embed, ephemeral=True)
             else:
                 await interaction.response.send_message(embed=embed, ephemeral=True)
-        except Exception:
+        except (discord.Forbidden, discord.HTTPException, discord.NotFound):
             pass  # Couldn't send error message
-    
+
     async def on_error(self, event: str, *args, **kwargs):
         """Handle general bot errors."""
         logger.error(f"Bot error in event {event}", exc_info=True)
-    
+
     async def get_guild_config(self, guild_id: int) -> Optional[GuildConfig]:
         """Get guild configuration through cache."""
         return await self.config_cache.get_guild_config(guild_id)
-    
+
     async def update_guild_config(self, guild_id: int, **kwargs) -> GuildConfig:
         """Update guild configuration through cache."""
         return await self.config_cache.update_guild_config(guild_id, **kwargs)
-    
-    async def log_action(self, guild_id: int, action: str, moderator: discord.Member, 
+
+    async def log_action(self, guild_id: int, action: str, moderator: discord.Member,
                         target: discord.Member, details: str = None):
         """Log an administrative action."""
         try:
@@ -243,35 +218,35 @@ class GuildBot(commands.Bot):
                         color=discord.Color.blue(),
                         timestamp=discord.utils.utcnow()
                     )
-                    
+
                     embed.add_field(
                         name="Moderator",
                         value=f"{moderator.mention}\n**ID:** {moderator.id}",
                         inline=True
                     )
-                    
+
                     embed.add_field(
                         name="Target",
                         value=f"{target.mention}\n**ID:** {target.id}",
                         inline=True
                     )
-                    
+
                     if details:
                         embed.add_field(
                             name="Details",
                             value=details,
                             inline=False
                         )
-                    
+
                     await logs_channel.send(embed=embed)
-                    
-        except Exception as e:
+
+        except (discord.Forbidden, discord.HTTPException, discord.NotFound) as e:
             logger.error(f"Failed to log action: {e}")
-    
+
     async def close(self):
         """Clean shutdown of the bot."""
         logger.info("Bot shutting down...")
-        
+
         # Close database connections
         try:
             from database import close_database
@@ -279,7 +254,7 @@ class GuildBot(commands.Bot):
             logger.info("Database connections closed")
         except Exception as e:
             logger.error(f"Error closing database: {e}")
-        
+
         await super().close()
         logger.info("Bot shutdown complete")
 
@@ -287,25 +262,19 @@ class GuildBot(commands.Bot):
 # Utility function to create bot instance
 def create_bot(database_url: str) -> GuildBot:
     """Create and configure the bot instance."""
-    
+
     # Configure intents
     intents = discord.Intents.default()
     intents.message_content = True  # Required for moderation
     intents.members = True  # Required for member management
     intents.guilds = True
-    
+
     # Create bot instance
     bot = GuildBot(
         database_url=database_url,
-        command_prefix=commands.when_mentioned_or('!'),  # Fallback prefix
+        command_prefix=commands.when_mentioned_or('!'),
         intents=intents,
-        case_insensitive=True,
-        help_command=None,  # We'll create our own help command
-        allowed_mentions=discord.AllowedMentions(
-            roles=False,
-            everyone=False,
-            users=True
-        )
+        help_command=None  # We'll create a custom help system
     )
     
     return bot

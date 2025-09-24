@@ -19,7 +19,7 @@ class WelcomeView(discord.ui.View):
 
     @discord.ui.button(
         label="Start Onboarding",
-        style=discord.ButtonStyle.primary,
+        style=discord.ButtonStyle.primary, # type: ignore[arg-type]
         emoji="🚀"
     )
     async def start_onboarding(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -243,7 +243,8 @@ class OnboardingWizard(discord.ui.View):
         else:
             await interaction.edit_original_response(embed=embed, view=None)
 
-    async def calculate_role_suggestions(self, guild_id: int) -> List[int]:
+    @staticmethod
+    async def calculate_role_suggestions(guild_id: int) -> List[int]:
         """Calculate role suggestions based on answers (simplified)."""
         # This is a placeholder - implement rule-based suggestions later
         return []
@@ -302,7 +303,7 @@ class OnboardingWizard(discord.ui.View):
 
     @discord.ui.button(
         label="Start",
-        style=discord.ButtonStyle.primary,
+        style=discord.ButtonStyle.primary, # type: ignore[arg-type]
         emoji="▶️"
     )
     async def start_button(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -532,7 +533,7 @@ class TextInputView(discord.ui.View):
 
     @discord.ui.button(
         label="Answer",
-        style=discord.ButtonStyle.primary,
+        style=discord.ButtonStyle.primary, # type: ignore[arg-type]
         emoji="✏️"
     )
     async def answer_button(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -552,7 +553,7 @@ class TextInputModal(discord.ui.Modal):
         self.text_input = discord.ui.TextInput(
             label=question.prompt[:45],
             placeholder="Enter your answer here...",
-            style=discord.TextStyle.paragraph if len(question.prompt) > 100 else discord.TextStyle.short,
+            style=discord.TextStyle.paragraph if len(question.prompt) > 100 else discord.TextStyle.short, # type: ignore[arg-type]
             required=question.required,
             max_length=1000
         )
@@ -641,18 +642,18 @@ class OnboardingQueueView(discord.ui.View):
 
         if total_pages > 1:
             if self.current_page > 0:
-                prev_button = discord.ui.Button(label="Previous", emoji="⬅️", style=discord.ButtonStyle.secondary)
+                prev_button = discord.ui.Button(label="Previous", emoji="⬅️", style=discord.ButtonStyle.secondary) # type: ignore[arg-type]
                 prev_button.callback = self.previous_page
                 self.add_item(prev_button)
 
             if self.current_page < total_pages - 1:
-                next_button = discord.ui.Button(label="Next", emoji="➡️", style=discord.ButtonStyle.secondary)
+                next_button = discord.ui.Button(label="Next", emoji="➡️", style=discord.ButtonStyle.secondary) # type: ignore[arg-type]
                 next_button.callback = self.next_page
                 self.add_item(next_button)
 
         # Review button
         if self.sessions:
-            review_button = discord.ui.Button(label="Review Applications", emoji="👁️", style=discord.ButtonStyle.primary)
+            review_button = discord.ui.Button(label="Review Applications", emoji="👁️", style=discord.ButtonStyle.primary) # type: ignore[arg-type]
             review_button.callback = self.review_applications
             self.add_item(review_button)
 
@@ -768,21 +769,21 @@ class ApplicationReviewView(discord.ui.View):
         # Navigation
         if len(self.sessions) > 1:
             if self.current_session_index > 0:
-                prev_button = discord.ui.Button(label="Previous", emoji="⬅️", style=discord.ButtonStyle.secondary)
+                prev_button = discord.ui.Button(label="Previous", emoji="⬅️", style=discord.ButtonStyle.secondary) # type: ignore[arg-type]
                 prev_button.callback = self.previous_application
                 self.add_item(prev_button)
 
             if self.current_session_index < len(self.sessions) - 1:
-                next_button = discord.ui.Button(label="Next", emoji="➡️", style=discord.ButtonStyle.secondary)
+                next_button = discord.ui.Button(label="Next", emoji="➡️", style=discord.ButtonStyle.secondary) # type: ignore[arg-type]
                 next_button.callback = self.next_application
                 self.add_item(next_button)
 
         # Action buttons
-        approve_button = discord.ui.Button(label="Approve", emoji="✅", style=discord.ButtonStyle.success)
+        approve_button = discord.ui.Button(label="Approve", emoji="✅", style=discord.ButtonStyle.success) # type: ignore[arg-type]
         approve_button.callback = self.approve_application
         self.add_item(approve_button)
 
-        deny_button = discord.ui.Button(label="Deny", emoji="❌", style=discord.ButtonStyle.danger)
+        deny_button = discord.ui.Button(label="Deny", emoji="❌", style=discord.ButtonStyle.danger) # type: ignore[arg-type]
         deny_button.callback = self.deny_application
         self.add_item(deny_button)
 
@@ -886,7 +887,7 @@ class ConfirmApprovalView(discord.ui.View):
         self.roles = roles
         self.parent_view = parent_view
 
-    @discord.ui.button(label="Confirm Approval", style=discord.ButtonStyle.success, emoji="✅")
+    @discord.ui.button(label="Confirm Approval", style=discord.ButtonStyle.success, emoji="✅") # type: ignore[arg-type]
     async def confirm_approval(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Execute the approval with enhanced feedback."""
         # Update session status
@@ -976,7 +977,7 @@ class ConfirmApprovalView(discord.ui.View):
         if self.parent_view.current_session_index >= len(self.parent_view.sessions):
             self.parent_view.current_session_index = max(0, len(self.parent_view.sessions) - 1)
 
-    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.secondary, emoji="❌")
+    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.secondary, emoji="❌") # type: ignore[arg-type]
     async def cancel_approval(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Cancel the approval."""
         embed = discord.Embed(
@@ -999,7 +1000,7 @@ class DenyApplicationModal(discord.ui.Modal):
         self.reason_input = discord.ui.TextInput(
             label="Denial Reason",
             placeholder="Provide a reason for denial (will be sent to the user)...",
-            style=discord.TextStyle.paragraph,
+            style=discord.TextStyle.paragraph, # type: ignore[arg-type]
             required=True,
             max_length=1000
         )
@@ -1075,7 +1076,7 @@ class QuickOnboardingActionView(discord.ui.View):
         self.session_id = session_id
         self.user = user
 
-    @discord.ui.button(label="Quick Approve", style=discord.ButtonStyle.success, emoji="✅")
+    @discord.ui.button(label="Quick Approve", style=discord.ButtonStyle.success, emoji="✅") # type: ignore[arg-type]
     async def quick_approve(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Quick approve with default roles."""
         async with get_session() as db_session:
@@ -1118,7 +1119,7 @@ class QuickOnboardingActionView(discord.ui.View):
         await interaction.response.edit_message(view=self)
         await interaction.followup.send(embed=embed, ephemeral=True)
 
-    @discord.ui.button(label="Review", style=discord.ButtonStyle.primary, emoji="👁️")
+    @discord.ui.button(label="Review", style=discord.ButtonStyle.primary, emoji="👁️") # type: ignore[arg-type]
     async def review_application(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Open detailed review."""
         async with get_session() as db_session:

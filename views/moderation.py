@@ -17,7 +17,7 @@ class ModerationCenterView(discord.ui.View):
     
     @discord.ui.button(
         label="Spam Filter Settings",
-        style=discord.ButtonStyle.secondary,
+        style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
         emoji="🚫",
         row=0
     )
@@ -29,7 +29,7 @@ class ModerationCenterView(discord.ui.View):
     
     @discord.ui.button(
         label="Swear Filter Settings", 
-        style=discord.ButtonStyle.secondary,
+        style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
         emoji="🤬",
         row=0
     )
@@ -41,7 +41,7 @@ class ModerationCenterView(discord.ui.View):
     
     @discord.ui.button(
         label="Watch Channels",
-        style=discord.ButtonStyle.secondary,
+        style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
         emoji="👁️",
         row=1
     )
@@ -53,7 +53,7 @@ class ModerationCenterView(discord.ui.View):
     
     @discord.ui.button(
         label="Staff Exemptions",
-        style=discord.ButtonStyle.secondary,
+        style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
         emoji="🛡️",
         row=1
     )
@@ -65,7 +65,7 @@ class ModerationCenterView(discord.ui.View):
     
     @discord.ui.button(
         label="Recent Incidents",
-        style=discord.ButtonStyle.primary,
+        style=discord.ButtonStyle.primary, # type: ignore[arg-type]
         emoji="📋",
         row=2
     )
@@ -165,7 +165,7 @@ class SpamFilterView(discord.ui.View):
         toggle_label = "Enable" if not self.enabled else "Disable"
         toggle_button = discord.ui.Button(
             label=toggle_label,
-            style=toggle_style,
+            style=toggle_style, # type: ignore[arg-type]
             emoji="🔄"
         )
         toggle_button.callback = self.toggle_enabled
@@ -214,7 +214,7 @@ class SpamFilterView(discord.ui.View):
         # Save button
         save_button = discord.ui.Button(
             label="Save Settings",
-            style=discord.ButtonStyle.primary,
+            style=discord.ButtonStyle.primary, # type: ignore[arg-type]
             emoji="💾"
         )
         save_button.callback = self.save_settings_callback
@@ -359,7 +359,7 @@ class SwearFilterView(discord.ui.View):
         toggle_label = "Enable" if not self.enabled else "Disable"
         toggle_button = discord.ui.Button(
             label=toggle_label,
-            style=toggle_style,
+            style=toggle_style, # type: ignore[arg-type]
             emoji="🔄"
         )
         toggle_button.callback = self.toggle_enabled
@@ -369,7 +369,7 @@ class SwearFilterView(discord.ui.View):
             # Delete messages toggle
             delete_toggle = discord.ui.Button(
                 label=f"Delete: {'ON' if self.delete_on_match else 'OFF'}",
-                style=discord.ButtonStyle.secondary,
+                style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
                 emoji="🗑️"
             )
             delete_toggle.callback = self.toggle_delete
@@ -390,7 +390,7 @@ class SwearFilterView(discord.ui.View):
             # Manage word lists
             manage_swear_button = discord.ui.Button(
                 label="Manage Blocked Words",
-                style=discord.ButtonStyle.secondary,
+                style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
                 emoji="📝"
             )
             manage_swear_button.callback = self.manage_swear_list
@@ -398,7 +398,7 @@ class SwearFilterView(discord.ui.View):
             
             manage_allow_button = discord.ui.Button(
                 label="Manage Allowed Words",
-                style=discord.ButtonStyle.secondary,
+                style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
                 emoji="✅"
             )
             manage_allow_button.callback = self.manage_allow_list
@@ -407,7 +407,7 @@ class SwearFilterView(discord.ui.View):
         # Save button
         save_button = discord.ui.Button(
             label="Save Settings",
-            style=discord.ButtonStyle.primary,
+            style=discord.ButtonStyle.primary, # type: ignore[arg-type]
             emoji="💾"
         )
         save_button.callback = self.save_settings_callback
@@ -498,19 +498,19 @@ class WordListManagementView(discord.ui.View):
         # Navigation buttons
         if len(self.term_list) > 10:
             if self.current_page > 0:
-                prev_button = discord.ui.Button(label="◀️ Previous", style=discord.ButtonStyle.secondary)
+                prev_button = discord.ui.Button(label="◀️ Previous", style=discord.ButtonStyle.secondary) # type: ignore[arg-type]
                 prev_button.callback = self.previous_page
                 self.add_item(prev_button)
             
             if (self.current_page + 1) * 10 < len(self.term_list):
-                next_button = discord.ui.Button(label="Next ▶️", style=discord.ButtonStyle.secondary)
+                next_button = discord.ui.Button(label="Next ▶️", style=discord.ButtonStyle.secondary) # type: ignore[arg-type]
                 next_button.callback = self.next_page
                 self.add_item(next_button)
         
         # Management buttons
         add_button = discord.ui.Button(
             label="Add Term",
-            style=discord.ButtonStyle.primary,
+            style=discord.ButtonStyle.primary, # type: ignore[arg-type]
             emoji="➕"
         )
         add_button.callback = self.add_term
@@ -519,7 +519,7 @@ class WordListManagementView(discord.ui.View):
         if self.term_list:
             remove_button = discord.ui.Button(
                 label="Remove Term",
-                style=discord.ButtonStyle.danger,
+                style=discord.ButtonStyle.danger, # type: ignore[arg-type]
                 emoji="➖"
             )
             remove_button.callback = self.remove_term
@@ -528,7 +528,7 @@ class WordListManagementView(discord.ui.View):
         # Back button
         back_button = discord.ui.Button(
             label="Back",
-            style=discord.ButtonStyle.secondary,
+            style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
             emoji="🔙"
         )
         back_button.callback = self.back_to_parent
@@ -660,7 +660,7 @@ class RemoveTermView(discord.ui.View):
         # Cancel button
         cancel_button = discord.ui.Button(
             label="Cancel",
-            style=discord.ButtonStyle.secondary
+            style=discord.ButtonStyle.secondary # type: ignore[arg-type]
         )
         cancel_button.callback = self.cancel_removal
         self.add_item(cancel_button)
@@ -755,7 +755,7 @@ class WatchChannelsView(discord.ui.View):
         # Add channel button
         add_channel_button = discord.ui.Button(
             label="Add Channel",
-            style=discord.ButtonStyle.primary,
+            style=discord.ButtonStyle.primary, # type: ignore[arg-type]
             emoji="➕"
         )
         add_channel_button.callback = self.add_channel
@@ -765,7 +765,7 @@ class WatchChannelsView(discord.ui.View):
         if self.watch_channels:
             remove_channel_button = discord.ui.Button(
                 label="Remove Channel",
-                style=discord.ButtonStyle.danger,
+                style=discord.ButtonStyle.danger, # type: ignore[arg-type]
                 emoji="➖"
             )
             remove_channel_button.callback = self.remove_channel
@@ -775,7 +775,7 @@ class WatchChannelsView(discord.ui.View):
         if self.watch_channels:
             clear_button = discord.ui.Button(
                 label="Clear All",
-                style=discord.ButtonStyle.secondary,
+                style=discord.ButtonStyle.secondary, # type: ignore[arg-type]
                 emoji="🗑️"
             )
             clear_button.callback = self.clear_all_channels
@@ -784,7 +784,7 @@ class WatchChannelsView(discord.ui.View):
         # Save button
         save_button = discord.ui.Button(
             label="Save Settings",
-            style=discord.ButtonStyle.primary,
+            style=discord.ButtonStyle.primary, # type: ignore[arg-type]
             emoji="💾"
         )
         save_button.callback = self.save_settings_callback
@@ -999,7 +999,7 @@ class StaffExemptionsView(discord.ui.View):
         # Add role button
         add_role_button = discord.ui.Button(
             label="Add Role",
-            style=discord.ButtonStyle.primary,
+            style=discord.ButtonStyle.primary, # type: ignore[arg-type]
             emoji="➕"
         )
         add_role_button.callback = self.add_role
@@ -1009,7 +1009,7 @@ class StaffExemptionsView(discord.ui.View):
         if self.staff_roles:
             remove_role_button = discord.ui.Button(
                 label="Remove Role",
-                style=discord.ButtonStyle.danger,
+                style=discord.ButtonStyle.danger, # type: ignore[arg-type]
                 emoji="➖"
             )
             remove_role_button.callback = self.remove_role
@@ -1018,7 +1018,7 @@ class StaffExemptionsView(discord.ui.View):
         # Save button
         save_button = discord.ui.Button(
             label="Save Settings",
-            style=discord.ButtonStyle.primary,
+            style=discord.ButtonStyle.primary, # type: ignore[arg-type]
             emoji="💾"
         )
         save_button.callback = self.save_settings_callback
@@ -1216,19 +1216,19 @@ class IncidentLogView(discord.ui.View):
         # Navigation buttons
         if len(self.incidents) > per_page:
             if self.current_page > 0:
-                prev_button = discord.ui.Button(label="◀️ Previous", style=discord.ButtonStyle.secondary)
+                prev_button = discord.ui.Button(label="◀️ Previous", style=discord.ButtonStyle.secondary) # type: ignore[arg-type]
                 prev_button.callback = self.previous_page
                 self.add_item(prev_button)
             
             if (self.current_page + 1) * per_page < len(self.incidents):
-                next_button = discord.ui.Button(label="Next ▶️", style=discord.ButtonStyle.secondary)
+                next_button = discord.ui.Button(label="Next ▶️", style=discord.ButtonStyle.secondary) # type: ignore[arg-type]
                 next_button.callback = self.next_page
                 self.add_item(next_button)
         
         # Refresh button
         refresh_button = discord.ui.Button(
             label="Refresh",
-            style=discord.ButtonStyle.primary,
+            style=discord.ButtonStyle.primary, # type: ignore[arg-type]
             emoji="🔄"
         )
         refresh_button.callback = self.refresh_incidents

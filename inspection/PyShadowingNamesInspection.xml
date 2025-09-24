@@ -1,7 +1,7 @@
 <problems>
 <problem>
   <file>file://$PROJECT_DIR$/context_menus.py</file>
-  <line>456</line>
+  <line>359</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/context_menus.py" />
   <problem_class id="PyShadowingNamesInspection" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Shadowing names from outer scopes</problem_class>
@@ -25,7 +25,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/announcements.py</file>
-  <line>572</line>
+  <line>573</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/announcements.py" />
   <problem_class id="PyShadowingNamesInspection" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Shadowing names from outer scopes</problem_class>
@@ -133,7 +133,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
-  <line>345</line>
+  <line>346</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
   <problem_class id="PyShadowingNamesInspection" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Shadowing names from outer scopes</problem_class>
@@ -145,7 +145,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
-  <line>378</line>
+  <line>379</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
   <problem_class id="PyShadowingNamesInspection" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Shadowing names from outer scopes</problem_class>
@@ -157,7 +157,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
-  <line>415</line>
+  <line>416</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
   <problem_class id="PyShadowingNamesInspection" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Shadowing names from outer scopes</problem_class>
@@ -169,7 +169,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
-  <line>446</line>
+  <line>447</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
   <problem_class id="PyShadowingNamesInspection" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Shadowing names from outer scopes</problem_class>
@@ -181,7 +181,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
-  <line>479</line>
+  <line>480</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
   <problem_class id="PyShadowingNamesInspection" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Shadowing names from outer scopes</problem_class>
@@ -193,7 +193,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
-  <line>510</line>
+  <line>511</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
   <problem_class id="PyShadowingNamesInspection" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Shadowing names from outer scopes</problem_class>
@@ -205,7 +205,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
-  <line>850</line>
+  <line>851</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/onboarding.py" />
   <problem_class id="PyShadowingNamesInspection" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Shadowing names from outer scopes</problem_class>

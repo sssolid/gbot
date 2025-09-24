@@ -38,13 +38,13 @@ class RoleManagerView(discord.ui.View):
 
         await interaction.response.send_message(embed=embed, view=self, ephemeral=True)
 
-    @discord.ui.button(label="Browse Members", style=discord.ButtonStyle.primary, emoji="👥")
+    @discord.ui.button(label="Browse Members", style=discord.ButtonStyle.primary, emoji="👥") # type: ignore[arg-type]
     async def browse_members(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Browse server members for role management."""
         view = MemberBrowserView()
         await view.show_members(interaction)
 
-    @discord.ui.button(label="Role Statistics", style=discord.ButtonStyle.secondary, emoji="📊")
+    @discord.ui.button(label="Role Statistics", style=discord.ButtonStyle.secondary, emoji="📊") # type: ignore[arg-type]
     async def role_stats(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Show role usage statistics."""
         embed = discord.Embed(
@@ -81,7 +81,7 @@ class RoleManagerView(discord.ui.View):
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @discord.ui.button(label="Mass Role Actions", style=discord.ButtonStyle.secondary, emoji="⚡")
+    @discord.ui.button(label="Mass Role Actions", style=discord.ButtonStyle.secondary, emoji="⚡") # type: ignore[arg-type]
     async def mass_actions(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Mass role assignment/removal actions."""
         view = MassRoleActionView()
@@ -130,12 +130,12 @@ class MemberBrowserView(discord.ui.View):
         # Add navigation buttons if needed
         if total_pages > 1:
             if self.page > 0:
-                prev_button = discord.ui.Button(label="Previous", style=discord.ButtonStyle.secondary, emoji="⬅️")
+                prev_button = discord.ui.Button(label="Previous", style=discord.ButtonStyle.secondary, emoji="⬅️") # type: ignore[arg-type]
                 prev_button.callback = self.previous_page
                 self.add_item(prev_button)
 
             if self.page < total_pages - 1:
-                next_button = discord.ui.Button(label="Next", style=discord.ButtonStyle.secondary, emoji="➡️")
+                next_button = discord.ui.Button(label="Next", style=discord.ButtonStyle.secondary, emoji="➡️") # type: ignore[arg-type]
                 next_button.callback = self.next_page
                 self.add_item(next_button)
 
@@ -253,7 +253,7 @@ class MemberRoleManagementView(discord.ui.View):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @discord.ui.button(label="Remove Roles", style=discord.ButtonStyle.danger, emoji="➖")
+    @discord.ui.button(label="Remove Roles", style=discord.ButtonStyle.danger, emoji="➖") # type: ignore[arg-type]
     async def remove_roles_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Show role removal interface."""
         current_roles = [role for role in self.member.roles if role != interaction.guild.default_role]
@@ -364,13 +364,13 @@ class MassRoleActionView(discord.ui.View):
 
         await interaction.response.send_message(embed=embed, view=self, ephemeral=True)
 
-    @discord.ui.button(label="Mass Add Role", style=discord.ButtonStyle.primary, emoji="➕")
+    @discord.ui.button(label="Mass Add Role", style=discord.ButtonStyle.primary, emoji="➕") # type: ignore[arg-type]
     async def mass_add_role(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Mass add a role to members."""
         modal = MassRoleModal("add")
         await interaction.response.send_modal(modal)
 
-    @discord.ui.button(label="Mass Remove Role", style=discord.ButtonStyle.danger, emoji="➖")
+    @discord.ui.button(label="Mass Remove Role", style=discord.ButtonStyle.danger, emoji="➖") # type: ignore[arg-type]
     async def mass_remove_role(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Mass remove a role from members."""
         modal = MassRoleModal("remove")
@@ -468,7 +468,7 @@ class MassRoleConfirmationView(discord.ui.View):
         self.action = action
         self.reason = reason
 
-    @discord.ui.button(label="Confirm", style=discord.ButtonStyle.danger, emoji="✅")
+    @discord.ui.button(label="Confirm", style=discord.ButtonStyle.danger, emoji="✅") # type: ignore[arg-type]
     async def confirm_action(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Execute the mass role operation."""
         await interaction.response.defer(ephemeral=True)
@@ -507,7 +507,7 @@ class MassRoleConfirmationView(discord.ui.View):
 
         await interaction.followup.send(embed=embed, ephemeral=True)
 
-    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.secondary, emoji="❌")
+    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.secondary, emoji="❌") # type: ignore[arg-type]
     async def cancel_action(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Cancel the mass role operation."""
         embed = discord.Embed(

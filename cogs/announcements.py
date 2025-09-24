@@ -1,7 +1,7 @@
 """
 Announcements cog for the Guild Management Bot
 """
-from datetime import datetime
+import datetime
 
 import discord
 from discord import app_commands
@@ -88,7 +88,7 @@ class AnnouncementsCog(commands.Cog):
             title="📢 Server Announcement",
             description=message,
             color=discord.Color.blue(),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.datetime.now(datetime.UTC)
         )
         announcement_embed.set_author(
             name=interaction.user.display_name,
@@ -114,7 +114,7 @@ class AnnouncementsCog(commands.Cog):
                     target_channel_id=interaction.channel.id,
                     message_id=announcement_message.id,
                     content=message,
-                    created_at=datetime.utcnow()
+                    created_at=datetime.datetime.now(datetime.UTC)
                 )
                 session.add(announcement)
                 await session.commit()
@@ -343,7 +343,7 @@ class AnnouncementsCog(commands.Cog):
     async def check_scheduled_announcements(self):
         """Check for and post scheduled announcements."""
         try:
-            current_time = datetime.utcnow()
+            current_time = datetime.datetime.now(datetime.UTC)
             
             async with get_session() as session:
                 result = await session.execute(
@@ -395,7 +395,7 @@ class AnnouncementsCog(commands.Cog):
                 title="📢 Server Announcement",
                 description=announcement.content,
                 color=discord.Color.blue(),
-                timestamp=datetime.utcnow()
+                timestamp=datetime.datetime.now(datetime.UTC)
             )
             
             if author:
@@ -416,7 +416,7 @@ class AnnouncementsCog(commands.Cog):
                 )
                 db_announcement = result.scalar_one()
                 db_announcement.message_id = message.id
-                db_announcement.created_at = datetime.utcnow()
+                db_announcement.created_at = datetime.datetime.now(datetime.UTC)
                 db_announcement.scheduled_for = None
                 await session.commit()
             
