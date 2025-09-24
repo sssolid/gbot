@@ -1,0 +1,14 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/migrations/initial_data.py</file>
+  <line>417</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/migrations/initial_data.py" />
+  <problem_class id="PyPep8NamingInspection" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">PEP 8 naming convention violation</problem_class>
+  <description>Variable in function should be lowercase</description>
+  <highlighted_element>TEST_GUILD_ID</highlighted_element>
+  <language>Python</language>
+  <offset>4</offset>
+  <length>13</length>
+</problem>
+</problems>

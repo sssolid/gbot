@@ -1,0 +1,14 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/database.py</file>
+  <line>293</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/database.py" />
+  <problem_class id="PyCallingNonCallableInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Attempt to call a non-callable object</problem_class>
+  <description>'None' object is not callable</description>
+  <highlighted_element>async_session()</highlighted_element>
+  <language>Python</language>
+  <offset>11</offset>
+  <length>15</length>
+</problem>
+</problems>

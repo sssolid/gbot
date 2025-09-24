@@ -1,0 +1,26 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/management.py</file>
+  <line>452</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/management.py" />
+  <problem_class id="PyDunderSlotsInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Invalid usages of classes with  '__slots__' definitions</problem_class>
+  <description>'Embed' object attribute 'color' is read-only</description>
+  <highlighted_element>embed.color</highlighted_element>
+  <language>Python</language>
+  <offset>12</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/cogs/polls.py</file>
+  <line>264</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/polls.py" />
+  <problem_class id="PyDunderSlotsInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Invalid usages of classes with  '__slots__' definitions</problem_class>
+  <description>'Embed' object attribute 'color' is read-only</description>
+  <highlighted_element>embed.color</highlighted_element>
+  <language>Python</language>
+  <offset>28</offset>
+  <length>11</length>
+</problem>
+</problems>
