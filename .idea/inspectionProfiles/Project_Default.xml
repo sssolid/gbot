@@ -12,5 +12,16 @@
       </option>
       <option name="myCustomValuesEnabled" value="true" />
     </inspection_tool>
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="send_message" />
+          <option value="send_modal" />
+          <option value="edit_message" />
+          <option value="is_done" />
+          <option value="defer" />
+        </list>
+      </option>
+    </inspection_tool>
   </profile>
 </component>

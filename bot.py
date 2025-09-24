@@ -8,7 +8,7 @@ from typing import Optional
 import discord
 from discord.ext import commands
 
-from database import GuildConfig, init_database
+from database import GuildConfig, setup_database
 from utils.cache import ConfigCache
 from utils.permissions import PermissionChecker
 
@@ -31,7 +31,7 @@ class GuildBot(commands.Bot):
         
         # Initialize database first
         try:
-            await init_database(self.database_url)
+            await setup_database(self.database_url)
             logger.info("Database connection established")
                 
         except Exception as e:

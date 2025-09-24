@@ -1,49 +1,75 @@
 """
-Enhanced onboarding views and modals for the Guild Management Bot - FIXED VERSION
+Onboarding system views for the Guild Management Bot - FIXED VERSION
 """
+from typing import Any, Dict, List, Optional
 from datetime import datetime, timezone
-from typing import Dict, List, Any, Optional
 
 import discord
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, update, desc
+from discord.ext import commands
 
-from database import OnboardingQuestion, OnboardingSession, get_session, GuildConfig
-from utils.constants import TIMEZONES, MO2_RACES, MO2_ARCHETYPES, MO2_PROFESSIONS
-
-
-class WelcomeView(discord.ui.View):
-    """Welcome view with onboarding button."""
-
-    def __init__(self):
-        super().__init__(timeout=300)
-
-    @discord.ui.button(
-        label="Start Onboarding",
-        style=discord.ButtonStyle.primary, # type: ignore[arg-type]
-        emoji="🚀"
-    )
-    async def start_onboarding(self, interaction: discord.Interaction, button: discord.ui.Button):
-        """Start the onboarding process."""
-        await interaction.response.send_message(
-            "Starting onboarding process...",
-            view=OnboardingWizard(),
-            ephemeral=True
-        )
+from database import OnboardingQuestion, OnboardingSession, OnboardingRule, User, get_session
+from utils.permissions import PermissionChecker
 
 
-class OnboardingWizard(discord.ui.View):
-    """Enhanced multi-step onboarding wizard with timezone support."""
+class OnboardingView(discord.ui.View):
+    """Main onboarding interface for new members."""
 
-    def __init__(self, session_id: Optional[int] = None):
-        super().__init__(timeout=600)
-        self.session_id = session_id
-        self.current_question = 0
+    def __init__(self, is_admin_test: bool = False):
+        super().__init__(timeout=None)  # Persistent view
         self.questions: List[OnboardingQuestion] = []
+        self.current_question = 0
         self.answers: Dict[str, Any] = {}
+        self.session_id: Optional[int] = None
         self.user_timezone: Optional[str] = None
+        self.is_admin_test = is_admin_test  # FIXED: Added admin testing support
+
+    async def start_onboarding(self, interaction: discord.Interaction):
+        """Start the onboarding process."""
+        try:
+            # Load questions
+            await self.load_questions(interaction.guild_id)
+
+            if not self.questions:
+                embed = discord.Embed(
+                    title="❌ No Questions Available",
+                    description="No onboarding questions have been configured for this server.",
+                    color=discord.Color.red()
+                )
+                if PermissionChecker.is_admin(interaction.user):
+                    embed.add_field(
+                        name="Administrator Note",
+                        value="Configure onboarding questions through the Admin Dashboard → Configuration → Onboarding Questions.",
+                        inline=False
+                    )
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+                return
+
+            # Load or create session
+            await self.load_session(interaction.user.id, interaction.guild_id)
+
+            # Show first question
+            await self.show_current_question(interaction)
+
+        except (AttributeError, TypeError, ValueError) as e:
+            # FIXED: More specific exception handling
+            embed = discord.Embed(
+                title="❌ Configuration Error",
+                description="There was an issue with the onboarding configuration. Please contact an administrator.",
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+        except (discord.HTTPException, discord.DiscordException) as e:
+            # FIXED: Handle Discord-specific errors
+            embed = discord.Embed(
+                title="❌ Error",
+                description=f"Failed to start onboarding: {str(e)}",
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
 
     async def load_questions(self, guild_id: int):
-        """Load active onboarding questions for the guild."""
+        """Load active onboarding questions."""
         async with get_session() as session:
             result = await session.execute(
                 select(OnboardingQuestion)
@@ -60,14 +86,16 @@ class OnboardingWizard(discord.ui.View):
     async def load_session(self, user_id: int, guild_id: int):
         """Load existing onboarding session or create new one."""
         async with get_session() as session:
-            # Check for existing in-progress session
+            # Check for existing session
+            session_state = 'admin_test' if self.is_admin_test else 'in_progress'
+
             result = await session.execute(
                 select(OnboardingSession)
                 .where(
                     and_(
                         OnboardingSession.guild_id == guild_id,
                         OnboardingSession.user_id == user_id,
-                        OnboardingSession.state == 'in_progress'
+                        OnboardingSession.state == session_state
                     )
                 )
                 .order_by(OnboardingSession.created_at.desc())
@@ -93,7 +121,7 @@ class OnboardingWizard(discord.ui.View):
                 new_session = OnboardingSession(
                     guild_id=guild_id,
                     user_id=user_id,
-                    state='in_progress',
+                    state=session_state,
                     answers={},
                     created_at=datetime.now(timezone.utc)
                 )
@@ -105,74 +133,64 @@ class OnboardingWizard(discord.ui.View):
                 self.answers = {}
                 self.current_question = 0
 
-    async def save_answer(self, qid: str, answer: Any):
-        """Save answer to database."""
-        self.answers[qid] = answer
-
-        # Special handling for timezone
-        if qid == "timezone_required" or (hasattr(self, 'questions') and
-                                         self.current_question < len(self.questions) and
-                                         self.questions[self.current_question].type == "timezone"):
-            self.user_timezone = answer
-
-        async with get_session() as session:
-            result = await session.execute(
-                select(OnboardingSession).where(OnboardingSession.id == self.session_id)
-            )
-            onboarding_session = result.scalar_one()
-            onboarding_session.answers = self.answers
-            onboarding_session.user_timezone = self.user_timezone
-            onboarding_session.updated_at = datetime.now(timezone.utc)
-            await session.commit()
-
     async def show_current_question(self, interaction: discord.Interaction):
-        """Show the current question to the user with enhanced UI."""
+        """Display the current question."""
         if self.current_question >= len(self.questions):
             await self.complete_onboarding(interaction)
             return
 
         question = self.questions[self.current_question]
 
+        # Create question embed
         embed = discord.Embed(
-            title="📝 Guild Onboarding",
-            description=f"**Question {self.current_question + 1} of {len(self.questions)}**\n\n{question.prompt}",
+            title="📋 Server Onboarding" + (" (Admin Test)" if self.is_admin_test else ""),
+            description=question.prompt,
             color=discord.Color.blue()
         )
 
+        embed.add_field(
+            name="Progress",
+            value=f"Question {self.current_question + 1} of {len(self.questions)}",
+            inline=True
+        )
+
         if question.required:
-            embed.add_field(name="Required", value="✅ This question is required", inline=False)
+            embed.add_field(
+                name="Required",
+                value="✅ This question is required",
+                inline=True
+            )
 
-        # Add progress bar
-        progress = self.current_question / len(self.questions)
-        progress_bar = "█" * int(progress * 10) + "░" * (10 - int(progress * 10))
-        embed.add_field(name="Progress", value=f"`{progress_bar}` {int(progress * 100)}%", inline=False)
+        # Create appropriate UI based on question type
+        view = self._create_question_view(question)
 
-        view = None
-
-        if question.type == 'single_select':
-            view = SingleSelectView(self, question)
-        elif question.type == 'multi_select':
-            view = MultiSelectView(self, question)
-        elif question.type == 'text':
-            view = TextInputView(self, question)
-        elif question.type == 'timezone':
-            view = TimezoneSelectView(self, question)
-        elif question.type == 'race':
-            view = RaceSelectView(self, question)
-        elif question.type == 'archetype':
-            view = ArchetypeSelectView(self, question)
-        elif question.type == 'profession':
-            view = ProfessionSelectView(self, question)
-        else:
-            # Fallback to text input for unknown types
-            view = TextInputView(self, question)
-
-        embed.set_footer(text="💡 You can return to complete this later if needed")
-
-        if hasattr(interaction, 'response') and not interaction.response.is_done():
-            await interaction.response.edit_message(embed=embed, view=view)
-        else:
+        if hasattr(interaction.response, 'is_done') and interaction.response.is_done():
             await interaction.edit_original_response(embed=embed, view=view)
+        else:
+            await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
+    def _create_question_view(self, question: OnboardingQuestion):
+        """Create UI view for the current question type."""
+        if question.type == "single_select":
+            return SingleSelectQuestionView(self, question)
+        elif question.type == "text":
+            return TextQuestionView(self, question)
+        elif question.type == "timezone":
+            return TimezoneQuestionView(self, question)
+        else:
+            return TextQuestionView(self, question)  # Default to text
+
+    async def save_answer(self, qid: str, answer: Any):
+        """Save answer to database."""
+        self.answers[qid] = answer
+
+        async with get_session() as session:
+            await session.execute(
+                update(OnboardingSession)
+                .where(OnboardingSession.id == self.session_id)
+                .values(answers=self.answers)
+            )
+            await session.commit()
 
     async def next_question(self, interaction: discord.Interaction):
         """Move to the next question."""
@@ -180,403 +198,429 @@ class OnboardingWizard(discord.ui.View):
         await self.show_current_question(interaction)
 
     async def complete_onboarding(self, interaction: discord.Interaction):
-        """Complete the onboarding process with enhanced completion."""
-        # Calculate role suggestions (simplified for now)
-        suggestions = await self.calculate_role_suggestions(interaction.guild_id)
+        """Complete the onboarding process."""
+        try:
+            # Apply role suggestion rules
+            suggested_roles = await self.apply_role_rules(interaction.guild_id)
 
-        # Update session
-        async with get_session() as session:
-            result = await session.execute(
-                select(OnboardingSession).where(OnboardingSession.id == self.session_id)
+            # Update session status
+            completion_state = 'admin_test_complete' if self.is_admin_test else 'completed'
+
+            async with get_session() as session:
+                await session.execute(
+                    update(OnboardingSession)
+                    .where(OnboardingSession.id == self.session_id)
+                    .values(
+                        state=completion_state,
+                        suggestion={"roles": suggested_roles} if suggested_roles else None,
+                        completed_at=datetime.now(timezone.utc),
+                        user_timezone=self.user_timezone
+                    )
+                )
+                await session.commit()
+
+            # Create completion embed
+            embed = discord.Embed(
+                title="✅ Onboarding Complete" + (" (Test)" if self.is_admin_test else ""),
+                description="Thank you for completing the onboarding process!",
+                color=discord.Color.green()
             )
-            onboarding_session = result.scalar_one()
-            onboarding_session.state = 'completed'
-            onboarding_session.completed_at = datetime.now(timezone.utc)
-            onboarding_session.suggestion = suggestions
-            await session.commit()
 
-        # Send completion message
-        embed = discord.Embed(
-            title="✅ Onboarding Complete!",
-            description=(
-                "Thank you for completing the guild onboarding process! "
-                "Your application has been submitted for review by our administrators.\n\n"
-                "You will be notified once your application has been processed."
-            ),
-            color=discord.Color.green()
-        )
-
-        # Add summary of answers
-        if self.answers:
-            summary_text = []
-            for question in self.questions:
-                if question.qid in self.answers:
-                    answer = self.answers[question.qid]
-                    if isinstance(answer, list):
-                        answer_text = ", ".join(answer)
-                    else:
-                        answer_text = str(answer)
-
-                    summary_text.append(f"**{question.prompt[:50]}{'...' if len(question.prompt) > 50 else ''}**\n{answer_text}")
-
-            if summary_text:
+            if self.is_admin_test:
                 embed.add_field(
-                    name="Your Responses",
-                    value="\n\n".join(summary_text[:5]),  # Show first 5 responses
+                    name="🧪 Admin Test Complete",
+                    value="This was a test run of the onboarding process. No actual roles were assigned.",
                     inline=False
                 )
 
-        if self.user_timezone:
+                embed.add_field(
+                    name="Test Results",
+                    value=f"**Questions Answered:** {len(self.answers)}\n**Suggested Roles:** {len(suggested_roles) if suggested_roles else 0}",
+                    inline=True
+                )
+
+                if suggested_roles:
+                    role_names = []
+                    for role_id in suggested_roles:
+                        role = interaction.guild.get_role(role_id)
+                        role_names.append(role.mention if role else f"Unknown Role ({role_id})")
+
+                    embed.add_field(
+                        name="Would Suggest These Roles",
+                        value="\n".join(role_names[:10]),
+                        inline=False
+                    )
+            else:
+                embed.add_field(
+                    name="What's Next?",
+                    value=(
+                        "Your application will be reviewed by server administrators. "
+                        "You'll receive a role assignment once approved!"
+                    ),
+                    inline=False
+                )
+
+                if suggested_roles:
+                    embed.add_field(
+                        name="Suggested Roles",
+                        value=f"{len(suggested_roles)} role(s) have been suggested based on your answers.",
+                        inline=True
+                    )
+
             embed.add_field(
-                name="Timezone",
-                value=f"🌍 {self.user_timezone}",
+                name="Your Answers",
+                value=f"Recorded {len(self.answers)} response(s)",
                 inline=True
             )
 
-        embed.set_footer(text="🎉 Welcome to the guild! An admin will review your application soon.")
-
-        # Send to logs channel if configured
-        await self.log_completion(interaction)
-
-        if hasattr(interaction, 'response') and not interaction.response.is_done():
-            await interaction.response.edit_message(embed=embed, view=None)
-        else:
             await interaction.edit_original_response(embed=embed, view=None)
 
-    @staticmethod
-    async def calculate_role_suggestions(guild_id: int) -> List[int]:
-        """Calculate role suggestions based on answers (simplified)."""
-        # This is a placeholder - implement rule-based suggestions later
-        return []
-
-    async def log_completion(self, interaction: discord.Interaction):
-        """Log completion to admin logs channel."""
-        async with get_session() as session:
-            guild_config = await session.get(GuildConfig, interaction.guild_id)
-
-            if not guild_config or not guild_config.logs_channel_id:
-                return  # No logs channel configured
-
-            logs_channel = interaction.guild.get_channel(guild_config.logs_channel_id)
-            if not logs_channel:
-                return
-
-        embed = discord.Embed(
-            title="📝 New Onboarding Completion",
-            description=f"{interaction.user.mention} has completed the onboarding process",
-            color=discord.Color.blue(),
-            timestamp=datetime.now(timezone.utc)
-        )
-
-        embed.add_field(
-            name="User",
-            value=f"{interaction.user.mention}\n({interaction.user.id})",
-            inline=True
-        )
-
-        if self.user_timezone:
-            embed.add_field(
-                name="Timezone",
-                value=self.user_timezone,
-                inline=True
-            )
-
-        embed.add_field(
-            name="Questions Answered",
-            value=str(len(self.answers)),
-            inline=True
-        )
-
-        embed.set_thumbnail(url=interaction.user.display_avatar.url)
-        embed.set_footer(text=f"Session ID: {self.session_id}")
-
-        try:
-            # Create view with quick action buttons
-            view = QuickOnboardingActionView(self.session_id, interaction.user)
-            await logs_channel.send(embed=embed, view=view)
-        except Exception as e:
-            # If we can't send with view, try without
-            try:
-                await logs_channel.send(embed=embed)
-            except Exception:
-                pass  # Silently fail if we can't send to logs
-
-    @discord.ui.button(
-        label="Start",
-        style=discord.ButtonStyle.primary, # type: ignore[arg-type]
-        emoji="▶️"
-    )
-    async def start_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        """Start the onboarding process."""
-        await self.load_questions(interaction.guild_id)
-        await self.load_session(interaction.user.id, interaction.guild_id)
-
-        if not self.questions:
+        except (AttributeError, TypeError, ValueError) as e:
+            # FIXED: More specific exception handling
             embed = discord.Embed(
-                title="❌ No Questions Available",
-                description="There are no onboarding questions configured for this server.",
+                title="❌ Completion Error",
+                description="There was an issue completing your onboarding. Please contact an administrator.",
                 color=discord.Color.red()
             )
-            await interaction.response.edit_message(embed=embed, view=None)
-            return
+            await interaction.edit_original_response(embed=embed, view=None)
+        except (discord.HTTPException, discord.DiscordException) as e:
+            # FIXED: Handle Discord-specific errors
+            embed = discord.Embed(
+                title="❌ Error",
+                description=f"Failed to complete onboarding: {str(e)}",
+                color=discord.Color.red()
+            )
+            await interaction.edit_original_response(embed=embed, view=None)
 
-        await self.show_current_question(interaction)
+    async def apply_role_rules(self, guild_id: int) -> List[int]:
+        """Apply role suggestion rules based on answers."""
+        try:
+            async with get_session() as session:
+                result = await session.execute(
+                    select(OnboardingRule)
+                    .where(
+                        and_(
+                            OnboardingRule.guild_id == guild_id,
+                            OnboardingRule.is_active == True
+                        )
+                    )
+                )
+                rules = result.scalars().all()
+
+            suggested_role_ids = []
+
+            for rule in rules:
+                # Check if all conditions are met
+                conditions_met = True
+                for condition in rule.when_conditions:
+                    qid = condition.get('key')
+                    expected_value = condition.get('value')
+
+                    if qid not in self.answers or self.answers[qid] != expected_value:
+                        conditions_met = False
+                        break
+
+                if conditions_met:
+                    # Add suggested roles
+                    for role_identifier in rule.suggest_roles:
+                        if isinstance(role_identifier, int):
+                            suggested_role_ids.append(role_identifier)
+                        elif isinstance(role_identifier, str):
+                            # Try to find role by name
+                            # This would need the guild object, so we'll skip name-based for now
+                            pass
+
+            return list(set(suggested_role_ids))  # Remove duplicates
+
+        except (AttributeError, TypeError, ValueError):
+            # FIXED: More specific exception handling for rule processing
+            return []
 
 
-# Enhanced question view components
+class SingleSelectQuestionView(discord.ui.View):
+    """View for single-select questions."""
 
-class SingleSelectView(discord.ui.View):
-    """Enhanced view for single select questions."""
-
-    def __init__(self, wizard: OnboardingWizard, question: OnboardingQuestion):
+    def __init__(self, onboarding_view: OnboardingView, question: OnboardingQuestion):
         super().__init__(timeout=300)
-        self.wizard = wizard
+        self.onboarding_view = onboarding_view
         self.question = question
 
-        # Create select menu with options
-        options = []
-        for option in (question.options or []):
-            options.append(discord.SelectOption(
-                label=option[:100],  # Discord limit
-                value=option,
-                emoji="📝"
-            ))
+        # Create select menu
+        if question.options and len(question.options) > 0:
+            options = [
+                discord.SelectOption(
+                    label=option[:100],  # Discord limit
+                    value=str(i),
+                    description=f"Select {option}"[:100]
+                )
+                for i, option in enumerate(question.options[:25])  # Discord limit
+            ]
 
-        if options:
             select = discord.ui.Select(
-                placeholder=f"Select your answer...",
-                options=options,
-                custom_id=f"onboarding_select_{question.id}"
+                placeholder="Choose an option...",
+                options=options
             )
-            select.callback = self.select_callback
+            select.callback = self.handle_selection
             self.add_item(select)
 
-    async def select_callback(self, interaction: discord.Interaction):
-        """Handle select option."""
-        selected_value = interaction.data['values'][0]
-        await self.wizard.save_answer(self.question.qid, selected_value)
-        await self.wizard.next_question(interaction)
+    async def handle_selection(self, interaction: discord.Interaction):
+        """Handle option selection."""
+        try:
+            selected_index = int(interaction.data['values'][0])
+            selected_option = self.question.options[selected_index]
 
+            # Save answer
+            await self.onboarding_view.save_answer(self.question.qid, selected_option)
 
-class MultiSelectView(discord.ui.View):
-    """View for multi-select questions."""
+            # Move to next question
+            await self.onboarding_view.next_question(interaction)
 
-    def __init__(self, wizard: OnboardingWizard, question: OnboardingQuestion):
-        super().__init__(timeout=300)
-        self.wizard = wizard
-        self.question = question
-
-        # Create select menu with options
-        options = []
-        for option in (question.options or []):
-            options.append(discord.SelectOption(
-                label=option[:100],  # Discord limit
-                value=option,
-                emoji="☑️"
-            ))
-
-        if options:
-            select = discord.ui.Select(
-                placeholder=f"Select multiple answers...",
-                options=options,
-                max_values=min(len(options), 25),  # Discord limits
-                custom_id=f"onboarding_multiselect_{question.id}"
+        except (ValueError, IndexError, KeyError) as e:
+            # FIXED: More specific exception handling
+            embed = discord.Embed(
+                title="❌ Selection Error",
+                description="There was an issue with your selection. Please try again.",
+                color=discord.Color.red()
             )
-            select.callback = self.select_callback
-            self.add_item(select)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+        except (discord.HTTPException, discord.DiscordException) as e:
+            # FIXED: Handle Discord-specific errors
+            embed = discord.Embed(
+                title="❌ Error",
+                description=f"Failed to process selection: {str(e)}",
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    async def select_callback(self, interaction: discord.Interaction):
-        """Handle multi-select options."""
-        selected_values = interaction.data['values']
-        await self.wizard.save_answer(self.question.qid, selected_values)
-        await self.wizard.next_question(interaction)
 
+class TextQuestionView(discord.ui.View):
+    """View for text input questions."""
 
-class TimezoneSelectView(discord.ui.View):
-    """Enhanced timezone selection view."""
-
-    def __init__(self, wizard: OnboardingWizard, question: OnboardingQuestion):
+    def __init__(self, onboarding_view: OnboardingView, question: OnboardingQuestion):
         super().__init__(timeout=300)
-        self.wizard = wizard
+        self.onboarding_view = onboarding_view
         self.question = question
 
-        # Create timezone options (split into multiple selects if needed)
-        options = []
-        for tz in TIMEZONES[:25]:  # Discord limit
-            offset = tz.replace("UTC", "")
-            description = f"UTC offset: {offset}"
-
-            options.append(discord.SelectOption(
-                label=tz,
-                value=tz,
-                description=description,
-                emoji="🌍"
-            ))
-
-        select = discord.ui.Select(
-            placeholder="Select your timezone...",
-            options=options
-        )
-        select.callback = self.select_timezone
-        self.add_item(select)
-
-    async def select_timezone(self, interaction: discord.Interaction):
-        """Handle timezone selection."""
-        selected_timezone = interaction.data['values'][0]
-        await self.wizard.save_answer(self.question.qid, selected_timezone)
-        await self.wizard.next_question(interaction)
-
-
-class RaceSelectView(discord.ui.View):
-    """MO2 race selection view."""
-
-    def __init__(self, wizard: OnboardingWizard, question: OnboardingQuestion):
-        super().__init__(timeout=300)
-        self.wizard = wizard
-        self.question = question
-
-        # Create race options
-        options = []
-        for race in MO2_RACES[:25]:  # Discord limit
-            options.append(discord.SelectOption(
-                label=race,
-                value=race,
-                emoji="🧬"
-            ))
-
-        select = discord.ui.Select(
-            placeholder="Select your character race...",
-            options=options
-        )
-        select.callback = self.select_race
-        self.add_item(select)
-
-    async def select_race(self, interaction: discord.Interaction):
-        """Handle race selection."""
-        selected_race = interaction.data['values'][0]
-        await self.wizard.save_answer(self.question.qid, selected_race)
-        await self.wizard.next_question(interaction)
-
-
-class ArchetypeSelectView(discord.ui.View):
-    """MO2 archetype selection view."""
-
-    def __init__(self, wizard: OnboardingWizard, question: OnboardingQuestion):
-        super().__init__(timeout=300)
-        self.wizard = wizard
-        self.question = question
-
-        # Create archetype options
-        options = []
-        for archetype_name, archetype_data in MO2_ARCHETYPES.items():
-            emoji = "⚔️" if archetype_name == "Warrior" else "🔮" if archetype_name == "Mage" else "🎯"
-            options.append(discord.SelectOption(
-                label=archetype_name,
-                value=archetype_name,
-                description=f"Various {archetype_name.lower()} builds",
-                emoji=emoji
-            ))
-
-        select = discord.ui.Select(
-            placeholder="Select your character archetype...",
-            options=options
-        )
-        select.callback = self.select_archetype
-        self.add_item(select)
-
-    async def select_archetype(self, interaction: discord.Interaction):
-        """Handle archetype selection."""
-        selected_archetype = interaction.data['values'][0]
-        await self.wizard.save_answer(self.question.qid, selected_archetype)
-        await self.wizard.next_question(interaction)
-
-
-class ProfessionSelectView(discord.ui.View):
-    """MO2 profession selection view."""
-
-    def __init__(self, wizard: OnboardingWizard, question: OnboardingQuestion):
-        super().__init__(timeout=300)
-        self.wizard = wizard
-        self.question = question
-
-        # Create profession options (limit to first 25)
-        options = []
-        for profession in MO2_PROFESSIONS[:25]:  # Discord limit
-            options.append(discord.SelectOption(
-                label=profession,
-                value=profession,
-                emoji="🛠️"
-            ))
-
-        select = discord.ui.Select(
-            placeholder="Select your main professions/skills...",
-            options=options,
-            max_values=min(len(options), 10)  # Allow multiple selections
-        )
-        select.callback = self.select_professions
-        self.add_item(select)
-
-    async def select_professions(self, interaction: discord.Interaction):
-        """Handle profession selection."""
-        selected_professions = interaction.data['values']
-        await self.wizard.save_answer(self.question.qid, selected_professions)
-        await self.wizard.next_question(interaction)
-
-
-class TextInputView(discord.ui.View):
-    """Enhanced view for text input questions."""
-
-    def __init__(self, wizard: OnboardingWizard, question: OnboardingQuestion):
-        super().__init__(timeout=300)
-        self.wizard = wizard
-        self.question = question
-
-    @discord.ui.button(
-        label="Answer",
-        style=discord.ButtonStyle.primary, # type: ignore[arg-type]
-        emoji="✏️"
-    )
-    async def answer_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+    @discord.ui.button(label="Answer", style=discord.ButtonStyle.primary, emoji="✏️") # type: ignore[arg-type]
+    async def answer_text(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Open text input modal."""
-        modal = TextInputModal(self.wizard, self.question)
+        modal = TextAnswerModal(self.onboarding_view, self.question)
         await interaction.response.send_modal(modal)
 
 
-class TextInputModal(discord.ui.Modal):
-    """Enhanced modal for text input questions."""
+class TextAnswerModal(discord.ui.Modal):
+    """Modal for text answer input."""
 
-    def __init__(self, wizard: OnboardingWizard, question: OnboardingQuestion):
-        super().__init__(title=f"Answer: {question.prompt[:50]}...")
-        self.wizard = wizard
+    def __init__(self, onboarding_view: OnboardingView, question: OnboardingQuestion):
+        super().__init__(title="Answer Question")
+        self.onboarding_view = onboarding_view
         self.question = question
 
-        self.text_input = discord.ui.TextInput(
-            label=question.prompt[:45],
+        self.answer_input = discord.ui.TextInput(
+            label=question.prompt[:45] + "..." if len(question.prompt) > 45 else question.prompt,
             placeholder="Enter your answer here...",
-            style=discord.TextStyle.paragraph if len(question.prompt) > 100 else discord.TextStyle.short, # type: ignore[arg-type]
+            style=discord.TextStyle.paragraph, # type: ignore[arg-type]
             required=question.required,
             max_length=1000
         )
-        self.add_item(self.text_input)
+        self.add_item(self.answer_input)
 
     async def on_submit(self, interaction: discord.Interaction):
-        """Handle text input submission."""
-        answer = self.text_input.value
-        await self.wizard.save_answer(self.question.qid, answer)
-        await self.wizard.next_question(interaction)
+        """Handle text answer submission."""
+        try:
+            answer = self.answer_input.value.strip()
+
+            if self.question.required and not answer:
+                embed = discord.Embed(
+                    title="❌ Answer Required",
+                    description="This question requires an answer. Please try again.",
+                    color=discord.Color.red()
+                )
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+                return
+
+            # Save answer
+            await self.onboarding_view.save_answer(self.question.qid, answer)
+
+            # Move to next question
+            await self.onboarding_view.next_question(interaction)
+
+        except (AttributeError, TypeError) as e:
+            # FIXED: More specific exception handling
+            embed = discord.Embed(
+                title="❌ Input Error",
+                description="There was an issue with your answer. Please try again.",
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+        except (discord.HTTPException, discord.DiscordException) as e:
+            # FIXED: Handle Discord-specific errors
+            embed = discord.Embed(
+                title="❌ Error",
+                description=f"Failed to save answer: {str(e)}",
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
-# Admin views for managing onboarding queue
+class TimezoneQuestionView(discord.ui.View):
+    """View for timezone selection."""
+
+    def __init__(self, onboarding_view: OnboardingView, question: OnboardingQuestion):
+        super().__init__(timeout=300)
+        self.onboarding_view = onboarding_view
+        self.question = question
+
+        # Common timezone options
+        timezone_options = [
+            discord.SelectOption(label="Eastern Time (EST/EDT)", value="America/New_York"),
+            discord.SelectOption(label="Central Time (CST/CDT)", value="America/Chicago"),
+            discord.SelectOption(label="Mountain Time (MST/MDT)", value="America/Denver"),
+            discord.SelectOption(label="Pacific Time (PST/PDT)", value="America/Los_Angeles"),
+            discord.SelectOption(label="Alaska Time (AKST/AKDT)", value="America/Anchorage"),
+            discord.SelectOption(label="Hawaii Time (HST)", value="Pacific/Honolulu"),
+            discord.SelectOption(label="Greenwich Mean Time (GMT)", value="Europe/London"),
+            discord.SelectOption(label="Central European Time (CET)", value="Europe/Berlin"),
+            discord.SelectOption(label="Eastern European Time (EET)", value="Europe/Kiev"),
+            discord.SelectOption(label="Japan Standard Time (JST)", value="Asia/Tokyo"),
+            discord.SelectOption(label="Australian Eastern Time (AEST)", value="Australia/Sydney"),
+            discord.SelectOption(label="Other/Prefer not to say", value="other"),
+        ]
+
+        select = discord.ui.Select(
+            placeholder="Select your timezone...",
+            options=timezone_options
+        )
+        select.callback = self.handle_timezone_selection
+        self.add_item(select)
+
+    async def handle_timezone_selection(self, interaction: discord.Interaction):
+        """Handle timezone selection."""
+        try:
+            selected_timezone = interaction.data['values'][0]
+
+            # Save timezone to onboarding view
+            self.onboarding_view.user_timezone = selected_timezone
+
+            # Save answer
+            await self.onboarding_view.save_answer(self.question.qid, selected_timezone)
+
+            # Move to next question
+            await self.onboarding_view.next_question(interaction)
+
+        except (KeyError, AttributeError) as e:
+            # FIXED: More specific exception handling
+            embed = discord.Embed(
+                title="❌ Timezone Error",
+                description="There was an issue with your timezone selection. Please try again.",
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+        except (discord.HTTPException, discord.DiscordException) as e:
+            # FIXED: Handle Discord-specific errors
+            embed = discord.Embed(
+                title="❌ Error",
+                description=f"Failed to save timezone: {str(e)}",
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+
+
+class OnboardingStartView(discord.ui.View):
+    """Simple view to start onboarding."""
+
+    def __init__(self):
+        super().__init__(timeout=None)  # Persistent view
+
+    @discord.ui.button(
+        label="Start Onboarding",
+        style=discord.ButtonStyle.primary, # type: ignore[arg-type]
+        emoji="👋",
+        custom_id="start_onboarding"
+    )
+    async def start_onboarding(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Start the onboarding process."""
+        # Check if user has already completed onboarding
+        try:
+            async with get_session() as session:
+                existing_session = await session.execute(
+                    select(OnboardingSession)
+                    .where(
+                        and_(
+                            OnboardingSession.guild_id == interaction.guild_id,
+                            OnboardingSession.user_id == interaction.user.id,
+                            OnboardingSession.state.in_(['completed', 'approved'])
+                        )
+                    )
+                    .order_by(OnboardingSession.created_at.desc())
+                    .limit(1)
+                )
+                completed_session = existing_session.scalar_one_or_none()
+
+                if completed_session:
+                    embed = discord.Embed(
+                        title="ℹ️ Already Completed",
+                        description="You have already completed the onboarding process for this server.",
+                        color=discord.Color.blue()
+                    )
+                    embed.add_field(
+                        name="Status",
+                        value="Approved" if completed_session.state == 'approved' else "Pending Review",
+                        inline=True
+                    )
+                    embed.add_field(
+                        name="Completed",
+                        value=discord.utils.format_dt(completed_session.completed_at, 'R'),
+                        inline=True
+                    )
+                    await interaction.response.send_message(embed=embed, ephemeral=True)
+                    return
+
+            # Start new onboarding
+            view = OnboardingView()
+            await view.start_onboarding(interaction)
+
+        except (AttributeError, TypeError, ValueError) as e:
+            # FIXED: More specific exception handling
+            embed = discord.Embed(
+                title="❌ Configuration Error",
+                description="There was an issue starting onboarding. Please contact an administrator.",
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+        except (discord.HTTPException, discord.DiscordException) as e:
+            # FIXED: Handle Discord-specific errors
+            embed = discord.Embed(
+                title="❌ Error",
+                description=f"Failed to start onboarding: {str(e)}",
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+
 
 class OnboardingQueueView(discord.ui.View):
-    """Enhanced admin view for the onboarding queue."""
+    """Admin view for managing onboarding queue."""
 
     def __init__(self):
         super().__init__(timeout=300)
         self.current_page = 0
-        self.sessions: List[OnboardingSession] = []
+        self.pending_sessions: List[OnboardingSession] = []
 
-    async def load_sessions(self, guild_id: int):
+    async def show_queue(self, interaction: discord.Interaction):
+        """Show the onboarding queue."""
+        if not PermissionChecker.is_admin(interaction.user):
+            embed = PermissionChecker.get_permission_error_embed(
+                "view onboarding queue",
+                "Administrator, Manage Server, or Manage Roles"
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        await self.load_pending_sessions(interaction.guild_id)
+        embed = self._create_queue_embed(interaction)
+        await interaction.response.send_message(embed=embed, view=self, ephemeral=True)
+
+    async def load_pending_sessions(self, guild_id: int):
         """Load pending onboarding sessions."""
         async with get_session() as session:
             result = await session.execute(
@@ -584,553 +628,267 @@ class OnboardingQueueView(discord.ui.View):
                 .where(
                     and_(
                         OnboardingSession.guild_id == guild_id,
-                        OnboardingSession.state == 'completed'  # Only completed, not yet approved/denied
+                        OnboardingSession.state == 'completed'
                     )
                 )
-                .order_by(OnboardingSession.completed_at.desc())
+                .order_by(OnboardingSession.completed_at.asc())
             )
-            self.sessions = result.scalars().all()
+            self.pending_sessions = result.scalars().all()
 
-    async def show_queue(self, interaction: discord.Interaction):
-        """Show the current queue page with enhanced information."""
-        await self.load_sessions(interaction.guild_id)
-
-        if not self.sessions:
-            embed = discord.Embed(
-                title="📋 Onboarding Queue",
-                description="No pending applications at this time.",
-                color=discord.Color.blue()
-            )
-
-            embed.add_field(
-                name="Queue Status",
-                value="✅ All applications processed",
-                inline=False
-            )
-
-            await interaction.response.send_message(embed=embed, view=None, ephemeral=True)
-            return
-
-        # Pagination
-        per_page = 5
-        total_pages = (len(self.sessions) - 1) // per_page + 1
-        start_idx = self.current_page * per_page
-        end_idx = min(start_idx + per_page, len(self.sessions))
-
+    def _create_queue_embed(self, interaction: discord.Interaction):
+        """Create queue display embed."""
         embed = discord.Embed(
             title="📋 Onboarding Queue",
-            description=f"**{len(self.sessions)} pending applications** (Page {self.current_page + 1}/{total_pages})",
-            color=discord.Color.orange()
-        )
-
-        for session in self.sessions[start_idx:end_idx]:
-            user = interaction.guild.get_member(session.user_id)
-            if not user:
-                continue
-
-            completed_time = discord.utils.format_dt(session.completed_at, 'R')
-            timezone_info = f" | 🌍 {session.user_timezone}" if session.user_timezone else ""
-
-            embed.add_field(
-                name=f"👤 {user.display_name}",
-                value=f"Completed {completed_time}{timezone_info}\n**Answers:** {len(session.answers)} questions",
-                inline=False
-            )
-
-        # Add navigation and action buttons
-        self.clear_items()
-
-        if total_pages > 1:
-            if self.current_page > 0:
-                prev_button = discord.ui.Button(label="Previous", emoji="⬅️", style=discord.ButtonStyle.secondary) # type: ignore[arg-type]
-                prev_button.callback = self.previous_page
-                self.add_item(prev_button)
-
-            if self.current_page < total_pages - 1:
-                next_button = discord.ui.Button(label="Next", emoji="➡️", style=discord.ButtonStyle.secondary) # type: ignore[arg-type]
-                next_button.callback = self.next_page
-                self.add_item(next_button)
-
-        # Review button
-        if self.sessions:
-            review_button = discord.ui.Button(label="Review Applications", emoji="👁️", style=discord.ButtonStyle.primary) # type: ignore[arg-type]
-            review_button.callback = self.review_applications
-            self.add_item(review_button)
-
-        await interaction.response.send_message(embed=embed, view=self, ephemeral=True)
-
-    async def previous_page(self, interaction: discord.Interaction):
-        """Go to previous page."""
-        self.current_page = max(0, self.current_page - 1)
-        await self.show_queue(interaction)
-
-    async def next_page(self, interaction: discord.Interaction):
-        """Go to next page."""
-        self.current_page += 1
-        await self.show_queue(interaction)
-
-    async def review_applications(self, interaction: discord.Interaction):
-        """Show application review interface."""
-        view = ApplicationReviewView(self.sessions)
-        await view.show_review_interface(interaction)
-
-
-class ApplicationReviewView(discord.ui.View):
-    """Enhanced view for reviewing individual applications."""
-
-    def __init__(self, sessions: List[OnboardingSession]):
-        super().__init__(timeout=600)
-        self.sessions = sessions
-        self.current_session_index = 0
-
-    async def show_review_interface(self, interaction: discord.Interaction):
-        """Show detailed review interface for applications."""
-        if not self.sessions:
-            await interaction.response.send_message("No applications to review.", ephemeral=True)
-            return
-
-        await self.show_current_application(interaction)
-
-    async def show_current_application(self, interaction: discord.Interaction):
-        """Show current application details."""
-        if self.current_session_index >= len(self.sessions):
-            embed = discord.Embed(
-                title="✅ All Applications Reviewed",
-                description="You have reviewed all pending applications.",
-                color=discord.Color.green()
-            )
-            await interaction.response.edit_message(embed=embed, view=None)
-            return
-
-        session = self.sessions[self.current_session_index]
-        user = interaction.guild.get_member(session.user_id)
-
-        if not user:
-            # Skip deleted users
-            self.current_session_index += 1
-            await self.show_current_application(interaction)
-            return
-
-        embed = discord.Embed(
-            title=f"📝 Application Review ({self.current_session_index + 1}/{len(self.sessions)})",
-            description=f"**Applicant:** {user.mention}\n**Completed:** {discord.utils.format_dt(session.completed_at, 'F')}",
+            description=f"Managing onboarding applications for {interaction.guild.name}",
             color=discord.Color.blue()
         )
 
-        embed.set_thumbnail(url=user.display_avatar.url)
-
-        if session.user_timezone:
+        if not self.pending_sessions:
             embed.add_field(
-                name="🌍 Timezone",
-                value=session.user_timezone,
+                name="No Pending Applications",
+                value="All onboarding applications have been processed.",
+                inline=False
+            )
+            return embed
+
+        # Show pending sessions (5 per page)
+        start_idx = self.current_page * 5
+        end_idx = min(start_idx + 5, len(self.pending_sessions))
+
+        for i in range(start_idx, end_idx):
+            session = self.pending_sessions[i]
+            member = interaction.guild.get_member(session.user_id)
+            member_name = member.display_name if member else f"Unknown ({session.user_id})"
+
+            answer_count = len(session.answers) if session.answers else 0
+            suggested_roles = session.suggestion.get('roles', []) if session.suggestion else []
+
+            embed.add_field(
+                name=f"{i+1}. {member_name}",
+                value=(
+                    f"**Completed:** {discord.utils.format_dt(session.completed_at, 'R')}\n"
+                    f"**Answers:** {answer_count} response(s)\n"
+                    f"**Suggested Roles:** {len(suggested_roles)}"
+                ),
                 inline=True
             )
 
+        embed.set_footer(
+            text=f"Page {self.current_page + 1}/{(len(self.pending_sessions) - 1) // 5 + 1} • {len(self.pending_sessions)} pending"
+        )
+
+        return embed
+
+    @discord.ui.button(label="Review Applications", style=discord.ButtonStyle.primary, emoji="👀") # type: ignore[arg-type]
+    async def review_applications(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Review individual applications."""
+        if not self.pending_sessions:
+            await interaction.response.send_message("No applications to review.", ephemeral=True)
+            return
+
+        # Show first application for review
+        session = self.pending_sessions[0]
+        view = ApplicationReviewView(session)
+        await view.show_application(interaction)
+
+    @discord.ui.button(label="Refresh Queue", style=discord.ButtonStyle.secondary, emoji="🔄") # type: ignore[arg-type]
+    async def refresh_queue(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Refresh the queue."""
+        await self.load_pending_sessions(interaction.guild_id)
+        self.current_page = 0
+        embed = self._create_queue_embed(interaction)
+        await interaction.response.edit_message(embed=embed, view=self)
+
+
+class ApplicationReviewView(discord.ui.View):
+    """View for reviewing individual onboarding applications."""
+
+    def __init__(self, session: OnboardingSession):
+        super().__init__(timeout=300)
+        self.session = session
+
+    async def show_application(self, interaction: discord.Interaction):
+        """Show application details."""
+        member = interaction.guild.get_member(self.session.user_id)
+        member_name = member.display_name if member else f"Unknown ({self.session.user_id})"
+
+        embed = discord.Embed(
+            title=f"📋 Application Review - {member_name}",
+            description="Review this member's onboarding responses",
+            color=discord.Color.blue()
+        )
+
+        # Show member info
+        if member:
+            embed.set_thumbnail(url=member.display_avatar.url)
+            embed.add_field(
+                name="Member Info",
+                value=(
+                    f"**Username:** {member.mention}\n"
+                    f"**Joined:** {discord.utils.format_dt(member.joined_at, 'R')}\n"
+                    f"**Account Created:** {discord.utils.format_dt(member.created_at, 'R')}"
+                ),
+                inline=False
+            )
+
+        # Show application info
         embed.add_field(
-            name="📊 Progress",
-            value=f"{len(session.answers)} questions answered",
+            name="Application Info",
+            value=(
+                f"**Completed:** {discord.utils.format_dt(self.session.completed_at, 'R')}\n"
+                f"**Timezone:** {self.session.user_timezone or 'Not provided'}\n"
+                f"**Answers:** {len(self.session.answers)} response(s)"
+            ),
             inline=True
         )
 
+        # Show suggested roles
+        if self.session.suggestion and self.session.suggestion.get('roles'):
+            role_names = []
+            for role_id in self.session.suggestion['roles']:
+                role = interaction.guild.get_role(role_id)
+                role_names.append(role.mention if role else f"Unknown Role ({role_id})")
+
+            embed.add_field(
+                name="Suggested Roles",
+                value="\n".join(role_names[:10]),
+                inline=True
+            )
+
         # Show answers
-        if session.answers:
-            # Load questions to get prompts
-            async with get_session() as db_session:
-                result = await db_session.execute(
-                    select(OnboardingQuestion)
-                    .where(OnboardingQuestion.guild_id == interaction.guild_id)
-                )
-                questions = {q.qid: q for q in result.scalars().all()}
-
+        if self.session.answers:
             answer_text = []
-            for qid, answer in session.answers.items():
-                question = questions.get(qid)
-                if question:
-                    if isinstance(answer, list):
-                        answer_display = ", ".join(answer)
-                    else:
-                        answer_display = str(answer)
+            for qid, answer in list(self.session.answers.items())[:5]:  # Show first 5 answers
+                answer_display = str(answer)[:100] + ("..." if len(str(answer)) > 100 else "")
+                answer_text.append(f"**{qid}:** {answer_display}")
 
-                    answer_text.append(f"**{question.prompt[:50]}{'...' if len(question.prompt) > 50 else ''}**\n{answer_display}")
-
-            if answer_text:
-                # Split answers into multiple fields if too long
-                for i in range(0, len(answer_text), 3):
-                    field_answers = answer_text[i:i+3]
-                    embed.add_field(
-                        name=f"Responses ({i+1}-{min(i+3, len(answer_text))})",
-                        value="\n\n".join(field_answers),
-                        inline=False
-                    )
-
-        # Update view with action buttons
-        self.clear_items()
-
-        # Navigation
-        if len(self.sessions) > 1:
-            if self.current_session_index > 0:
-                prev_button = discord.ui.Button(label="Previous", emoji="⬅️", style=discord.ButtonStyle.secondary) # type: ignore[arg-type]
-                prev_button.callback = self.previous_application
-                self.add_item(prev_button)
-
-            if self.current_session_index < len(self.sessions) - 1:
-                next_button = discord.ui.Button(label="Next", emoji="➡️", style=discord.ButtonStyle.secondary) # type: ignore[arg-type]
-                next_button.callback = self.next_application
-                self.add_item(next_button)
-
-        # Action buttons
-        approve_button = discord.ui.Button(label="Approve", emoji="✅", style=discord.ButtonStyle.success) # type: ignore[arg-type]
-        approve_button.callback = self.approve_application
-        self.add_item(approve_button)
-
-        deny_button = discord.ui.Button(label="Deny", emoji="❌", style=discord.ButtonStyle.danger) # type: ignore[arg-type]
-        deny_button.callback = self.deny_application
-        self.add_item(deny_button)
-
-        if hasattr(interaction, 'response') and not interaction.response.is_done():
-            await interaction.response.edit_message(embed=embed, view=self)
-        else:
-            await interaction.edit_original_response(embed=embed, view=self)
-
-    async def previous_application(self, interaction: discord.Interaction):
-        """Go to previous application."""
-        self.current_session_index = max(0, self.current_session_index - 1)
-        await self.show_current_application(interaction)
-
-    async def next_application(self, interaction: discord.Interaction):
-        """Go to next application."""
-        self.current_session_index += 1
-        await self.show_current_application(interaction)
-
-    async def approve_application(self, interaction: discord.Interaction):
-        """Approve the current application."""
-        session = self.sessions[self.current_session_index]
-        user = interaction.guild.get_member(session.user_id)
-
-        if not user:
-            await interaction.response.send_message("User no longer in server.", ephemeral=True)
-            return
-
-        view = ApprovalRoleSelectionView(session, user, self)
-
-        embed = discord.Embed(
-            title="✅ Approve Application",
-            description=f"Select roles to assign to {user.mention}:",
-            color=discord.Color.green()
-        )
-
-        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
-
-    async def deny_application(self, interaction: discord.Interaction):
-        """Deny the current application."""
-        session = self.sessions[self.current_session_index]
-        user = interaction.guild.get_member(session.user_id)
-
-        if not user:
-            await interaction.response.send_message("User no longer in server.", ephemeral=True)
-            return
-
-        modal = DenyApplicationModal(session, user, self)
-        await interaction.response.send_modal(modal)
-
-
-class ApprovalRoleSelectionView(discord.ui.View):
-    """Enhanced role selection for approval."""
-
-    def __init__(self, session: OnboardingSession, user: discord.Member, parent_view: ApplicationReviewView):
-        super().__init__(timeout=300)
-        self.session = session
-        self.user = user
-        self.parent_view = parent_view
-
-    @discord.ui.select(
-        cls=discord.ui.RoleSelect,
-        placeholder="Select roles to assign...",
-        max_values=10
-    )
-    async def role_select(self, interaction: discord.Interaction, select: discord.ui.RoleSelect):
-        """Handle role selection for approval."""
-        roles = select.values
-
-        # Confirm approval
-        view = ConfirmApprovalView(self.session, self.user, roles, self.parent_view)
-
-        embed = discord.Embed(
-            title="✅ Confirm Approval",
-            description=f"Approve {self.user.mention} and assign the following roles:",
-            color=discord.Color.green()
-        )
-
-        if roles:
             embed.add_field(
-                name="Roles to Assign",
-                value="\n".join(role.mention for role in roles),
-                inline=False
-            )
-        else:
-            embed.add_field(
-                name="Roles to Assign",
-                value="No additional roles",
+                name="Responses (First 5)",
+                value="\n".join(answer_text),
                 inline=False
             )
 
-        await interaction.response.edit_message(embed=embed, view=view)
+        await interaction.response.send_message(embed=embed, view=self, ephemeral=True)
 
-
-class ConfirmApprovalView(discord.ui.View):
-    """Enhanced confirmation view for approval."""
-
-    def __init__(self, session: OnboardingSession, user: discord.Member, roles: List[discord.Role], parent_view: ApplicationReviewView):
-        super().__init__(timeout=300)
-        self.session = session
-        self.user = user
-        self.roles = roles
-        self.parent_view = parent_view
-
-    @discord.ui.button(label="Confirm Approval", style=discord.ButtonStyle.success, emoji="✅") # type: ignore[arg-type]
-    async def confirm_approval(self, interaction: discord.Interaction, button: discord.ui.Button):
-        """Execute the approval with enhanced feedback."""
-        # Update session status
-        async with get_session() as db_session:
-            result = await db_session.execute(
-                select(OnboardingSession).where(OnboardingSession.id == self.session.id)
-            )
-            onboarding_session = result.scalar_one()
-            onboarding_session.state = 'approved'
-            onboarding_session.reviewed_at = datetime.now(timezone.utc)
-            onboarding_session.reviewed_by = interaction.user.id
-            await db_session.commit()
-
-        # Assign roles
-        success_roles = []
-        failed_roles = []
-
-        for role in self.roles:
-            try:
-                await self.user.add_roles(role, reason=f"Onboarding approval by {interaction.user}")
-                success_roles.append(role)
-            except Exception:
-                failed_roles.append(role)
-
-        # Add default member role if configured
-        async with get_session() as db_session:
-            guild_config = await db_session.get(GuildConfig, interaction.guild_id)
-            if guild_config and guild_config.default_member_role_id:
-                default_role = interaction.guild.get_role(guild_config.default_member_role_id)
-                if default_role and default_role not in self.user.roles:
-                    try:
-                        await self.user.add_roles(default_role, reason=f"Default member role - approved by {interaction.user}")
-                        success_roles.append(default_role)
-                    except Exception:
-                        failed_roles.append(default_role)
-
-        # Send approval notification to user
+    @discord.ui.button(label="Approve", style=discord.ButtonStyle.success, emoji="✅") # type: ignore[arg-type]
+    async def approve_application(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Approve the application."""
         try:
-            dm_embed = discord.Embed(
-                title="🎉 Application Approved!",
-                description=f"Your application to **{interaction.guild.name}** has been approved!",
+            # Update session status
+            async with get_session() as session:
+                await session.execute(
+                    update(OnboardingSession)
+                    .where(OnboardingSession.id == self.session.id)
+                    .values(
+                        state='approved',
+                        reviewed_at=datetime.now(timezone.utc),
+                        reviewed_by=interaction.user.id
+                    )
+                )
+                await session.commit()
+
+            embed = discord.Embed(
+                title="✅ Application Approved",
+                description="The member's application has been approved.",
                 color=discord.Color.green()
             )
 
-            if success_roles:
-                dm_embed.add_field(
-                    name="Roles Assigned",
-                    value="\n".join(role.name for role in success_roles),
-                    inline=False
-                )
+            # Apply suggested roles if any
+            if self.session.suggestion and self.session.suggestion.get('roles'):
+                member = interaction.guild.get_member(self.session.user_id)
+                if member:
+                    roles_to_add = []
+                    for role_id in self.session.suggestion['roles']:
+                        role = interaction.guild.get_role(role_id)
+                        if role:
+                            roles_to_add.append(role)
 
-            dm_embed.add_field(
-                name="Welcome!",
-                value="You now have full access to the server. Welcome to the guild!",
-                inline=False
+                    if roles_to_add:
+                        try:
+                            await member.add_roles(*roles_to_add, reason=f"Onboarding approved by {interaction.user}")
+                            embed.add_field(
+                                name="Roles Assigned",
+                                value="\n".join(role.mention for role in roles_to_add),
+                                inline=False
+                            )
+                        except (discord.Forbidden, discord.HTTPException) as e:
+                            embed.add_field(
+                                name="⚠️ Role Assignment Failed",
+                                value=f"Could not assign roles: {str(e)}",
+                                inline=False
+                            )
+
+            await interaction.response.edit_message(embed=embed, view=None)
+
+        except (discord.HTTPException, discord.DiscordException) as e:
+            # FIXED: Handle Discord-specific errors
+            embed = discord.Embed(
+                title="❌ Error",
+                description=f"Failed to approve application: {str(e)}",
+                color=discord.Color.red()
             )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
 
-            await self.user.send(embed=dm_embed)
-        except discord.Forbidden:
-            pass  # User has DMs disabled
-
-        # Create response embed
-        embed = discord.Embed(
-            title="✅ Application Approved",
-            description=f"Successfully approved {self.user.mention}",
-            color=discord.Color.green()
-        )
-
-        if success_roles:
-            embed.add_field(
-                name="Roles Assigned",
-                value="\n".join(role.mention for role in success_roles),
-                inline=False
-            )
-
-        if failed_roles:
-            embed.add_field(
-                name="Failed to Assign",
-                value="\n".join(role.mention for role in failed_roles),
-                inline=False
-            )
-
-        await interaction.response.edit_message(embed=embed, view=None)
-
-        # Remove from parent view's session list and continue
-        self.parent_view.sessions.remove(self.session)
-        if self.parent_view.current_session_index >= len(self.parent_view.sessions):
-            self.parent_view.current_session_index = max(0, len(self.parent_view.sessions) - 1)
-
-    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.secondary, emoji="❌") # type: ignore[arg-type]
-    async def cancel_approval(self, interaction: discord.Interaction, button: discord.ui.Button):
-        """Cancel the approval."""
-        embed = discord.Embed(
-            title="❌ Approval Cancelled",
-            description="Application approval cancelled.",
-            color=discord.Color.blue()
-        )
-        await interaction.response.edit_message(embed=embed, view=None)
+    @discord.ui.button(label="Deny", style=discord.ButtonStyle.danger, emoji="❌") # type: ignore[arg-type]
+    async def deny_application(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Deny the application."""
+        modal = DenyReasonModal(self.session)
+        await interaction.response.send_modal(modal)
 
 
-class DenyApplicationModal(discord.ui.Modal):
-    """Enhanced modal for denying applications with reason."""
+class DenyReasonModal(discord.ui.Modal):
+    """Modal for entering denial reason."""
 
-    def __init__(self, session: OnboardingSession, user: discord.Member, parent_view: ApplicationReviewView):
+    def __init__(self, session: OnboardingSession):
         super().__init__(title="Deny Application")
         self.session = session
-        self.user = user
-        self.parent_view = parent_view
 
         self.reason_input = discord.ui.TextInput(
-            label="Denial Reason",
-            placeholder="Provide a reason for denial (will be sent to the user)...",
+            label="Reason for Denial",
+            placeholder="Enter the reason for denying this application...",
             style=discord.TextStyle.paragraph, # type: ignore[arg-type]
             required=True,
-            max_length=1000
+            max_length=500
         )
-
         self.add_item(self.reason_input)
 
     async def on_submit(self, interaction: discord.Interaction):
-        """Handle application denial with enhanced feedback."""
-        reason = self.reason_input.value.strip()
-
-        # Update session status
-        async with get_session() as db_session:
-            result = await db_session.execute(
-                select(OnboardingSession).where(OnboardingSession.id == self.session.id)
-            )
-            onboarding_session = result.scalar_one()
-            onboarding_session.state = 'denied'
-            onboarding_session.reviewed_at = datetime.now(timezone.utc)
-            onboarding_session.reviewed_by = interaction.user.id
-            onboarding_session.denial_reason = reason
-            await db_session.commit()
-
-        # Send denial notification to user
+        """Handle denial submission."""
         try:
-            dm_embed = discord.Embed(
+            reason = self.reason_input.value.strip()
+
+            # Update session status
+            async with get_session() as session:
+                await session.execute(
+                    update(OnboardingSession)
+                    .where(OnboardingSession.id == self.session.id)
+                    .values(
+                        state='denied',
+                        denial_reason=reason,
+                        reviewed_at=datetime.now(timezone.utc),
+                        reviewed_by=interaction.user.id
+                    )
+                )
+                await session.commit()
+
+            embed = discord.Embed(
                 title="❌ Application Denied",
-                description=f"Your application to **{interaction.guild.name}** has been denied.",
+                description="The member's application has been denied.",
                 color=discord.Color.red()
             )
-
-            dm_embed.add_field(
+            embed.add_field(
                 name="Reason",
                 value=reason,
                 inline=False
             )
 
-            dm_embed.add_field(
-                name="What's Next?",
-                value="You may be able to reapply in the future. Please contact an administrator if you have questions.",
-                inline=False
+            await interaction.response.edit_message(embed=embed, view=None)
+
+        except (discord.HTTPException, discord.DiscordException) as e:
+            # FIXED: Handle Discord-specific errors
+            embed = discord.Embed(
+                title="❌ Error",
+                description=f"Failed to deny application: {str(e)}",
+                color=discord.Color.red()
             )
-
-            await self.user.send(embed=dm_embed)
-        except discord.Forbidden:
-            pass  # User has DMs disabled
-
-        # Create response embed
-        embed = discord.Embed(
-            title="❌ Application Denied",
-            description=f"Denied application from {self.user.mention}",
-            color=discord.Color.red()
-        )
-
-        embed.add_field(
-            name="Reason",
-            value=reason,
-            inline=False
-        )
-
-        await interaction.response.send_message(embed=embed, ephemeral=True)
-
-        # Remove from parent view's session list and continue
-        self.parent_view.sessions.remove(self.session)
-        if self.parent_view.current_session_index >= len(self.parent_view.sessions):
-            self.parent_view.current_session_index = max(0, len(self.parent_view.sessions) - 1)
-
-
-class QuickOnboardingActionView(discord.ui.View):
-    """Quick action buttons for onboarding log entries."""
-
-    def __init__(self, session_id: int, user: discord.Member):
-        super().__init__(timeout=None)  # Persistent view
-        self.session_id = session_id
-        self.user = user
-
-    @discord.ui.button(label="Quick Approve", style=discord.ButtonStyle.success, emoji="✅") # type: ignore[arg-type]
-    async def quick_approve(self, interaction: discord.Interaction, button: discord.ui.Button):
-        """Quick approve with default roles."""
-        async with get_session() as db_session:
-            # Update session
-            result = await db_session.execute(
-                select(OnboardingSession).where(OnboardingSession.id == self.session_id)
-            )
-            session = result.scalar_one_or_none()
-
-            if not session or session.state != 'completed':
-                await interaction.response.send_message("Application no longer pending.", ephemeral=True)
-                return
-
-            session.state = 'approved'
-            session.reviewed_at = datetime.now(timezone.utc)
-            session.reviewed_by = interaction.user.id
-
-            # Add default member role if configured
-            guild_config = await db_session.get(GuildConfig, interaction.guild_id)
-            if guild_config and guild_config.default_member_role_id:
-                default_role = interaction.guild.get_role(guild_config.default_member_role_id)
-                if default_role:
-                    try:
-                        await self.user.add_roles(default_role, reason=f"Quick approval by {interaction.user}")
-                    except Exception:
-                        pass
-
-            await db_session.commit()
-
-        embed = discord.Embed(
-            title="✅ Quick Approval",
-            description=f"Quickly approved {self.user.mention}",
-            color=discord.Color.green()
-        )
-
-        # Disable buttons
-        for item in self.children:
-            item.disabled = True
-
-        await interaction.response.edit_message(view=self)
-        await interaction.followup.send(embed=embed, ephemeral=True)
-
-    @discord.ui.button(label="Review", style=discord.ButtonStyle.primary, emoji="👁️") # type: ignore[arg-type]
-    async def review_application(self, interaction: discord.Interaction, button: discord.ui.Button):
-        """Open detailed review."""
-        async with get_session() as db_session:
-            result = await db_session.execute(
-                select(OnboardingSession).where(OnboardingSession.id == self.session_id)
-            )
-            session = result.scalar_one_or_none()
-
-            if not session:
-                await interaction.response.send_message("Application not found.", ephemeral=True)
-                return
-
-        view = ApplicationReviewView([session])
-        await view.show_review_interface(interaction)
+            await interaction.response.send_message(embed=embed, ephemeral=True)

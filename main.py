@@ -10,7 +10,7 @@ import discord
 from dotenv import load_dotenv
 
 from bot import GuildBot
-from database import init_database
+from database import setup_database
 
 # Load environment variables
 load_dotenv()
@@ -46,7 +46,7 @@ async def main():
     try:
         # Initialize database
         logger.info("Initializing database...")
-        await init_database(database_url)
+        await setup_database(database_url)
         logger.info("Database initialized successfully")
 
         # Configure bot intents

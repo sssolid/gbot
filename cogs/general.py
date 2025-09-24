@@ -1,398 +1,389 @@
 """
-General utility commands for the Guild Management Bot
+General commands for the Guild Management Bot - FIXED VERSION
 """
-import random
-import re
-
 import discord
-from discord import app_commands
 from discord.ext import commands
+from typing import Optional
+
+from database import GuildConfig, get_session
+from utils.permissions import PermissionChecker
 
 
-class GeneralCog(commands.Cog):
+class General(commands.Cog):
     """General utility commands."""
-    
+
     def __init__(self, bot):
         self.bot = bot
-    
-    @app_commands.command(name="roll", description="Roll dice using standard notation (e.g., 1d20, 2d6+3)")
-    @app_commands.describe(
-        dice="Dice notation (e.g., 1d20, 2d6+3, 4d6kh3). Supports modifiers and keep highest/lowest."
-    )
-    async def roll_dice(self, interaction: discord.Interaction, dice: str):
-        """Roll dice with support for various notations."""
+
+    @discord.app_commands.command(name="ping", description="Check bot latency")
+    async def ping(self, interaction: discord.Interaction):
+        """Simple ping command to check bot responsiveness."""
+        latency = round(self.bot.latency * 1000)
+
+        embed = discord.Embed(
+            title="🏓 Pong!",
+            description=f"Bot latency: **{latency}ms**",
+            color=discord.Color.green()
+        )
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @discord.app_commands.command(name="info", description="Show bot information")
+    async def info(self, interaction: discord.Interaction):
+        """Display bot information and statistics."""
         try:
-            result = self.parse_and_roll_dice(dice)
-            
+            # Get guild configuration
+            async with get_session() as session:
+                result = await session.get(GuildConfig, interaction.guild_id)
+                config = result
+
             embed = discord.Embed(
-                title="🎲 Dice Roll",
+                title="ℹ️ Bot Information",
+                description="Guild Management Bot - UI-First Discord Bot",
                 color=discord.Color.blue()
             )
-            
+
+            # Bot stats
             embed.add_field(
-                name="Request",
-                value=f"`{dice}`",
-                inline=True
-            )
-            
-            embed.add_field(
-                name="Result",
-                value=f"**{result['total']}**",
-                inline=True
-            )
-            
-            if result['breakdown']:
-                embed.add_field(
-                    name="Breakdown",
-                    value=result['breakdown'],
-                    inline=False
-                )
-            
-            embed.set_author(
-                name=interaction.user.display_name,
-                icon_url=interaction.user.display_avatar.url
-            )
-            
-            await interaction.response.send_message(embed=embed)
-            
-        except ValueError as e:
-            embed = discord.Embed(
-                title="❌ Invalid Dice Notation",
-                description=str(e),
-                color=discord.Color.red()
-            )
-            embed.add_field(
-                name="Examples",
+                name="📊 Bot Statistics",
                 value=(
-                    "• `1d20` - Roll a 20-sided die\n"
-                    "• `2d6+3` - Roll two 6-sided dice and add 3\n"
-                    "• `4d6kh3` - Roll four 6-sided dice, keep highest 3\n"
-                    "• `6d6kl4` - Roll six 6-sided dice, keep lowest 4\n"
-                    "• `1d20+5-2` - Roll a d20, add 5, subtract 2\n"
-                    "• `2d10*2` - Roll two d10s and multiply by 2"
+                    f"**Guilds:** {len(self.bot.guilds)}\n"
+                    f"**Users:** {sum(len(guild.members) for guild in self.bot.guilds)}\n"
+                    f"**Latency:** {round(self.bot.latency * 1000)}ms"
+                ),
+                inline=True
+            )
+
+            # Guild config status
+            config_status = "✅ Configured" if config else "⚠️ Not configured"
+            embed.add_field(
+                name="⚙️ Guild Status",
+                value=(
+                    f"**Configuration:** {config_status}\n"
+                    f"**Members:** {len(interaction.guild.members)}\n"
+                    f"**Channels:** {len(interaction.guild.channels)}"
+                ),
+                inline=True
+            )
+
+            # Features
+            embed.add_field(
+                name="🌟 Features",
+                value=(
+                    "• UI-First Design - No commands to remember\n"
+                    "• Onboarding System - Custom questions & approval\n"
+                    "• Character Profiles - Multiple characters per user\n"
+                    "• Polls & Voting - Rich poll creation system\n"
+                    "• Auto-Moderation - Spam & swear filtering\n"
+                    "• Announcements - Scheduled & rich formatting\n"
+                    "• Role Management - Admin-controlled assignments"
                 ),
                 inline=False
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-        except Exception as e:
+
+            # Quick links
+            embed.add_field(
+                name="🔗 Quick Access",
+                value=(
+                    "• Use `/setup` to configure the bot\n"
+                    "• Check Admin Dashboard for management\n"
+                    "• Check Member Hub for user features\n"
+                    "• Right-click messages/users for context actions"
+                ),
+                inline=False
+            )
+
+            embed.set_footer(
+                text=f"Requested by {interaction.user.display_name}",
+                icon_url=interaction.user.display_avatar.url
+            )
+
+        except (AttributeError, TypeError, ValueError) as e:
+            # FIXED: More specific exception handling
+            embed = discord.Embed(
+                title="ℹ️ Bot Information",
+                description="Guild Management Bot - UI-First Discord Bot",
+                color=discord.Color.blue()
+            )
+            embed.add_field(
+                name="⚠️ Configuration Issue",
+                value="Some information could not be loaded. Use `/setup` to configure the bot.",
+                inline=False
+            )
+        except (discord.HTTPException, discord.DiscordException) as e:
+            # FIXED: Handle Discord-specific errors
             embed = discord.Embed(
                 title="❌ Error",
-                description="An error occurred while rolling dice.",
+                description=f"Failed to retrieve bot information: {str(e)}",
                 color=discord.Color.red()
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-    
-    def parse_and_roll_dice(self, dice_str: str) -> dict:
-        """Parse dice notation and roll the dice."""
-        dice_str = dice_str.lower().replace(" ", "")
-        
-        # Validate basic format
-        if not re.match(r'^[0-9d+\-*/khl]+$', dice_str):
-            raise ValueError("Invalid characters in dice notation. Use only numbers, d, +, -, *, /, k, h, l")
-        
-        # Split by dice groups (split on + or - but keep the operators)
-        parts = re.split(r'([+\-*/])', dice_str)
-        
-        total = 0
-        breakdown_parts = []
-        first_part = True
-        current_operator = '+'
-        
-        for part in parts:
-            if part in ['+', '-', '*', '/']:
-                current_operator = part
-                continue
-            
-            if not part:
-                continue
-            
-            # Check if this part contains dice notation
-            if 'd' in part:
-                dice_result = self.roll_dice_group(part)
-                value = dice_result['total']
-                breakdown_parts.append(f"{part} → {dice_result['breakdown']}")
-            else:
-                # It's just a number
-                try:
-                    value = int(part)
-                    breakdown_parts.append(str(value))
-                except ValueError:
-                    raise ValueError(f"Invalid number: {part}")
-            
-            # Apply the operation
-            if first_part:
-                total = value
-                first_part = False
-            else:
-                if current_operator == '+':
-                    total += value
-                elif current_operator == '-':
-                    total -= value
-                elif current_operator == '*':
-                    total *= value
-                elif current_operator == '/':
-                    if value == 0:
-                        raise ValueError("Cannot divide by zero")
-                    total = int(total / value)  # Integer division for dice
-        
-        return {
-            'total': total,
-            'breakdown': ' '.join(breakdown_parts) if len(breakdown_parts) > 1 else breakdown_parts[0] if breakdown_parts else str(total)
-        }
 
-    @staticmethod
-    def roll_dice_group(dice_group: str) -> dict:
-        """Roll a single group of dice (e.g., '3d6kh2')."""
-        # Parse keep highest/lowest
-        keep_highest = None
-        keep_lowest = None
-        
-        if 'kh' in dice_group:
-            dice_part, keep_part = dice_group.split('kh')
-            keep_highest = int(keep_part)
-        elif 'kl' in dice_group:
-            dice_part, keep_part = dice_group.split('kl')
-            keep_lowest = int(keep_part)
-        else:
-            dice_part = dice_group
-        
-        # Parse number of dice and die size
-        if 'd' not in dice_part:
-            raise ValueError(f"Invalid dice notation: {dice_group}")
-        
-        parts = dice_part.split('d')
-        if len(parts) != 2:
-            raise ValueError(f"Invalid dice notation: {dice_group}")
-        
-        try:
-            num_dice = int(parts[0]) if parts[0] else 1
-            die_size = int(parts[1])
-        except ValueError:
-            raise ValueError(f"Invalid dice notation: {dice_group}")
-        
-        # Validate ranges
-        if num_dice < 1 or num_dice > 100:
-            raise ValueError("Number of dice must be between 1 and 100")
-        
-        if die_size < 2 or die_size > 1000:
-            raise ValueError("Die size must be between 2 and 1000")
-        
-        if keep_highest and (keep_highest < 1 or keep_highest > num_dice):
-            raise ValueError("Keep highest must be between 1 and number of dice")
-        
-        if keep_lowest and (keep_lowest < 1 or keep_lowest > num_dice):
-            raise ValueError("Keep lowest must be between 1 and number of dice")
-        
-        # Roll the dice
-        rolls = [random.randint(1, die_size) for _ in range(num_dice)]
-        
-        # Apply keep highest/lowest
-        kept_rolls = rolls.copy()
-        dropped_rolls = []
-        
-        if keep_highest:
-            sorted_rolls = sorted(rolls, reverse=True)
-            kept_rolls = sorted_rolls[:keep_highest]
-            dropped_rolls = sorted_rolls[keep_highest:]
-        elif keep_lowest:
-            sorted_rolls = sorted(rolls)
-            kept_rolls = sorted_rolls[:keep_lowest]
-            dropped_rolls = sorted_rolls[keep_lowest:]
-        
-        total = sum(kept_rolls)
-        
-        # Create breakdown string
-        if keep_highest or keep_lowest:
-            kept_str = ', '.join(str(r) for r in kept_rolls)
-            if dropped_rolls:
-                dropped_str = ', '.join(f"~~{r}~~" for r in dropped_rolls)
-                breakdown = f"[{kept_str}, {dropped_str}] = {total}"
-            else:
-                breakdown = f"[{kept_str}] = {total}"
-        else:
-            if len(rolls) == 1:
-                breakdown = str(total)
-            else:
-                rolls_str = ', '.join(str(r) for r in rolls)
-                breakdown = f"[{rolls_str}] = {total}"
-        
-        return {
-            'total': total,
-            'breakdown': breakdown,
-            'rolls': rolls,
-            'kept_rolls': kept_rolls,
-            'dropped_rolls': dropped_rolls
-        }
-    
-    @app_commands.command(name="coinflip", description="Flip a coin")
-    async def coinflip(self, interaction: discord.Interaction):
-        """Flip a coin."""
-        result = random.choice(["Heads", "Tails"])
-        emoji = "🪙"
-        
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @discord.app_commands.command(name="help", description="Show help information")
+    async def help_command(self, interaction: discord.Interaction):
+        """Display comprehensive help information."""
         embed = discord.Embed(
-            title=f"{emoji} Coin Flip",
-            description=f"**{result}**",
-            color=discord.Color.gold()
+            title="📚 Help - Guild Management Bot",
+            description="A comprehensive Discord bot for gaming guild management",
+            color=discord.Color.blue()
         )
-        
-        embed.set_author(
-            name=interaction.user.display_name,
-            icon_url=interaction.user.display_avatar.url
+
+        # For Administrators
+        embed.add_field(
+            name="👑 For Administrators",
+            value=(
+                "**Setup & Configuration:**\n"
+                "• `/setup` - Initial bot configuration wizard\n"
+                "• `/deploy_panels` - Deploy Admin Dashboard and Member Hub\n"
+                "• `/config` - Access specific configuration sections\n\n"
+                "**Admin Dashboard Features:**\n"
+                "• Onboarding Queue - Review & approve new members\n"
+                "• Announcements - Create server announcements\n"
+                "• Role Management - Promote members & manage roles\n"
+                "• Poll Builder - Create community polls\n"
+                "• Moderation Center - Configure filters & view incidents\n"
+                "• Profile Admin - Manage member character profiles\n"
+                "• Configuration - Access all bot settings"
+            ),
+            inline=False
         )
-        
-        await interaction.response.send_message(embed=embed)
-    
-    @app_commands.command(name="choose", description="Choose randomly from a list of options")
-    @app_commands.describe(
-        options="Comma-separated list of options to choose from"
-    )
-    async def choose(self, interaction: discord.Interaction, options: str):
-        """Choose randomly from a list of options."""
-        option_list = [opt.strip() for opt in options.split(',') if opt.strip()]
-        
-        if len(option_list) < 2:
+
+        # For Members
+        embed.add_field(
+            name="👥 For Members",
+            value=(
+                "**Member Hub Features:**\n"
+                "• Start Onboarding - Complete server onboarding process\n"
+                "• My Characters - Manage character profiles\n"
+                "• Create Poll - Create community polls (if permitted)\n"
+                "• Report Message - Report inappropriate content\n"
+                "• Server Info & Rules - View server information\n\n"
+                "**Character Management:**\n"
+                "• Create multiple characters with names & archetypes\n"
+                "• Set one character as your \"main\"\n"
+                "• Add build notes and playstyle descriptions\n"
+                "• View other members' character profiles"
+            ),
+            inline=False
+        )
+
+        # Context Menus
+        embed.add_field(
+            name="🖱️ Context Menus (Right-click)",
+            value=(
+                "**On Messages:**\n"
+                "• Moderate Message - Delete, warn, or timeout\n"
+                "• Create Poll from Message - Turn message into poll\n\n"
+                "**On Users:**\n"
+                "• Manage User Roles - Add/remove roles (admin)\n"
+                "• View Character Profile - See user's characters"
+            ),
+            inline=False
+        )
+
+        # Key Features
+        embed.add_field(
+            name="🌟 Key Features",
+            value=(
+                "• **UI-First Design** - Everything through buttons & menus\n"
+                "• **Database-Driven** - All settings stored permanently\n"
+                "• **Admin-Controlled** - No automatic role assignments\n"
+                "• **Persistent Views** - Control panels survive bot restarts\n"
+                "• **Permission-Aware** - Proper access control everywhere"
+            ),
+            inline=False
+        )
+
+        # Getting Started
+        embed.add_field(
+            name="🚀 Getting Started",
+            value=(
+                "1. **Admins:** Run `/setup` to configure basic settings\n"
+                "2. **Deploy Panels:** Use `/deploy_panels` to add control panels\n"
+                "3. **Configure Features:** Use Admin Dashboard to set up onboarding, moderation, etc.\n"
+                "4. **Test Everything:** Use context menus and Member Hub features\n"
+                "5. **Invite Members:** They can complete onboarding and create profiles"
+            ),
+            inline=False
+        )
+
+        embed.set_footer(text="For detailed setup instructions, check the documentation or ask an administrator.")
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @discord.app_commands.command(name="status", description="Check bot and guild configuration status")
+    async def status(self, interaction: discord.Interaction):
+        """Check the current status of bot configuration."""
+        try:
+            # Check guild configuration
+            async with get_session() as session:
+                config = await session.get(GuildConfig, interaction.guild_id)
+
             embed = discord.Embed(
-                title="❌ Invalid Options",
-                description="Please provide at least 2 options separated by commas.",
+                title="📋 Configuration Status",
+                description=f"Status check for **{interaction.guild.name}**",
+                color=discord.Color.blue()
+            )
+
+            # Basic configuration
+            if config:
+                # Check channels
+                channels_configured = []
+                if config.welcome_channel_id:
+                    channel = interaction.guild.get_channel(config.welcome_channel_id)
+                    channels_configured.append(f"Welcome: {channel.mention if channel else '❌ Missing'}")
+                if config.logs_channel_id:
+                    channel = interaction.guild.get_channel(config.logs_channel_id)
+                    channels_configured.append(f"Logs: {channel.mention if channel else '❌ Missing'}")
+                if config.admin_dashboard_channel_id:
+                    channel = interaction.guild.get_channel(config.admin_dashboard_channel_id)
+                    channels_configured.append(f"Admin Dashboard: {channel.mention if channel else '❌ Missing'}")
+                if config.member_hub_channel_id:
+                    channel = interaction.guild.get_channel(config.member_hub_channel_id)
+                    channels_configured.append(f"Member Hub: {channel.mention if channel else '❌ Missing'}")
+
+                embed.add_field(
+                    name="📺 Configured Channels",
+                    value="\n".join(channels_configured) if channels_configured else "No channels configured",
+                    inline=False
+                )
+
+                # Default role
+                default_role = None
+                if config.default_member_role_id:
+                    default_role = interaction.guild.get_role(config.default_member_role_id)
+
+                embed.add_field(
+                    name="👤 Default Member Role",
+                    value=default_role.mention if default_role else "Not configured",
+                    inline=True
+                )
+
+                embed.add_field(
+                    name="🕐 Timezone Offset",
+                    value=f"UTC{config.timezone_offset:+d}" if config.timezone_offset != 0 else "UTC",
+                    inline=True
+                )
+
+                embed.add_field(
+                    name="📅 Configured",
+                    value=discord.utils.format_dt(config.created_at, 'R'),
+                    inline=True
+                )
+
+                # Check panel deployment
+                panels_status = []
+                if config.admin_dashboard_message_id:
+                    panels_status.append("✅ Admin Dashboard deployed")
+                else:
+                    panels_status.append("❌ Admin Dashboard not deployed")
+
+                if config.member_hub_message_id:
+                    panels_status.append("✅ Member Hub deployed")
+                else:
+                    panels_status.append("❌ Member Hub not deployed")
+
+                embed.add_field(
+                    name="🎛️ Control Panels",
+                    value="\n".join(panels_status),
+                    inline=False
+                )
+
+            else:
+                embed.add_field(
+                    name="❌ Not Configured",
+                    value="This guild has not been configured yet. Run `/setup` to get started.",
+                    inline=False
+                )
+
+            # Bot permissions check
+            bot_permissions = interaction.guild.me.guild_permissions
+            required_perms = [
+                ("Manage Roles", bot_permissions.manage_roles),
+                ("Send Messages", bot_permissions.send_messages),
+                ("Embed Links", bot_permissions.embed_links),
+                ("Read Message History", bot_permissions.read_message_history),
+                ("Manage Messages", bot_permissions.manage_messages),
+                ("Moderate Members", bot_permissions.moderate_members),
+            ]
+
+            perm_status = []
+            for perm_name, has_perm in required_perms:
+                status = "✅" if has_perm else "❌"
+                perm_status.append(f"{status} {perm_name}")
+
+            embed.add_field(
+                name="🔒 Bot Permissions",
+                value="\n".join(perm_status),
+                inline=False
+            )
+
+        except (AttributeError, TypeError, ValueError) as e:
+            # FIXED: More specific exception handling
+            embed = discord.Embed(
+                title="❌ Configuration Error",
+                description="Failed to load configuration status. Database may need initialization.",
                 color=discord.Color.red()
             )
             embed.add_field(
-                name="Example",
-                value="`/choose options:pizza, tacos, sushi, burgers`",
+                name="Suggested Action",
+                value="Run `/setup` to initialize the bot configuration.",
                 inline=False
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
-        
-        if len(option_list) > 20:
+        except (discord.HTTPException, discord.DiscordException) as e:
+            # FIXED: Handle Discord-specific errors
             embed = discord.Embed(
-                title="❌ Too Many Options",
-                description="Please provide no more than 20 options.",
+                title="❌ Discord Error",
+                description=f"Failed to check status: {str(e)}",
                 color=discord.Color.red()
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
-        
-        choice = random.choice(option_list)
-        
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @discord.app_commands.command(name="version", description="Show bot version information")
+    async def version(self, interaction: discord.Interaction):
+        """Display bot version and technical information."""
+        import discord as discord_version
+        import sys
+
         embed = discord.Embed(
-            title="🎯 Random Choice",
-            description=f"**{choice}**",
+            title="🔧 Version Information",
             color=discord.Color.green()
         )
-        
+
         embed.add_field(
-            name="Options",
-            value=", ".join(f"`{opt}`" for opt in option_list),
-            inline=False
-        )
-        
-        embed.set_author(
-            name=interaction.user.display_name,
-            icon_url=interaction.user.display_avatar.url
-        )
-        
-        await interaction.response.send_message(embed=embed)
-    
-    @app_commands.command(name="random", description="Generate a random number")
-    @app_commands.describe(
-        minimum="Minimum value (default: 1)",
-        maximum="Maximum value (default: 100)"
-    )
-    async def random_number(self, interaction: discord.Interaction, minimum: int = 1, maximum: int = 100):
-        """Generate a random number between min and max."""
-        if minimum >= maximum:
-            embed = discord.Embed(
-                title="❌ Invalid Range",
-                description="Minimum value must be less than maximum value.",
-                color=discord.Color.red()
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
-        
-        if maximum - minimum > 1000000:
-            embed = discord.Embed(
-                title="❌ Range Too Large",
-                description="Range must be 1,000,000 or less.",
-                color=discord.Color.red()
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
-        
-        result = random.randint(minimum, maximum)
-        
-        embed = discord.Embed(
-            title="🔢 Random Number",
-            description=f"**{result}**",
-            color=discord.Color.blue()
-        )
-        
-        embed.add_field(
-            name="Range",
-            value=f"{minimum} - {maximum}",
+            name="Bot Version",
+            value="2.0.0 (Guild Management Bot)",
             inline=True
         )
-        
-        embed.set_author(
-            name=interaction.user.display_name,
-            icon_url=interaction.user.display_avatar.url
-        )
-        
-        await interaction.response.send_message(embed=embed)
-    
-    @app_commands.command(name="8ball", description="Ask the magic 8-ball a question")
-    @app_commands.describe(question="Your yes/no question")
-    async def eight_ball(self, interaction: discord.Interaction, question: str):
-        """Magic 8-ball responses."""
-        responses = [
-            "It is certain.", "It is decidedly so.", "Without a doubt.", "Yes definitely.",
-            "You may rely on it.", "As I see it, yes.", "Most likely.", "Outlook good.",
-            "Yes.", "Signs point to yes.", "Reply hazy, try again.", "Ask again later.",
-            "Better not tell you now.", "Cannot predict now.", "Concentrate and ask again.",
-            "Don't count on it.", "My reply is no.", "My sources say no.", "Outlook not so good.",
-            "Very doubtful."
-        ]
-        
-        response = random.choice(responses)
-        
-        # Determine color based on response type
-        positive_responses = responses[:10]
-        neutral_responses = responses[10:15]
-        negative_responses = responses[15:]
-        
-        if response in positive_responses:
-            color = discord.Color.green()
-        elif response in neutral_responses:
-            color = discord.Color.yellow()
-        else:
-            color = discord.Color.red()
-        
-        embed = discord.Embed(
-            title="🎱 Magic 8-Ball",
-            color=color
-        )
-        
+
         embed.add_field(
-            name="Question",
-            value=question,
+            name="Discord.py",
+            value=f"v{discord_version.__version__}",
+            inline=True
+        )
+
+        embed.add_field(
+            name="Python",
+            value=f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
+            inline=True
+        )
+
+        embed.add_field(
+            name="Key Features",
+            value=(
+                "• SQLAlchemy 2.x with async support\n"
+                "• Persistent UI components\n"
+                "• Database-driven configuration\n"
+                "• Comprehensive permission system"
+            ),
             inline=False
         )
-        
-        embed.add_field(
-            name="Answer",
-            value=f"*{response}*",
-            inline=False
-        )
-        
-        embed.set_author(
-            name=interaction.user.display_name,
-            icon_url=interaction.user.display_avatar.url
-        )
-        
-        await interaction.response.send_message(embed=embed)
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 async def setup(bot):
-    """Setup function for the cog."""
-    await bot.add_cog(GeneralCog(bot))
+    """Setup function to add the cog to the bot."""
+    await bot.add_cog(General(bot))
