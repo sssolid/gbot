@@ -13,7 +13,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/migrations/initial_data.py</file>
-  <line>224</line>
+  <line>230</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/migrations/initial_data.py" />
   <problem_class id="PyShadowingNamesInspection" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Shadowing names from outer scopes</problem_class>
@@ -25,7 +25,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/migrations/initial_data.py</file>
-  <line>268</line>
+  <line>277</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/migrations/initial_data.py" />
   <problem_class id="PyShadowingNamesInspection" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Shadowing names from outer scopes</problem_class>
@@ -37,7 +37,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/migrations/initial_data.py</file>
-  <line>309</line>
+  <line>318</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/migrations/initial_data.py" />
   <problem_class id="PyShadowingNamesInspection" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Shadowing names from outer scopes</problem_class>
@@ -49,7 +49,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/migrations/initial_data.py</file>
-  <line>365</line>
+  <line>374</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/migrations/initial_data.py" />
   <problem_class id="PyShadowingNamesInspection" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Shadowing names from outer scopes</problem_class>
@@ -61,7 +61,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/migrations/initial_data.py</file>
-  <line>380</line>
+  <line>389</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/migrations/initial_data.py" />
   <problem_class id="PyShadowingNamesInspection" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Shadowing names from outer scopes</problem_class>

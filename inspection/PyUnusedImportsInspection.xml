@@ -48,6 +48,18 @@
   <length>39</length>
 </problem>
 <problem>
+  <file>file://$PROJECT_DIR$/cogs/profiles.py</file>
+  <line>13</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/cogs/profiles.py" />
+  <problem_class id="PyUnusedImportsInspection" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused imports</problem_class>
+  <description>Unused import statement &lt;code&gt;CharacterViewerView&lt;/code&gt;</description>
+  <highlighted_element>CharacterViewerView</highlighted_element>
+  <language>Python</language>
+  <offset>49</offset>
+  <length>19</length>
+</problem>
+<problem>
   <file>file://$PROJECT_DIR$/context_menus.py</file>
   <line>6</line>
   <module>guildbot</module>
@@ -58,30 +70,6 @@
   <language>Python</language>
   <offset>0</offset>
   <length>29</length>
-</problem>
-<problem>
-  <file>file://$PROJECT_DIR$/database.py</file>
-  <line>5</line>
-  <module>guildbot</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/database.py" />
-  <problem_class id="PyUnusedImportsInspection" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused imports</problem_class>
-  <description>Unused import statement &lt;code&gt;Any&lt;/code&gt;</description>
-  <highlighted_element>Any</highlighted_element>
-  <language>Python</language>
-  <offset>19</offset>
-  <length>3</length>
-</problem>
-<problem>
-  <file>file://$PROJECT_DIR$/database.py</file>
-  <line>5</line>
-  <module>guildbot</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/database.py" />
-  <problem_class id="PyUnusedImportsInspection" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused imports</problem_class>
-  <description>Unused import statement &lt;code&gt;Dict&lt;/code&gt;</description>
-  <highlighted_element>Dict</highlighted_element>
-  <language>Python</language>
-  <offset>24</offset>
-  <length>4</length>
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/migrate.py</file>
@@ -97,7 +85,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/migrations/initial_data.py</file>
-  <line>7</line>
+  <line>8</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/migrations/initial_data.py" />
   <problem_class id="PyUnusedImportsInspection" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused imports</problem_class>
@@ -109,7 +97,7 @@
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/migrations/initial_data.py</file>
-  <line>7</line>
+  <line>8</line>
   <module>guildbot</module>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/migrations/initial_data.py" />
   <problem_class id="PyUnusedImportsInspection" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused imports</problem_class>
@@ -118,6 +106,18 @@
   <language>Python</language>
   <offset>31</offset>
   <length>3</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/migrations/initial_data.py</file>
+  <line>11</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/migrations/initial_data.py" />
+  <problem_class id="PyUnusedImportsInspection" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused imports</problem_class>
+  <description>Unused import statement &lt;code&gt;from sqlalchemy import select&lt;/code&gt;</description>
+  <highlighted_element>from sqlalchemy import select</highlighted_element>
+  <language>Python</language>
+  <offset>0</offset>
+  <length>29</length>
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/onboarding.py</file>
@@ -166,18 +166,6 @@
   <language>Python</language>
   <offset>0</offset>
   <length>32</length>
-</problem>
-<problem>
-  <file>file://$PROJECT_DIR$/views/profiles.py</file>
-  <line>4</line>
-  <module>guildbot</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
-  <problem_class id="PyUnusedImportsInspection" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused imports</problem_class>
-  <description>Unused import statement &lt;code&gt;Optional&lt;/code&gt;</description>
-  <highlighted_element>Optional</highlighted_element>
-  <language>Python</language>
-  <offset>25</offset>
-  <length>8</length>
 </problem>
 <problem>
   <file>file://$PROJECT_DIR$/views/profiles.py</file>

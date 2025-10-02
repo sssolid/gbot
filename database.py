@@ -308,6 +308,64 @@ async def get_guild_config(guild_id: int) -> Optional[GuildConfig]:
         return result
 
 
+async def get_character_statistics(guild_id: int) -> Dict[str, Any]:
+    """Get character statistics for the guild."""
+    from sqlalchemy import select, func, and_
+
+    async with get_session() as session:
+        # Total characters
+        total_result = await session.execute(
+            select(func.count(Character.id))
+            .where(Character.guild_id == guild_id)
+        )
+        total_characters = total_result.scalar()
+
+        # Characters by race
+        race_result = await session.execute(
+            select(Character.race, func.count(Character.id))
+            .where(
+                and_(
+                    Character.guild_id == guild_id,
+                    Character.race.isnot(None)
+                )
+            )
+            .group_by(Character.race)
+        )
+        race_stats = dict(race_result.all())
+
+        # Characters by archetype
+        archetype_result = await session.execute(
+            select(Character.archetype, func.count(Character.id))
+            .where(
+                and_(
+                    Character.guild_id == guild_id,
+                    Character.archetype.isnot(None)
+                )
+            )
+            .group_by(Character.archetype)
+        )
+        archetype_stats = dict(archetype_result.all())
+
+        # Main characters
+        main_result = await session.execute(
+            select(func.count(Character.id))
+            .where(
+                and_(
+                    Character.guild_id == guild_id,
+                    Character.is_main == True
+                )
+            )
+        )
+        main_characters = main_result.scalar()
+
+        return {
+            "total_characters": total_characters,
+            "main_characters": main_characters,
+            "race_distribution": race_stats,
+            "archetype_distribution": archetype_stats
+        }
+
+
 async def log_message_action(guild_id: int, channel_id: int, message_id: int,
                            user_id: int, content: str, action: str,
                            attachments: List = None, embeds: List = None):

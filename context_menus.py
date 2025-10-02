@@ -139,7 +139,7 @@ class MessageModerationView(discord.ui.View):
     @discord.ui.button(label="Timeout User", style=discord.ButtonStyle.secondary, emoji="⏰") # type: ignore[arg-type]
     async def timeout_user(self, interaction: discord.Interaction, _button: discord.ui.Button):
         """Timeout the user who sent the message."""
-        if not PermissionChecker.has_permission(interaction.user, "moderate_members"):
+        if not PermissionChecker.is_moderator(interaction.user):
             embed = PermissionChecker.get_permission_error_embed(
                 "timeout users",
                 "Administrator, Manage Server, or Moderate Members"
@@ -267,8 +267,8 @@ class CreatePollFromMessage(commands.Cog):
         """Create a poll based on a message."""
         # Check if user can create polls
         try:
-            from utils.cache import get_config
-            config = await get_config(self.bot, interaction.guild_id, "poll_permissions", {})
+            from utils.cache import get_guild_config
+            config = await get_guild_config(self.bot, interaction.guild_id, "poll_permissions", {})
             allowed_roles = config.get("creator_roles", [])
 
             if allowed_roles:

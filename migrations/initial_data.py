@@ -3,8 +3,14 @@ Initial database migration for Guild Management Bot
 Populates essential onboarding questions and configuration data.
 """
 import asyncio
+import os
 from datetime import datetime, timezone
 from typing import Dict, List, Any
+
+from dotenv import load_dotenv
+from sqlalchemy import select
+
+load_dotenv()
 
 from database import (
     OnboardingQuestion, OnboardingRule, get_session, setup_database
@@ -236,12 +242,15 @@ async def populate_onboarding_questions(guild_id: int) -> int:
 
         for question_data in DEFAULT_ONBOARDING_QUESTIONS:
             # Check if question already exists
+            from sqlalchemy import select
+
             existing = await session.execute(
-                session.query(OnboardingQuestion).filter(
+                select(OnboardingQuestion).filter(
                     OnboardingQuestion.guild_id == guild_id,
                     OnboardingQuestion.qid == question_data["qid"]
                 )
             )
+
             if existing.scalar_one_or_none():
                 continue  # Skip if already exists
 
@@ -414,17 +423,17 @@ async def quick_setup():
     Creates sample data for guild ID 123456789 (replace with actual guild ID).
     """
     # Replace this with your actual guild ID for testing
-    TEST_GUILD_ID = 123456789
+    DEV_GUILD_ID = int(os.getenv("DEV_GUILD_ID", None))
 
     print("🚀 Quick Setup - Creating sample onboarding data...")
-    print(f"Guild ID: {TEST_GUILD_ID}")
-    print("⚠️  Replace TEST_GUILD_ID with your actual Discord server ID!")
+    print(f"Guild ID: {DEV_GUILD_ID}")
+    print("⚠️  Replace DEV_GUILD_ID with your actual Discord server ID!")
 
     try:
-        result = await run_initial_migration(TEST_GUILD_ID)
+        result = await run_initial_migration(DEV_GUILD_ID)
         print("\n✅ Quick setup completed!")
         print("Next steps:")
-        print("1. Update TEST_GUILD_ID in this script with your Discord server ID")
+        print("1. Update DEV_GUILD_ID in this script or .env with your Discord server ID")
         print("2. Run the bot and use /setup to configure channels")
         print("3. Use /deploy_panels to add the Admin Dashboard and Member Hub")
         print("4. Test the onboarding process through the Member Hub")

@@ -251,8 +251,9 @@ class MemberHub(discord.ui.View):
                 color=discord.Color.green()
             )
 
-        from views.onboarding import OnboardingWizard
-        wizard = OnboardingWizard(existing_session.id if existing_session else None)
+        from views.onboarding import OnboardingView
+        wizard = OnboardingView()
+        wizard.session_id = existing_session.id if existing_session else None
         await wizard.load_questions(interaction.guild_id)
         await wizard.load_session(interaction.user.id, interaction.guild_id)
 

@@ -26,7 +26,7 @@ def print_help():
     print("  python migrate.py <command> [options]")
     print()
     print("Commands:")
-    print("  init <guild_id>     Initialize onboarding data for specific guild")
+    print("  init <guild_id>    Initialize onboarding data for specific guild")
     print("  init-all           Initialize data for all configured guilds")
     print("  quick-setup        Quick setup with sample data (for testing)")
     print("  help               Show this help message")

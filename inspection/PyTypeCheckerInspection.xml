@@ -96,6 +96,30 @@
   <length>17</length>
 </problem>
 <problem>
+  <file>file://$PROJECT_DIR$/database.py</file>
+  <line>334</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/database.py" />
+  <problem_class id="PyTypeCheckerInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect type</problem_class>
+  <description>Unexpected type(s): (Sequence[Row[tuple[Any, Any]]]) Possible type(s): (SupportsKeysAndGetItem[Any, Any]) (SupportsKeysAndGetItem[str, Any]) (Iterable[tuple[Any, Any]]) (Iterable[tuple[str, Any]]) (Iterable[list[str]]) (Iterable[list[bytes]])</description>
+  <highlighted_element>race_result.all()</highlighted_element>
+  <language>Python</language>
+  <offset>26</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/database.py</file>
+  <line>347</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/database.py" />
+  <problem_class id="PyTypeCheckerInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect type</problem_class>
+  <description>Unexpected type(s): (Sequence[Row[tuple[Any, Any]]]) Possible type(s): (SupportsKeysAndGetItem[Any, Any]) (SupportsKeysAndGetItem[str, Any]) (Iterable[tuple[Any, Any]]) (Iterable[tuple[str, Any]]) (Iterable[list[str]]) (Iterable[list[bytes]])</description>
+  <highlighted_element>archetype_result.all()</highlighted_element>
+  <language>Python</language>
+  <offset>31</offset>
+  <length>22</length>
+</problem>
+<problem>
   <file>file://$PROJECT_DIR$/views/configuration.py</file>
   <line>146</line>
   <module>guildbot</module>
@@ -142,5 +166,29 @@
   <language>Python</language>
   <offset>22</offset>
   <length>172</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>1105</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyTypeCheckerInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect type</problem_class>
+  <description>Expected type 'ButtonStyle', got 'int' instead</description>
+  <highlighted_element>style=discord.ButtonStyle.secondary</highlighted_element>
+  <language>Python</language>
+  <offset>46</offset>
+  <length>35</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/views/profiles.py</file>
+  <line>1199</line>
+  <module>guildbot</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/views/profiles.py" />
+  <problem_class id="PyTypeCheckerInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect type</problem_class>
+  <description>Expected type 'ButtonStyle', got 'int' instead</description>
+  <highlighted_element>style=discord.ButtonStyle.primary</highlighted_element>
+  <language>Python</language>
+  <offset>53</offset>
+  <length>33</length>
 </problem>
 </problems>

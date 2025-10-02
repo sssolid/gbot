@@ -10,7 +10,7 @@ from sqlalchemy import select, and_
 
 from database import User, Character, get_session, get_character_statistics
 from utils.permissions import PermissionChecker
-from views.profiles import CharacterManagerView, CharacterStatsView, AdminCharacterBrowserView
+from views.profiles import CharacterManagerView, CharacterViewerView, AdminCharacterBrowserView
 
 
 class ProfilesCog(commands.Cog):

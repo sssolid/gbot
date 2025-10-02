@@ -1,14 +1,14 @@
 """
 Character profile management views for the Guild Management Bot - FIXED VERSION
 """
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from datetime import datetime, timezone
 
 import discord
 from sqlalchemy import select, and_, update, delete, func
 from discord.ext import commands
 
-from database import Character, User, get_session
+from database import Character, User, get_session, get_character_statistics
 from utils.permissions import PermissionChecker
 
 
@@ -1043,3 +1043,161 @@ class CharacterSearchModal(discord.ui.Modal):
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
+
+
+class CharacterStatsView(discord.ui.View):
+    """View for displaying guild character statistics."""
+
+    def __init__(self, stats: Dict[str, Any]):
+        super().__init__(timeout=300)
+        self.stats = stats
+
+    async def show_stats(self, interaction: discord.Interaction):
+        """Display character statistics."""
+        embed = discord.Embed(
+            title="📊 Guild Character Statistics",
+            description="Overview of guild member characters",
+            color=discord.Color.green()
+        )
+
+        # General stats
+        embed.add_field(
+            name="📈 General Statistics",
+            value=f"**Total Characters:** {self.stats['total_characters']}\n**Main Characters:** {self.stats['main_characters']}",
+            inline=False
+        )
+
+        # Race distribution
+        if self.stats['race_distribution']:
+            race_text = []
+            for race, count in sorted(self.stats['race_distribution'].items(), key=lambda x: x[1], reverse=True):
+                race_text.append(f"**{race}:** {count}")
+
+            embed.add_field(
+                name="🧬 Race Distribution",
+                value="\n".join(race_text[:10]),  # Top 10 races
+                inline=True
+            )
+
+        # Archetype distribution
+        if self.stats['archetype_distribution']:
+            archetype_text = []
+            for archetype, count in sorted(self.stats['archetype_distribution'].items(), key=lambda x: x[1], reverse=True):
+                archetype_text.append(f"**{archetype}:** {count}")
+
+            embed.add_field(
+                name="⚔️ Archetype Distribution",
+                value="\n".join(archetype_text[:10]),  # Top 10 archetypes
+                inline=True
+            )
+
+        if not self.stats['race_distribution'] and not self.stats['archetype_distribution']:
+            embed.add_field(
+                name="ℹ️ No Data",
+                value="No character data available yet. Encourage members to create character profiles!",
+                inline=False
+            )
+
+        embed.set_footer(text="💡 Character data helps with guild planning and organization")
+
+        await interaction.response.send_message(embed=embed, view=self, ephemeral=True)
+
+    @discord.ui.button(label="Refresh Stats", style=discord.ButtonStyle.secondary, emoji="🔄")
+    async def refresh_stats(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Refresh character statistics."""
+        new_stats = await get_character_statistics(interaction.guild_id)
+        self.stats = new_stats
+
+        await self.show_stats(interaction)
+
+
+class AdminCharacterBrowserView(discord.ui.View):
+    """Admin view for browsing all member characters."""
+
+    def __init__(self, member: Optional[discord.Member] = None):
+        super().__init__(timeout=300)
+        self.target_member = member
+        self.characters: List[Character] = []
+
+    async def show_admin_characters(self, interaction: discord.Interaction):
+        """Show character browser for admins."""
+        if self.target_member:
+            await self.load_member_characters(interaction.guild_id, self.target_member.id)
+            embed = discord.Embed(
+                title=f"👤 {self.target_member.display_name}'s Characters",
+                description="Admin view of member's characters",
+                color=discord.Color.orange()
+            )
+        else:
+            await self.load_all_characters(interaction.guild_id)
+            embed = discord.Embed(
+                title="👥 All Guild Characters",
+                description="Admin overview of all member characters",
+                color=discord.Color.orange()
+            )
+
+        if not self.characters:
+            embed.add_field(
+                name="No Characters",
+                value="No characters found.",
+                inline=False
+            )
+        else:
+            char_summary = []
+            for char in self.characters[:10]:  # Show first 10
+                owner = interaction.guild.get_member(char.user_id) if hasattr(char, 'user_id') else None
+                owner_name = owner.display_name if owner else "Unknown"
+                main_indicator = "⭐ " if char.is_main else ""
+                race_text = f" ({char.race})" if char.race else ""
+
+                char_summary.append(f"{main_indicator}**{char.name}**{race_text} - {owner_name}")
+
+            embed.add_field(
+                name="Characters",
+                value="\n".join(char_summary),
+                inline=False
+            )
+
+            if len(self.characters) > 10:
+                embed.add_field(
+                    name="Note",
+                    value=f"Showing 10 of {len(self.characters)} characters. Use character statistics for full overview.",
+                    inline=False
+                )
+
+        await interaction.response.send_message(embed=embed, view=self, ephemeral=True)
+
+    async def load_member_characters(self, guild_id: int, user_id: int):
+        """Load characters for a specific member."""
+        async with get_session() as session:
+            result = await session.execute(
+                select(User).where(
+                    and_(
+                        User.user_id == user_id,
+                        User.guild_id == guild_id
+                    )
+                )
+            )
+            db_user = result.scalar_one_or_none()
+
+            if db_user:
+                result = await session.execute(
+                    select(Character).where(Character.user_id == db_user.id)
+                    .order_by(Character.is_main.desc(), Character.created_at)
+                )
+                self.characters = result.scalars().all()
+
+    async def load_all_characters(self, guild_id: int):
+        """Load all characters in the guild."""
+        async with get_session() as session:
+            result = await session.execute(
+                select(Character).where(Character.guild_id == guild_id)
+                .order_by(Character.is_main.desc(), Character.created_at)
+            )
+            self.characters = result.scalars().all()
+
+    @discord.ui.button(label="Character Statistics", style=discord.ButtonStyle.primary, emoji="📊")
+    async def show_character_stats(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Show detailed character statistics."""
+        stats = await get_character_statistics(interaction.guild_id)
+        view = CharacterStatsView(stats)

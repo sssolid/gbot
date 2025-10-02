@@ -7,7 +7,7 @@ from discord.ext import commands
 from sqlalchemy import select, and_, delete
 
 from database import OnboardingSession, OnboardingQuestion, get_session
-from views.onboarding import OnboardingWizard
+from views.onboarding import OnboardingView
 from utils.permissions import PermissionChecker
 
 
@@ -48,7 +48,8 @@ class OnboardingCog(commands.Cog):
             )
         
         # Create wizard and load questions
-        wizard = OnboardingWizard(existing_session.id if existing_session else None)
+        wizard = OnboardingView()
+        wizard.session_id = existing_session.id if existing_session else None
         await wizard.load_questions(interaction.guild_id)
         
         # Check if there are any questions configured
