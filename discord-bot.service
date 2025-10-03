@@ -1,0 +1,48 @@
+# File: discord-bot.service
+# Location: /etc/systemd/system/discord-bot.service
+# Systemd service file for production deployment
+
+[Unit]
+Description=Discord Onboarding & Member Management Bot
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=botuser
+Group=botuser
+WorkingDirectory=/home/botuser/discord-onboarding-bot
+Environment="PATH=/home/botuser/discord-onboarding-bot/venv/bin"
+
+# Start command
+ExecStart=/home/botuser/discord-onboarding-bot/venv/bin/python bot/bot.py
+
+# Restart configuration
+Restart=always
+RestartSec=10
+StartLimitInterval=200
+StartLimitBurst=5
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/home/botuser/discord-onboarding-bot
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=discord-bot
+
+[Install]
+WantedBy=multi-user.target
+
+# Installation instructions:
+# 1. Copy this file to /etc/systemd/system/discord-bot.service
+# 2. Update User, Group, and paths to match your installation
+# 3. Run: sudo systemctl daemon-reload
+# 4. Run: sudo systemctl enable discord-bot
+# 5. Run: sudo systemctl start discord-bot
+# 6. Check status: sudo systemctl status discord-bot
+# 7. View logs: journalctl -u discord-bot -f

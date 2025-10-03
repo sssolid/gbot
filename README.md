@@ -1,354 +1,424 @@
-# Discord Guild Management Bot
+# Discord Onboarding & Member Management Bot
 
-A comprehensive Discord bot for gaming guild management with a UI-first approach, database-backed configuration, and admin-approval workflows.
+A comprehensive Discord bot for automating member onboarding, application review, and character profile management. Built with Python, discord.py, and SQLAlchemy.
 
-## 🌟 Features
+## Features
 
-### 🎛️ UI-First Design
-- **No command memorization required** - Everything accessible through buttons, dropdowns, and menus
-- **Persistent control panels** - Admin Dashboard and Member Hub with always-active controls
-- **Context menus** - Right-click actions for quick moderation and management
-- **Modal forms** - Intuitive forms for data entry
+- 🎯 **Multi-Step Application System** - Interactive onboarding with modals, selects, and buttons
+- 👥 **Moderation Workflow** - Streamlined review queue for moderators
+- 🎮 **Character Management** - Track game characters (Mortal Online 2 and more)
+- ⚙️ **Fully Configurable** - No hard-coded values, everything stored in database
+- 🔒 **Role-Based Permissions** - Admin, Moderator, Member, and Applicant tiers
+- 📊 **Audit Logging** - Track all moderator actions
+- 🚀 **PostgreSQL Ready** - SQLite by default, easy migration to PostgreSQL
 
-### 📋 Onboarding System
-- **Custom questions** - Create text or single-select questions for new members
-- **Rule-based suggestions** - Automatically suggest roles based on answers
-- **Admin approval required** - No automatic role assignment, admins review all applications
-- **Resume capability** - Members can continue incomplete onboarding sessions
+## Table of Contents
 
-### 👤 Character Profiles
-- **Multiple characters per user** - Support for gaming alts and different characters
-- **Main character designation** - Set one character as primary
-- **Archetype and build notes** - Store character class and build information
-- **Admin management** - Admins can view and manage all user profiles
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Initial Setup](#initial-setup)
+- [Commands](#commands)
+- [Database Management](#database-management)
+- [Operations Guide](#operations-guide)
+- [Troubleshooting](#troubleshooting)
 
-### 📊 Polls & Voting
-- **Rich poll creation** - Up to 10 options with visual vote bars
-- **Anonymous voting** - Option for anonymous or public votes
-- **Scheduling** - Set poll duration with automatic closing
-- **Real-time results** - Live vote count updates
+## Requirements
 
-### 📢 Announcements
-- **Rich formatting** - Embed-based announcements with author attribution
-- **Scheduling** - Schedule announcements for future posting
-- **Channel targeting** - Send to specific channels
-- **@everyone support** - Optional mass mentions
+- Python 3.9 or higher
+- Discord Bot Token ([Create one here](https://discord.com/developers/applications))
+- SQLite (included with Python) or PostgreSQL (optional)
 
-### 🛡️ Auto-Moderation
-- **Spam detection** - Configurable message and mention limits
-- **Swear filtering** - Custom word lists with wildcard support
-- **Channel-specific** - Only moderate selected channels
-- **Staff exemptions** - Exclude moderator roles from filtering
-- **Incident logging** - Complete audit trail of all moderation actions
+## Installation
 
-### ⚙️ Configuration Management
-- **Live configuration** - All settings stored in database, no restarts required
-- **UI-based setup** - Configure everything through Discord interfaces
-- **Guild-specific** - Separate settings per Discord server
-- **Export/import ready** - Database-backed for easy backup and migration
+### 1. Clone or Download
 
-## 🚀 Quick Start
-
-### Prerequisites
-- Python 3.11 or higher
-- Discord bot token from [Discord Developer Portal](https://discord.com/developers/applications)
-- PostgreSQL database (optional, SQLite used by default)
-
-### Installation
-
-1. **Clone the repository**
 ```bash
 git clone <repository-url>
-cd discord-guild-bot
+cd discord-onboarding-bot
 ```
 
-2. **Install dependencies**
+### 2. Create Virtual Environment
+
+```bash
+python -m venv venv
+
+# Activate on Windows
+venv\Scripts\activate
+
+# Activate on Linux/Mac
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-3. **Configure environment**
+### 4. Configure Environment
+
 ```bash
+# Copy the example environment file
 cp .env.example .env
-# Edit .env and add your Discord bot token
+
+# Edit .env with your values
+nano .env  # or use your preferred editor
 ```
 
-4. **Run the bot**
-```bash
-python main.py
+**Required Environment Variables:**
+
+```env
+DISCORD_TOKEN=your_bot_token_here
+DATABASE_URL=sqlite:///bot.db
 ```
 
-### Initial Setup
+## Configuration
 
-1. **Invite the bot to your server** with the following permissions:
+### Discord Bot Setup
+
+1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
+2. Click "New Application"
+3. Go to "Bot" section and click "Add Bot"
+4. Under "Privileged Gateway Intents", enable:
+   - ✅ Server Members Intent
+   - ✅ Message Content Intent
+5. Copy the bot token and add to `.env`
+6. Go to "OAuth2 > URL Generator"
+7. Select scopes: `bot` and `applications.commands`
+8. Select permissions:
    - Manage Roles
-   - Manage Channels
+   - Ban Members
    - Send Messages
    - Embed Links
-   - Read Message History
-   - Moderate Members
+   - Use Slash Commands
+9. Copy the generated URL and invite the bot to your server
 
-2. **Run the setup wizard**
-   ```
-   /setup
-   ```
+### Database Configuration
 
-3. **Deploy control panels**
-   - Use the setup wizard to deploy Admin Dashboard and Member Hub
-   - Admin Dashboard goes in a staff-only channel
-   - Member Hub goes in a public channel (welcome/general)
-
-4. **Configure onboarding** (optional)
-   - Add questions through the Admin Dashboard
-   - Set up role suggestion rules
-   - Test the onboarding flow
-
-## 📖 Usage Guide
-
-### For Administrators
-
-#### Admin Dashboard
-Access all administrative functions through the persistent Admin Dashboard:
-
-- **Onboarding Queue** - Review and approve new member applications
-- **Announcements** - Create server announcements with scheduling
-- **Promotions & Roles** - Manage member roles and promotions
-- **Poll Builder** - Create polls for community engagement
-- **Moderation Center** - Configure spam/swear filters and view incidents
-- **Profiles Admin** - Manage member character profiles
-- **Configuration** - Access all bot settings and deployment tools
-
-#### Key Commands
-- `/setup` - Initial configuration wizard
-- `/config` - Access specific configuration sections
-- `/deploy_panels` - Deploy control panels
-- `/info` - View bot status and configuration
-
-#### Context Menus (Right-click)
-- **Messages**: Moderate message, Create poll from message
-- **Users**: Manage roles, View profile
-
-### For Members
-
-#### Member Hub
-Access member features through the persistent Member Hub:
-
-- **Start Onboarding** - Complete the server onboarding process
-- **My Characters** - Manage your character profiles
-- **Create Poll** - Create polls (if permitted by role)
-- **Report Message** - Report inappropriate content
-- **Server Info & Rules** - View server information
-
-#### Character Management
-- Create multiple characters with names, archetypes, and build notes
-- Set one character as your "main"
-- View other members' profiles
-
-#### Polls & Voting
-- Vote on community polls
-- View real-time results
-- Create polls if you have permission
-
-### For Moderators
-
-#### Moderation Tools
-- Access through Admin Dashboard > Moderation Center
-- Configure spam and swear filters
-- Set watched channels and staff exemptions
-- View recent incidents and take action
-
-#### Quick Actions
-- `/warn @user reason` - Warn a user
-- `/timeout @user duration reason` - Timeout a user
-- Context menu moderation on messages and users
-
-## 🗄️ Database Schema
-
-The bot uses SQLAlchemy 2.x with async support. Key tables:
-
-### Core Configuration
-- `guild_configs` - Basic guild settings (channels, roles)
-- `config_kv` - Key-value configuration storage
-- `users` - Guild member records
-- `characters` - Member character profiles
-
-### Onboarding System
-- `onboarding_questions` - Custom onboarding questions
-- `onboarding_rules` - Role suggestion rules
-- `onboarding_sessions` - Member onboarding progress
-
-### Features
-- `polls` / `poll_votes` - Poll system
-- `announcements` - Announcement history
-- `moderation_incidents` - Moderation audit log
-
-### Database Migration
-The bot automatically creates tables on first run. For production deployments:
-
-1. **SQLite** (default): `sqlite:///guild_bot.sqlite`
-2. **PostgreSQL**: `postgresql+asyncpg://user:pass@host/db`
-
-## 🔧 Configuration
-
-### Environment Variables
-See `.env.example` for all available options:
-
-- `DISCORD_TOKEN` - Bot token (required)
-- `DATABASE_URL` - Database connection string
-- `LOG_LEVEL` - Logging verbosity
-
-### Guild Settings
-All guild-specific settings are managed through the Discord UI:
-
-1. **Basic Settings** - Channels, default roles
-2. **Onboarding** - Questions, rules, approval workflow
-3. **Moderation** - Spam/swear filters, watched channels
-4. **Polls** - Default settings, creator permissions
-5. **Panels** - Control panel deployment
-
-## 📁 Project Structure
-
-```
-discord-guild-bot/
-├── main.py                 # Bot entry point
-├── bot.py                  # Main bot class
-├── database.py             # Database models and setup
-├── context_menus.py        # Right-click commands
-├── requirements.txt        # Python dependencies
-├── .env.example           # Environment template
-├── README.md              # This file
-│
-├── utils/
-│   ├── permissions.py     # Permission checking utilities
-│   └── cache.py          # Configuration caching
-│
-├── views/
-│   ├── panels.py         # Main control panels
-│   ├── onboarding.py     # Onboarding UI components
-│   ├── profiles.py       # Character profile management
-│   ├── polls.py          # Poll creation and voting
-│   ├── moderation.py     # Moderation interfaces
-│   ├── announcements.py  # Announcement system
-│   └── configuration.py  # Settings management
-│
-└── cogs/
-    ├── onboarding.py     # Onboarding commands
-    ├── profiles.py       # Profile commands
-    ├── polls.py          # Poll commands
-    ├── moderation.py     # Moderation commands
-    ├── announcements.py  # Announcement commands
-    └── configuration.py  # Configuration commands
+**SQLite (Default):**
+```env
+DATABASE_URL=sqlite:///bot.db
 ```
 
-## 🔒 Security & Permissions
+**PostgreSQL (Production):**
+```env
+DATABASE_URL=postgresql://username:password@localhost:5432/dbname
+```
 
-### Bot Permissions
-The bot requires specific Discord permissions to function:
+## Initial Setup
 
-**Essential Permissions:**
-- Manage Roles (for role assignment)
-- Send Messages (for all communications)
-- Embed Links (for rich formatting)
-- Read Message History (for moderation)
+### 1. Start the Bot
 
-**Optional Permissions:**
-- Manage Messages (for message deletion in moderation)
-- Moderate Members (for timeouts)
-- Manage Channels (for advanced features)
+```bash
+python bot/bot.py
+```
 
-### Access Control
-- **Admin functions** require Administrator, Manage Server, or Manage Roles
-- **Moderator functions** require the above plus Manage Messages or Moderate Members
-- **Member functions** are available to all non-bot users
-- **Role assignment** always requires explicit admin approval
+The bot will automatically:
+- Create database tables
+- Register with your Discord server
+- Sync slash commands
 
-### Data Privacy
-- All data is stored locally in your database
-- No data is transmitted to external services
-- Member data includes only Discord IDs and user-provided character information
-- Moderation logs include message snapshots for context
+### 2. Seed Default Data
 
-## 🤝 Contributing
+Open a new terminal (keep the bot running) and run:
 
-### Development Setup
-1. Clone the repository
-2. Install dependencies with `pip install -r requirements.txt`
-3. Copy `.env.example` to `.env` and configure
-4. Run `python main.py`
+```bash
+python bot/seed_data.py YOUR_GUILD_ID
+```
 
-### Code Style
-- Use `black` for code formatting
-- Follow PEP 8 guidelines
-- Add type hints where possible
-- Document complex functions
+To find your guild ID:
+1. Enable Developer Mode in Discord (User Settings > Advanced)
+2. Right-click your server icon
+3. Click "Copy Server ID"
 
-### Testing
-- Test all UI components thoroughly
-- Verify database migrations work correctly
-- Ensure proper permission checking
-- Test edge cases and error handling
+This will create:
+- Default application questions
+- Mortal Online 2 game entry
+- Default configuration
 
-## 📝 License
+### 3. Configure Channels (In Discord)
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Use the following commands as an admin:
 
-## 🆘 Support
+```
+/set_channel channel_type:announcements channel:#announcements
+/set_channel channel_type:moderator_queue channel:#mod-queue
+/set_channel channel_type:welcome channel:#welcome
+```
 
-### Common Issues
+### 4. Configure Roles (In Discord)
 
-**Bot not responding to interactions:**
-- Check bot permissions in the channel
-- Verify the bot token is correct
-- Ensure the bot is online and connected
+```
+/set_role role_tier:admin role:@Admin hierarchy:3
+/set_role role_tier:moderator role:@Moderator hierarchy:2
+/set_role role_tier:member role:@Member hierarchy:1
+/set_role role_tier:applicant role:@Applicant hierarchy:0
+```
 
-**Database errors:**
-- Check database connection string
-- Ensure database server is running (for PostgreSQL)
-- Verify file permissions (for SQLite)
+### 5. Verify Setup
 
-**Permissions errors:**
-- Check bot role hierarchy (bot role must be above managed roles)
-- Verify required permissions are granted
-- Check channel-specific permission overrides
+```
+/view_config
+/health
+```
 
-### Getting Help
+## Commands
 
-1. Check the [Issues](issues) page for known problems
-2. Review the configuration settings in `/config`
-3. Check bot logs for error messages
-4. Ensure all dependencies are installed correctly
+### Member Commands
 
-### Reporting Bugs
+| Command | Description |
+|---------|-------------|
+| `/apply` | Start or continue application process |
+| `/character_add` | Add a new game character |
+| `/character_list` | View your characters |
+| `/character_remove` | Remove a character |
 
-When reporting issues, please include:
-- Discord.py version and Python version
-- Database type (SQLite/PostgreSQL)
-- Error messages from logs
-- Steps to reproduce the issue
-- Bot configuration (without sensitive data)
+### Moderator Commands
 
-## 🏗️ Architecture Notes
+| Command | Description |
+|---------|-------------|
+| `/queue` | View pending applications |
+| `/review <submission_id>` | Review a specific application |
 
-### Design Principles
+### Admin Commands
 
-1. **UI-First**: All features accessible through Discord's UI components
-2. **Database-Driven**: Configuration stored in database, not files
-3. **Admin-Controlled**: No automatic role assignment, admin approval required
-4. **Persistent Views**: Control panels survive bot restarts
-5. **Permission-Aware**: Proper access control at every level
+| Command | Description |
+|---------|-------------|
+| `/admin_help` | View all admin commands |
+| `/set_channel` | Configure bot channels |
+| `/set_role` | Configure role hierarchy |
+| `/add_game` | Add a supported game |
+| `/add_question` | Add application question |
+| `/set_welcome` | Set welcome message template |
+| `/view_config` | View current configuration |
+| `/health` | Check bot health status |
 
-### Key Technologies
+## Database Management
 
-- **discord.py 2.x**: Modern Discord API wrapper with app commands
-- **SQLAlchemy 2.x**: Async ORM for database operations
-- **Pydantic**: Data validation and settings management
-- **aiosqlite/asyncpg**: Async database drivers
+### Backup (SQLite)
 
-### Performance Considerations
+```bash
+# Create backup
+cp bot.db bot_backup_$(date +%Y%m%d).db
 
-- Configuration caching to reduce database queries
-- Efficient pagination for large datasets
-- Minimal memory footprint for persistent views
-- Optimized database queries with proper indexing
+# Restore from backup
+cp bot_backup_20240101.db bot.db
+```
 
-This bot is designed to be production-ready while remaining easy to deploy and maintain. The UI-first approach ensures a smooth experience for both administrators and members, while the database-backed configuration provides flexibility and reliability.
+### PostgreSQL Migration
+
+1. Update `.env`:
+```env
+DATABASE_URL=postgresql://username:password@localhost:5432/dbname
+```
+
+2. Install PostgreSQL adapter:
+```bash
+pip install psycopg2-binary
+```
+
+3. Restart the bot - tables will be created automatically
+
+### Database Schema Updates
+
+The bot uses SQLAlchemy for schema management. For production, consider using Alembic for migrations:
+
+```bash
+# Install Alembic
+pip install alembic
+
+# Initialize
+alembic init alembic
+
+# Create migration
+alembic revision --autogenerate -m "description"
+
+# Apply migration
+alembic upgrade head
+```
+
+## Operations Guide
+
+### Starting the Bot
+
+**Development:**
+```bash
+python bot/bot.py
+```
+
+**Production (with systemd):**
+
+Create `/etc/systemd/system/discord-bot.service`:
+
+```ini
+[Unit]
+Description=Discord Onboarding Bot
+After=network.target
+
+[Service]
+Type=simple
+User=botuser
+WorkingDirectory=/path/to/bot
+Environment="PATH=/path/to/venv/bin"
+ExecStart=/path/to/venv/bin/python bot/bot.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable and start:
+```bash
+sudo systemctl enable discord-bot
+sudo systemctl start discord-bot
+sudo systemctl status discord-bot
+```
+
+### Monitoring Logs
+
+**View logs:**
+```bash
+tail -f bot.log
+```
+
+**View systemd logs:**
+```bash
+journalctl -u discord-bot -f
+```
+
+### Common Maintenance Tasks
+
+**Add new question:**
+```
+/add_question
+```
+
+**Add new game:**
+```
+/add_game game_name:"Game Name"
+```
+
+**Check bot health:**
+```
+/health
+```
+
+**Update welcome message:**
+```
+/set_welcome template:"Welcome {mention} to our community! 🎉"
+```
+
+## Troubleshooting
+
+### Bot won't start
+
+**Check token:**
+```bash
+# Verify DISCORD_TOKEN in .env
+cat .env | grep DISCORD_TOKEN
+```
+
+**Check permissions:**
+```bash
+# Ensure database file is writable
+ls -la bot.db
+```
+
+**Check logs:**
+```bash
+tail -n 50 bot.log
+```
+
+### Commands not appearing
+
+1. Check bot has `applications.commands` scope
+2. Wait a few minutes for Discord to sync
+3. Kick and re-invite bot with proper permissions
+4. Check logs for sync errors
+
+### Database errors
+
+**SQLite locked:**
+- Close all connections to database
+- Ensure only one bot instance is running
+
+**Migration needed:**
+- Backup database first
+- Delete `bot.db` and restart (caution: data loss)
+- Or use Alembic for proper migrations
+
+### Permission errors
+
+**Bot can't assign roles:**
+- Ensure bot's role is higher than member role in Discord
+- Check bot has "Manage Roles" permission
+
+**Bot can't post in channels:**
+- Verify bot has "Send Messages" and "Embed Links" in channel
+
+## File Structure
+
+```
+discord-onboarding-bot/
+├── bot/
+│   ├── bot.py                 # Main bot file
+│   ├── config.py              # Configuration
+│   ├── database.py            # Database manager
+│   ├── models.py              # Database models
+│   ├── seed_data.py           # Data seeding script
+│   ├── cogs/
+│   │   ├── admin.py           # Admin commands
+│   │   ├── characters.py      # Character management
+│   │   ├── moderation.py      # Moderation workflow
+│   │   └── onboarding.py      # Application system
+│   └── utils/
+│       ├── checks.py          # Permission checks
+│       └── helpers.py         # Helper functions
+├── .env                       # Environment variables (create from .env.example)
+├── .env.example               # Environment template
+├── requirements.txt           # Python dependencies
+├── README.md                  # This file
+└── bot.db                     # SQLite database (created automatically)
+```
+
+## Data Retention & Privacy
+
+The bot stores:
+- User IDs and usernames
+- Application responses
+- Character profiles
+- Moderator actions (audit log)
+
+**To remove a user's data:**
+1. Locate user in database by user ID
+2. Delete associated records (submissions, characters, etc.)
+3. Or implement a `/gdpr_delete` admin command as needed
+
+## Contributing
+
+When adding new features:
+1. Follow existing code structure
+2. Add proper error handling
+3. Update documentation
+4. Test thoroughly before deployment
+
+## Support
+
+For issues or questions:
+1. Check logs first (`bot.log`)
+2. Use `/health` to verify setup
+3. Review this README
+4. Check Discord.py documentation
+
+## License
+
+[Add your license information here]
+
+## Credits
+
+Built with:
+- [discord.py](https://github.com/Rapptz/discord.py)
+- [SQLAlchemy](https://www.sqlalchemy.org/)
+- Python 3.9+

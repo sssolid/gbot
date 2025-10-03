@@ -1,0 +1,60 @@
+# File: docker-compose.yml
+# Location: /docker-compose.yml
+# Docker Compose configuration
+
+version: '3.8'
+
+services:
+  bot:
+    build: .
+    container_name: discord-onboarding-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=sqlite:////data/bot.db
+      - LOG_LEVEL=INFO
+    volumes:
+      # Persistent database storage
+      - bot-data:/data
+      # Logs
+      - ./logs:/app/logs
+    networks:
+      - bot-network
+
+    # Uncomment to use PostgreSQL instead of SQLite
+    # depends_on:
+    #   - postgres
+    # environment:
+    #   - DATABASE_URL=postgresql://botuser:botpass@postgres:5432/botdb
+
+  # Uncomment this section to use PostgreSQL
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: discord-bot-postgres
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_DB: botdb
+  #     POSTGRES_USER: botuser
+  #     POSTGRES_PASSWORD: botpass
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   networks:
+  #     - bot-network
+  #   ports:
+  #     - "5432:5432"
+
+volumes:
+  bot-data:
+  # postgres-data:
+
+networks:
+  bot-network:
+    driver: bridge
+
+# Usage:
+# 1. Create .env file with your DISCORD_TOKEN
+# 2. Run: docker-compose up -d
+# 3. View logs: docker-compose logs -f bot
+# 4. Stop: docker-compose down
+# 5. Backup: docker run --rm -v discord-onboarding-bot_bot-data:/data -v $(pwd):/backup alpine tar czf /backup/bot-backup.tar.gz /data
