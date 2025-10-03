@@ -25,6 +25,14 @@ async def get_or_create_guild(guild_id: int, guild_name: str = None) -> Guild:
         return guild.id
 
 
+async def get_member(guild_id: int, user_id: int) -> Optional[Member]:
+    with db.session_scope() as session:
+        guild = session.query(Guild).filter_by(guild_id=guild_id).first()
+        if not guild:
+            return None
+        return session.query(Member).filter_by(guild_id=guild.id, user_id=user_id).first()
+
+
 async def get_or_create_member(guild_id: int, user_id: int, username: str = None) -> Member:
     """Get or create member record"""
     with db.session_scope() as session:
@@ -48,6 +56,7 @@ async def get_or_create_member(guild_id: int, user_id: int, username: str = None
             session.flush()
             logger.info(f"Created member record for user {user_id} in guild {guild_id}")
 
+        session.refresh(member)
         return member
 
 

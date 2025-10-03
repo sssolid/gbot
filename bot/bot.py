@@ -1,5 +1,6 @@
 # File: bot.py
 # Location: /bot/bot.py
+import os
 
 import discord
 from discord.ext import commands
@@ -11,6 +12,10 @@ from pathlib import Path
 from config import Config
 from database import db
 from utils.helpers import get_or_create_guild
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -69,8 +74,10 @@ class OnboardingBot(commands.Bot):
 
         # Sync commands
         try:
-            self.tree.clear_commands(guild=None)
-            synced = await self.tree.sync()
+            Snowflake = discord.Object(int(os.getenv("GUILD_ID")))
+            self.tree.clear_commands(guild=Snowflake)
+            self.tree.copy_global_to(guild=Snowflake)
+            synced = await self.tree.sync(guild=Snowflake)
             logger.info(f"Synced {len(synced)} command(s)")
         except Exception as e:
             logger.error(f"Failed to sync commands: {e}")

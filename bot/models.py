@@ -15,11 +15,11 @@ Base = declarative_base()
 
 # Enums
 class ApplicationStatus(enum.Enum):
-    PENDING = "pending"
-    APPROVED = "approved"
-    REJECTED = "rejected"
-    FLAGGED = "flagged"
-    IN_PROGRESS = "in_progress"
+    PENDING = "PENDING"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
+    FLAGGED = "FLAGGED"
+    IN_PROGRESS = "IN_PROGRESS"
 
 
 class QuestionType(enum.Enum):
