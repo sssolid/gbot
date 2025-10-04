@@ -8,7 +8,7 @@ Run this after bot setup to create sample questions and configuration
 
 import sys
 from database import db
-from models import Guild, Question, QuestionOption, QuestionType, Game, Configuration
+from models import Guild, Question, QuestionOption, QuestionType, Game, Configuration, ChannelRegistry, RoleRegistry
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -116,27 +116,16 @@ def seed_questions(guild_id: int):
             )
             session.add(opt)
 
-        # Question 4: Tell us about yourself
+        # Question 4: Experience level
         q4 = Question(
-            guild_id=guild.id,
-            question_text="Tell us a bit about yourself and why you want to join our community:",
-            question_type=QuestionType.LONG_TEXT,
-            order=4,
-            required=True,
-            active=True
-        )
-        session.add(q4)
-
-        # Question 5: Experience level
-        q5 = Question(
             guild_id=guild.id,
             question_text="What is your experience level with Mortal Online 2?",
             question_type=QuestionType.SINGLE_CHOICE,
-            order=5,
+            order=4,
             required=False,
             active=True
         )
-        session.add(q5)
+        session.add(q4)
         session.flush()
 
         exp_levels = [
@@ -149,12 +138,23 @@ def seed_questions(guild_id: int):
 
         for idx, level in enumerate(exp_levels):
             opt = QuestionOption(
-                question_id=q5.id,
+                question_id=q4.id,
                 option_text=level,
                 order=idx + 1,
                 immediate_reject=False
             )
             session.add(opt)
+
+        # Question 5: Tell us about yourself
+        q5 = Question(
+            guild_id=guild.id,
+            question_text="Tell us a bit about yourself and why you want to join our community:",
+            question_type=QuestionType.LONG_TEXT,
+            order=5,
+            required=True,
+            active=True
+        )
+        session.add(q5)
 
         session.commit()
         logger.info(f"Successfully seeded {5} questions for guild {guild_id}")
@@ -186,6 +186,90 @@ def seed_games(guild_id: int):
         session.commit()
 
         logger.info(f"Successfully seeded games for guild {guild_id}")
+        return True
+
+
+def seed_channels(guild_id: int):
+    with db.session_scope() as session:
+        guild = session.query(Guild).filter_by(guild_id=guild_id).first()
+
+        if not guild:
+            logger.error(f"Guild {guild_id} not found.")
+            return False
+
+        existing = session.query(ChannelRegistry).filter_by(guild_id=guild.id).count()
+        if existing > 0:
+            logger.warning(f"Guild already has {existing} channels. Skipping seed.")
+            return False
+
+        channel = ChannelRegistry(
+            guild_id=guild.id,
+            channel_type="announcements",
+            channel_id=1418810985266942083
+        )
+        session.add(channel)
+        channel = ChannelRegistry(
+            guild_id=guild.id,
+            channel_type="moderator_queue",
+            channel_id=1419154339536044084
+        )
+        session.add(channel)
+        channel = ChannelRegistry(
+            guild_id=guild.id,
+            channel_type="welcome",
+            channel_id=1418809469202337933
+        )
+        session.add(channel)
+        session.commit()
+
+        logger.info(f"Successfully seeded channels for guild {guild_id}")
+        return True
+
+def seed_roles(guild_id: int):
+    with db.session_scope() as session:
+        guild = session.query(Guild).filter_by(guild_id=guild_id).first()
+
+        if not guild:
+            logger.error(f"Guild {guild_id} not found.")
+            return False
+
+        existing = session.query(RoleRegistry).filter_by(guild_id=guild.id).count()
+        if existing > 0:
+            logger.warning(f"Guild already has {existing} roles. Skipping seed.")
+            return False
+
+        role = RoleRegistry(
+            guild_id=guild.id,
+            role_tier="ADMIN",
+            role_id=1418955168204066937,
+            hierarchy_level=3
+        )
+        session.add(role)
+        role = RoleRegistry(
+            guild_id=guild.id,
+            role_tier="MODERATOR",
+            role_id=1418955465697660939,
+            hierarchy_level=2
+        )
+        session.add(role)
+        role = RoleRegistry(
+            guild_id=guild.id,
+            role_tier="MEMBER",
+            role_id=1418955825510219887,
+            hierarchy_level=1
+        )
+        session.add(role)
+        role = RoleRegistry(
+            guild_id=guild.id,
+            role_tier="APPLICANT",
+            role_id=1423764072062783488,
+            hierarchy_level=0
+        )
+        session.add(role)
+
+        session.commit()
+
+        logger.info(f"Successfully seeded roles for guild {guild_id}")
         return True
 
 
@@ -231,6 +315,12 @@ def seed_all(guild_id: int):
         success = False
 
     if not seed_questions(guild_id):
+        success = False
+
+    if not seed_channels(guild_id):
+        success = False
+
+    if not seed_roles(guild_id):
         success = False
 
     if success:

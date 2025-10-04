@@ -42,15 +42,16 @@ class ActionType(enum.Enum):
     REJECT = "reject"
     BAN = "ban"
     UNBAN = "unban"
+    KICK = "kick"
+    TIMEOUT = "timeout"
+    PROMOTE = "promote"
+    DEMOTE = "demote"
 
 
-# Association tables
-submission_answers = Table(
-    'submission_answers',
-    Base.metadata,
-    Column('submission_id', Integer, ForeignKey('submissions.id')),
-    Column('answer_id', Integer, ForeignKey('answers.id'))
-)
+class AppealStatus(enum.Enum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    REJECTED = "rejected"
 
 
 # Models
@@ -75,7 +76,7 @@ class ChannelRegistry(Base):
 
     id = Column(Integer, primary_key=True)
     guild_id = Column(Integer, ForeignKey('guilds.id'), nullable=False)
-    channel_type = Column(String(50), nullable=False)  # announcements, moderator_queue, etc.
+    channel_type = Column(String(50), nullable=False)
     channel_id = Column(BigInteger, nullable=False)
 
     guild = relationship('Guild', back_populates='channels')
@@ -88,7 +89,7 @@ class RoleRegistry(Base):
     guild_id = Column(Integer, ForeignKey('guilds.id'), nullable=False)
     role_tier = Column(SQLEnum(RoleTier), nullable=False)
     role_id = Column(BigInteger, nullable=False)
-    hierarchy_level = Column(Integer, default=0)  # Higher = more permissions
+    hierarchy_level = Column(Integer, default=0)
 
     guild = relationship('Guild', back_populates='roles')
 
@@ -105,10 +106,12 @@ class Member(Base):
     blacklist_reason = Column(Text)
     joined_at = Column(DateTime, default=datetime.utcnow)
     approved_at = Column(DateTime)
+    appeal_count = Column(Integer, default=0)
 
     guild = relationship('Guild', back_populates='members')
     submissions = relationship('Submission', back_populates='member', cascade='all, delete-orphan')
     characters = relationship('Character', back_populates='member', cascade='all, delete-orphan')
+    appeals = relationship('Appeal', back_populates='member', cascade='all, delete-orphan')
 
 
 class Question(Base):
@@ -122,14 +125,10 @@ class Question(Base):
     required = Column(Boolean, default=True)
     active = Column(Boolean, default=True)
 
-    # Conditional logic hooks
     parent_question_id = Column(Integer, ForeignKey('questions.id'), nullable=True)
-    parent_option_id   = Column(Integer, ForeignKey('question_options.id'), nullable=True)
+    parent_option_id = Column(Integer, ForeignKey('question_options.id'), nullable=True)
 
-    # --- Relationships ---
     guild = relationship('Guild', back_populates='questions')
-
-    # EXPLICIT foreign_keys to disambiguate the path to QuestionOption
     options = relationship(
         'QuestionOption',
         back_populates='question',
@@ -138,23 +137,17 @@ class Question(Base):
         foreign_keys=lambda: [QuestionOption.question_id],
         primaryjoin=lambda: Question.id == QuestionOption.question_id,
     )
-
-    # Answers unchanged (assuming Answer.question_id → questions.id)
     answers = relationship('Answer', back_populates='question', cascade='all, delete-orphan')
-
-    # Self-referential parent (explicit foreign_keys)
     parent_question = relationship(
         'Question',
         remote_side=lambda: [Question.id],
         foreign_keys=lambda: [Question.parent_question_id],
         backref=backref('conditional_questions', cascade='all, delete-orphan'),
     )
-
-    # Optional: direct handle to the parent option for convenience
     parent_option = relationship(
         'QuestionOption',
         foreign_keys=lambda: [Question.parent_option_id],
-        viewonly=True,  # flip to False only if you intend to assign through it
+        viewonly=True,
     )
 
 
@@ -167,7 +160,6 @@ class QuestionOption(Base):
     order = Column(Integer, nullable=False)
     immediate_reject = Column(Boolean, default=False)
 
-    # EXPLICIT foreign_keys to disambiguate the path back to Question
     question = relationship(
         'Question',
         back_populates='options',
@@ -219,6 +211,21 @@ answer_options = Table(
 )
 
 
+class Appeal(Base):
+    __tablename__ = 'appeals'
+
+    id = Column(Integer, primary_key=True)
+    member_id = Column(Integer, ForeignKey('members.id'), nullable=False)
+    reason = Column(Text, nullable=False)
+    status = Column(SQLEnum(AppealStatus), default=AppealStatus.PENDING)
+    submitted_at = Column(DateTime, default=datetime.utcnow)
+    reviewed_at = Column(DateTime)
+    reviewer_id = Column(BigInteger)
+    reviewer_note = Column(Text)
+
+    member = relationship('Member', back_populates='appeals')
+
+
 class Game(Base):
     __tablename__ = 'games'
 
@@ -239,8 +246,8 @@ class Character(Base):
     game_id = Column(Integer, ForeignKey('games.id'), nullable=False)
     name = Column(String(100), nullable=False)
     race = Column(String(50))
-    roles = Column(Text)  # JSON string for multiple roles
-    professions = Column(Text)  # JSON string for multiple professions
+    roles = Column(Text)
+    professions = Column(Text)
     notes = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -252,7 +259,8 @@ class ModeratorAction(Base):
     __tablename__ = 'moderator_actions'
 
     id = Column(Integer, primary_key=True)
-    submission_id = Column(Integer, ForeignKey('submissions.id'), nullable=False)
+    submission_id = Column(Integer, ForeignKey('submissions.id'), nullable=True)
+    target_user_id = Column(BigInteger, nullable=False)
     moderator_id = Column(BigInteger, nullable=False)
     action_type = Column(SQLEnum(ActionType), nullable=False)
     reason = Column(Text)

@@ -4,7 +4,6 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-from typing import Optional
 import logging
 
 from sqlalchemy import text
@@ -15,7 +14,6 @@ from models import (
 )
 from database import db
 from utils.helpers import create_embed, set_channel, set_role
-from utils.checks import require_admin
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +26,7 @@ class AdminCog(commands.Cog):
 
     @app_commands.command(name="admin_help", description="View admin commands")
     @app_commands.guild_only()
+    @app_commands.default_permissions(administrator=True)
     async def admin_help(self, interaction: discord.Interaction):
         """Show admin help"""
         if not await self._check_admin(interaction):
@@ -52,6 +51,7 @@ class AdminCog(commands.Cog):
 
     @app_commands.command(name="set_channel", description="Configure a bot channel")
     @app_commands.guild_only()
+    @app_commands.default_permissions(administrator=True)
     @app_commands.describe(
         channel_type="Type of channel (announcements, moderator_queue, welcome)",
         channel="The channel to use"
@@ -66,7 +66,6 @@ class AdminCog(commands.Cog):
         if not await self._check_admin(interaction):
             return
 
-        # Validate channel type
         valid_types = ["announcements", "moderator_queue", "welcome"]
         if channel_type not in valid_types:
             await interaction.response.send_message(
@@ -90,6 +89,7 @@ class AdminCog(commands.Cog):
 
     @app_commands.command(name="set_role", description="Configure a bot role")
     @app_commands.guild_only()
+    @app_commands.default_permissions(administrator=True)
     @app_commands.describe(
         role_tier="Role tier (admin, moderator, member, applicant)",
         role="The role to use"
@@ -104,7 +104,6 @@ class AdminCog(commands.Cog):
         if not await self._check_admin(interaction):
             return
 
-        # Convert to RoleTier enum
         tier_map = {
             "admin": RoleTier.ADMIN,
             "moderator": RoleTier.MODERATOR,
@@ -112,7 +111,6 @@ class AdminCog(commands.Cog):
             "applicant": RoleTier.APPLICANT
         }
 
-        # Built-in hierarchy (admin > moderator > member > applicant)
         hierarchy_map = {
             RoleTier.ADMIN: 3,
             RoleTier.MODERATOR: 2,
@@ -144,6 +142,7 @@ class AdminCog(commands.Cog):
 
     @app_commands.command(name="add_game", description="Add a supported game")
     @app_commands.guild_only()
+    @app_commands.default_permissions(administrator=True)
     @app_commands.describe(game_name="Name of the game")
     async def add_game(self, interaction: discord.Interaction, game_name: str):
         """Add a game for character tracking"""
@@ -159,7 +158,6 @@ class AdminCog(commands.Cog):
                 )
                 return
 
-            # Check if game already exists
             existing = session.query(Game).filter_by(
                 guild_id=guild.id,
                 name=game_name
@@ -187,6 +185,7 @@ class AdminCog(commands.Cog):
 
     @app_commands.command(name="add_question", description="Add an application question")
     @app_commands.guild_only()
+    @app_commands.default_permissions(administrator=True)
     async def add_question(self, interaction: discord.Interaction):
         """Add a question via modal"""
         if not await self._check_admin(interaction):
@@ -197,6 +196,7 @@ class AdminCog(commands.Cog):
 
     @app_commands.command(name="set_welcome", description="Set welcome announcement template")
     @app_commands.guild_only()
+    @app_commands.default_permissions(administrator=True)
     @app_commands.describe(template="Welcome message (use {mention} for user mention)")
     async def set_welcome(self, interaction: discord.Interaction, template: str):
         """Set welcome message template"""
@@ -227,6 +227,7 @@ class AdminCog(commands.Cog):
 
     @app_commands.command(name="view_config", description="View current configuration")
     @app_commands.guild_only()
+    @app_commands.default_permissions(administrator=True)
     async def view_config(self, interaction: discord.Interaction):
         """View server configuration"""
         if not await self._check_admin(interaction):
@@ -246,7 +247,6 @@ class AdminCog(commands.Cog):
                 color=discord.Color.gold()
             )
 
-            # Channels
             channels = session.query(ChannelRegistry).filter_by(guild_id=guild.id).all()
             if channels:
                 channel_text = "\n".join([
@@ -255,7 +255,6 @@ class AdminCog(commands.Cog):
                 ])
                 embed.add_field(name="Channels", value=channel_text, inline=False)
 
-            # Roles
             roles = session.query(RoleRegistry).filter_by(guild_id=guild.id).all()
             if roles:
                 role_text = "\n".join([
@@ -264,13 +263,11 @@ class AdminCog(commands.Cog):
                 ])
                 embed.add_field(name="Roles", value=role_text, inline=False)
 
-            # Games
             games = session.query(Game).filter_by(guild_id=guild.id, enabled=True).all()
             if games:
                 game_text = ", ".join([game.name for game in games])
                 embed.add_field(name="Games", value=game_text, inline=False)
 
-            # Questions
             questions = session.query(Question).filter_by(
                 guild_id=guild.id,
                 active=True,
@@ -278,7 +275,6 @@ class AdminCog(commands.Cog):
             ).count()
             embed.add_field(name="Application Questions", value=str(questions), inline=True)
 
-            # Config
             config = session.query(Configuration).filter_by(guild_id=guild.id).first()
             if config:
                 embed.add_field(
@@ -291,12 +287,12 @@ class AdminCog(commands.Cog):
 
     @app_commands.command(name="health", description="Check bot health status")
     @app_commands.guild_only()
+    @app_commands.default_permissions(administrator=True)
     async def health(self, interaction: discord.Interaction):
         """Health check command"""
         if not await self._check_admin(interaction):
             return
 
-        # Test database connection
         db_status = "✅ Connected"
         try:
             with db.session_scope() as session:
@@ -364,7 +360,6 @@ class AddQuestionModal(discord.ui.Modal):
 
     async def on_submit(self, interaction: discord.Interaction):
         """Save question"""
-        # Validate question type
         type_map = {
             "single_choice": QuestionType.SINGLE_CHOICE,
             "multi_choice": QuestionType.MULTI_CHOICE,
@@ -390,7 +385,6 @@ class AddQuestionModal(discord.ui.Modal):
                 )
                 return
 
-            # Get next order number
             max_order = session.query(Question).filter_by(
                 guild_id=guild.id
             ).count()
@@ -406,7 +400,6 @@ class AddQuestionModal(discord.ui.Modal):
             session.add(question)
             session.flush()
 
-            # Add options if provided
             if self.options.value and q_type in ["single_choice", "multi_choice"]:
                 options = [opt.strip() for opt in self.options.value.split(',') if opt.strip()]
                 for idx, opt_text in enumerate(options):

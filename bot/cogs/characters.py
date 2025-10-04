@@ -4,14 +4,12 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-from typing import Optional
 import json
 import logging
 
 from models import Guild, Member, Game, Character, ApplicationStatus
 from database import db
-from utils.helpers import create_embed, chunk_list
-from utils.checks import require_member
+from utils.helpers import create_embed
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +23,7 @@ class CharactersCog(commands.Cog):
     @app_commands.command(name="character", description="Manage your game characters")
     @app_commands.guild_only()
     async def character(self, interaction: discord.Interaction):
-        """Character management menu"""
+        """Character management menu - available to everyone"""
         if not await self._check_approved(interaction):
             return
 
@@ -45,11 +43,10 @@ class CharactersCog(commands.Cog):
     @app_commands.command(name="character_add", description="Add a new character")
     @app_commands.guild_only()
     async def character_add(self, interaction: discord.Interaction):
-        """Add a new character"""
+        """Add a new character - available to everyone"""
         if not await self._check_approved(interaction):
             return
 
-        # Get available games
         with db.session_scope() as session:
             guild = session.query(Guild).filter_by(guild_id=interaction.guild.id).first()
             if not guild:
@@ -71,12 +68,10 @@ class CharactersCog(commands.Cog):
                 )
                 return
 
-            # If only one game, show modal directly
             if len(games) == 1:
                 modal = CharacterModal(games[0].id, games[0].name)
                 await interaction.response.send_modal(modal)
             else:
-                # Show game selection
                 view = GameSelectView(games)
                 await interaction.response.send_message(
                     "Select a game for your character:",
@@ -87,7 +82,7 @@ class CharactersCog(commands.Cog):
     @app_commands.command(name="character_list", description="View your characters")
     @app_commands.guild_only()
     async def character_list(self, interaction: discord.Interaction):
-        """List user's characters"""
+        """List user's characters - available to everyone"""
         if not await self._check_approved(interaction):
             return
 
@@ -123,7 +118,6 @@ class CharactersCog(commands.Cog):
                 )
                 return
 
-            # Create character list embed
             embed = discord.Embed(
                 title="Your Characters",
                 description=f"You have **{len(characters)}** character(s)",
@@ -133,7 +127,6 @@ class CharactersCog(commands.Cog):
             for char in characters:
                 game = char.game
 
-                # Parse roles and professions
                 roles = json.loads(char.roles) if char.roles else []
                 professions = json.loads(char.professions) if char.professions else []
 
@@ -158,7 +151,7 @@ class CharactersCog(commands.Cog):
     @app_commands.command(name="character_remove", description="Remove a character")
     @app_commands.guild_only()
     async def character_remove(self, interaction: discord.Interaction):
-        """Remove a character"""
+        """Remove a character - available to everyone"""
         if not await self._check_approved(interaction):
             return
 
@@ -194,7 +187,6 @@ class CharactersCog(commands.Cog):
                 )
                 return
 
-            # Show character selection
             view = CharacterRemoveView(characters)
             await interaction.response.send_message(
                 "Select a character to remove:",
@@ -274,7 +266,6 @@ class CharacterModal(discord.ui.Modal):
         )
         self.add_item(self.char_name)
 
-        # Mortal Online 2 specific fields
         if "Mortal Online" in game_name or game_name == "MO2":
             self.race = discord.ui.TextInput(
                 label="Race",
@@ -318,7 +309,6 @@ class CharacterModal(discord.ui.Modal):
                 user_id=interaction.user.id
             ).first()
 
-            # Parse roles and professions
             roles_list = []
             professions_list = []
 
@@ -363,7 +353,7 @@ class CharacterRemoveView(discord.ui.View):
                 value=str(char.id),
                 description=char.race[:100] if char.race else "No details"
             )
-            for char in characters[:25]  # Discord limit
+            for char in characters[:25]
         ]
 
         select = discord.ui.Select(
@@ -377,7 +367,6 @@ class CharacterRemoveView(discord.ui.View):
         char_id = int(interaction.data['values'][0])
         character = self.characters[str(char_id)]
 
-        # Confirm deletion
         view = ConfirmRemoveView(char_id, character.name)
         await interaction.response.send_message(
             f"Are you sure you want to remove **{character.name}**?",
