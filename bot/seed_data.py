@@ -30,46 +30,78 @@ def seed_questions(guild_id: int):
             logger.warning(f"Guild already has {existing} questions. Skipping seed.")
             return False
 
-        # Question 1: Age verification
-        q1 = Question(
+        order = 0
+
+        # Age verification
+        order += 1
+        av = Question(
             guild_id=guild.id,
             question_text="Are you 18 years of age or older?",
             question_type=QuestionType.SINGLE_CHOICE,
-            order=1,
+            order=order,
             required=True,
             active=True
         )
-        session.add(q1)
+        session.add(av)
         session.flush()
 
-        # Options for Q1
-        opt1_yes = QuestionOption(
-            question_id=q1.id,
+        # Options for Age Verification
+        av_yes = QuestionOption(
+            question_id=av.id,
             option_text="Yes, I am 18 or older",
             order=1,
             immediate_reject=False
         )
-        opt1_no = QuestionOption(
-            question_id=q1.id,
+        av_no = QuestionOption(
+            question_id=av.id,
             option_text="No, I am under 18",
             order=2,
             immediate_reject=True  # Auto-flag underage applicants
         )
-        session.add_all([opt1_yes, opt1_no])
+        session.add_all([av_yes, av_no])
 
-        # Question 2: How did you find us
-        q2 = Question(
+        # Family first question
+        order += 1
+        fq = Question(
+            guild_id=guild.id,
+            question_text="Most of us are parents who value traditional family roles. Do you have kids or support family first priorities?",
+            question_type=QuestionType.SINGLE_CHOICE,
+            order=order,
+            required=False,
+            active=True
+        )
+        session.add(fq)
+        session.flush()
+
+        fq_yes = QuestionOption(
+            question_id=fq.id,
+            option_text="Yes, I have kids or support family first priorities.",
+            order=1,
+            immediate_reject=False
+        )
+
+        fq_no = QuestionOption(
+            question_id=fq.id,
+            option_text="No, I do not have kids or support family first priorities.",
+            order=2,
+            immediate_reject=True
+        )
+        session.add_all([fq_yes, fq_no])
+
+        # How did you find us?
+        order += 1
+        fu = Question(
             guild_id=guild.id,
             question_text="How did you find our server?",
             question_type=QuestionType.SINGLE_CHOICE,
-            order=2,
+            order=order,
             required=True,
             active=True
         )
-        session.add(q2)
+        session.add(fu)
         session.flush()
 
-        options_q2 = [
+        options_fu = [
             "Friend/Referral",
             "Discord Server List",
             "Social Media",
@@ -78,25 +110,138 @@ def seed_questions(guild_id: int):
             "Other"
         ]
 
-        for idx, opt_text in enumerate(options_q2):
+        for idx, opt_text in enumerate(options_fu):
             opt = QuestionOption(
-                question_id=q2.id,
+                question_id=fu.id,
                 option_text=opt_text,
                 order=idx + 1,
                 immediate_reject=False
             )
             session.add(opt)
 
-        # Question 3: Gaming experience
-        q3 = Question(
+        # Personal Experience
+        order += 1
+        pr = Question(
             guild_id=guild.id,
-            question_text="What games are you interested in? (Select all that apply)",
-            question_type=QuestionType.MULTI_CHOICE,
-            order=3,
+            question_text="We place a strong emphasis on personal responsibility and traditional values. Do these principles align with your own?",
+            question_type=QuestionType.SINGLE_CHOICE,
+            order=order,
+            required=False,
+            active=True
+        )
+        session.add(pr)
+        session.flush()
+
+        pr_responses = [
+            {"q": "Yes, I strongly share these views.", "rj": False},
+            {"q": "I mostly agree with these views.", "rj": False},
+            {"q": "I respect them, though I hold different priorities.", "rj": True},
+            {"q": "No, I do not share these views.", "rj": True}
+        ]
+
+        for idx, question in enumerate(pr_responses):
+            opt = QuestionOption(
+                question_id=pr.id,
+                option_text=question.get("q"),
+                order=idx + 1,
+                immediate_reject=question.get("rj")
+            )
+            session.add(opt)
+
+        # Pronouns
+        order += 1
+        pro = Question(
+            guild_id=guild.id,
+            question_text="We don’t do pronouns here. You’re addressed by your username or standard he/she based on what’s obvious. Will you push others to use them?",
+            question_type=QuestionType.SINGLE_CHOICE,
+            order=order,
+            required=False,
+            active=True
+        )
+        session.add(pro)
+        session.flush()
+
+        pro_yes = QuestionOption(
+            question_id=pro.id,
+            option_text="Yes, I want to be addressed appropriately.",
+            order=1,
+            immediate_reject=True
+        )
+
+        pro_no = QuestionOption(
+            question_id=pro.id,
+            option_text="No, I agree with this policy.",
+            order=2,
+            immediate_reject=False
+        )
+        session.add_all([pro_yes, pro_no])
+
+        # Adults
+        order += 1
+        adult = Question(
+            guild_id=guild.id,
+            question_text="Our guild has thick skin.  Banter and trash talk are part of gaming. If someone says something you don’t like, how will you respond?",
+            question_type=QuestionType.SINGLE_CHOICE,
+            order=order,
+            required=False,
+            active=True
+        )
+        session.add(adult)
+        session.flush()
+
+        adult_responses = [
+            {"q": "I will not be disrespected.", "rj": True},
+            {"q": "I will ignore it.", "rj": False},
+            {"q": "I will inform an officer.", "rj": True}
+        ]
+
+        for idx, question in enumerate(adult_responses):
+            opt = QuestionOption(
+                question_id=adult.id,
+                option_text=question.get("q"),
+                order=idx + 1,
+                immediate_reject=question.get("rj")
+            )
+            session.add(opt)
+
+        # Agree to terms
+        order += 1
+        agree = Question(
+            guild_id=guild.id,
+            question_text="This guild is for conservative, family focused gamers who can handle adult humor and zero drama. If you’re not 100% on board with our values, you’ll be a problem. Are you in?",
+            question_type=QuestionType.SINGLE_CHOICE,
+            order=order,
             required=True,
             active=True
         )
-        session.add(q3)
+        session.add(agree)
+        session.flush()
+
+        agree_yes = QuestionOption(
+            question_id=agree.id,
+            option_text="Yes, this guild seems like a good fit for me.",
+            order=1,
+            immediate_reject=False
+        )
+        agree_no = QuestionOption(
+            question_id=agree.id,
+            option_text="No, I don't believe this guild is for me.",
+            order=2,
+            immediate_reject=True
+        )
+        session.add_all([agree_yes, agree_no])
+
+        # Gaming Experience
+        order += 1
+        ge = Question(
+            guild_id=guild.id,
+            question_text="What games are you interested in? (Select all that apply)",
+            question_type=QuestionType.MULTI_CHOICE,
+            order=order,
+            required=True,
+            active=True
+        )
+        session.add(ge)
         session.flush()
 
         games_list = [
@@ -109,55 +254,27 @@ def seed_questions(guild_id: int):
 
         for idx, game in enumerate(games_list):
             opt = QuestionOption(
-                question_id=q3.id,
+                question_id=ge.id,
                 option_text=game,
                 order=idx + 1,
                 immediate_reject=False
             )
             session.add(opt)
 
-        # Question 4: Experience level
-        q4 = Question(
-            guild_id=guild.id,
-            question_text="What is your experience level with Mortal Online 2?",
-            question_type=QuestionType.SINGLE_CHOICE,
-            order=4,
-            required=False,
-            active=True
-        )
-        session.add(q4)
-        session.flush()
-
-        exp_levels = [
-            "New Player (Never played)",
-            "Beginner (0-50 hours)",
-            "Intermediate (50-200 hours)",
-            "Advanced (200-500 hours)",
-            "Veteran (500+ hours)"
-        ]
-
-        for idx, level in enumerate(exp_levels):
-            opt = QuestionOption(
-                question_id=q4.id,
-                option_text=level,
-                order=idx + 1,
-                immediate_reject=False
-            )
-            session.add(opt)
-
-        # Question 5: Tell us about yourself
-        q5 = Question(
+        # Tell us about yourself
+        order += 1
+        about = Question(
             guild_id=guild.id,
             question_text="Tell us a bit about yourself and why you want to join our community:",
             question_type=QuestionType.LONG_TEXT,
-            order=5,
-            required=True,
+            order=order,
+            required=False,
             active=True
         )
-        session.add(q5)
+        session.add(about)
 
         session.commit()
-        logger.info(f"Successfully seeded {5} questions for guild {guild_id}")
+        logger.info(f"Successfully seeded questions for guild {guild_id}")
         return True
 
 
