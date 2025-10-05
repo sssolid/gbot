@@ -172,10 +172,23 @@ async def create_embed(
     return embed
 
 
-async def try_send_dm(user: discord.User, content: str = None, embed: discord.Embed = None) -> bool:
-    """Attempt to send a DM to a user"""
+async def try_send_dm(
+        user: discord.User,
+        content: str = None,
+        embed: discord.Embed = None,
+        view: discord.ui.View = None
+) -> bool:
+    """Attempt to send a DM to a user with optional view"""
     try:
-        await user.send(content=content, embed=embed)
+        kwargs = {}
+        if content:
+            kwargs['content'] = content
+        if embed:
+            kwargs['embed'] = embed
+        if view:
+            kwargs['view'] = view
+
+        await user.send(**kwargs)
         return True
     except discord.Forbidden:
         logger.warning(f"Cannot send DM to user {user.id} - DMs disabled")

@@ -18,22 +18,39 @@ async def has_role_tier(ctx, required_tier: RoleTier) -> bool:
 
     # Fallback: Allow Discord server administrators for admin commands
     # This allows initial setup before roles are configured
-    if required_tier == RoleTier.ADMIN:
+    if required_tier in [RoleTier.SOVEREIGN, RoleTier.ADMIN]:
         if ctx.user.guild_permissions.administrator:
             return True
 
     # Get hierarchy mapping
     tier_hierarchy = {
         RoleTier.APPLICANT: 0,
+        RoleTier.SQUIRE: 1,
+        RoleTier.KNIGHT: 2,
+        RoleTier.TEMPLAR: 3,
+        RoleTier.SOVEREIGN: 4,
+        # Legacy support
         RoleTier.MEMBER: 1,
-        RoleTier.MODERATOR: 2,
-        RoleTier.ADMIN: 3
+        RoleTier.MODERATOR: 3,
+        RoleTier.ADMIN: 4
     }
 
     required_level = tier_hierarchy.get(required_tier, 0)
 
     # Check each tier from highest to lowest
-    for tier in [RoleTier.ADMIN, RoleTier.MODERATOR, RoleTier.MEMBER, RoleTier.APPLICANT]:
+    tiers_to_check = [
+        RoleTier.SOVEREIGN,
+        RoleTier.TEMPLAR,
+        RoleTier.KNIGHT,
+        RoleTier.SQUIRE,
+        RoleTier.APPLICANT,
+        # Legacy tiers
+        RoleTier.ADMIN,
+        RoleTier.MODERATOR,
+        RoleTier.MEMBER
+    ]
+
+    for tier in tiers_to_check:
         role_id = await get_role_id(ctx.guild.id, tier)
         if role_id:
             role = ctx.guild.get_role(role_id)
@@ -45,21 +62,43 @@ async def has_role_tier(ctx, required_tier: RoleTier) -> bool:
 
 
 async def is_admin(ctx) -> bool:
-    """Check if user is admin"""
-    return await has_role_tier(ctx, RoleTier.ADMIN)
+    """Check if user is admin (Sovereign)"""
+    return await has_role_tier(ctx, RoleTier.SOVEREIGN) or await has_role_tier(ctx, RoleTier.ADMIN)
 
 
 async def is_moderator(ctx) -> bool:
-    """Check if user is moderator or higher"""
+    """Check if user is moderator (Templar) or higher"""
     # Discord administrators always have moderator permissions
     if ctx.guild and ctx.user.guild_permissions.administrator:
         return True
-    return await has_role_tier(ctx, RoleTier.MODERATOR)
+
+    # Check for Templar or higher
+    if await has_role_tier(ctx, RoleTier.TEMPLAR):
+        return True
+
+    # Legacy support
+    if await has_role_tier(ctx, RoleTier.MODERATOR):
+        return True
+
+    return False
 
 
 async def is_member(ctx) -> bool:
-    """Check if user is member or higher"""
-    return await has_role_tier(ctx, RoleTier.MEMBER)
+    """Check if user is member (Squire) or higher"""
+    # Check for Squire or higher
+    if await has_role_tier(ctx, RoleTier.SQUIRE):
+        return True
+
+    # Legacy support
+    if await has_role_tier(ctx, RoleTier.MEMBER):
+        return True
+
+    return False
+
+
+async def is_knight(ctx) -> bool:
+    """Check if user is Knight or higher"""
+    return await has_role_tier(ctx, RoleTier.KNIGHT)
 
 
 async def check_blacklist(ctx) -> bool:
@@ -72,33 +111,44 @@ async def check_blacklist(ctx) -> bool:
 
 
 def require_admin():
-    """Decorator to require admin role"""
+    """Decorator to require admin role (Sovereign)"""
 
     async def predicate(ctx):
         if not await is_admin(ctx):
-            raise commands.MissingPermissions(['Admin role required'])
+            raise commands.MissingPermissions(['Sovereign/Admin role required'])
         return True
 
     return commands.check(predicate)
 
 
 def require_moderator():
-    """Decorator to require moderator role or higher"""
+    """Decorator to require moderator role (Templar) or higher"""
 
     async def predicate(ctx):
         if not await is_moderator(ctx):
-            raise commands.MissingPermissions(['Moderator role required'])
+            raise commands.MissingPermissions(['Templar/Moderator role required'])
         return True
 
     return commands.check(predicate)
 
 
 def require_member():
-    """Decorator to require member role or higher"""
+    """Decorator to require member role (Squire) or higher"""
 
     async def predicate(ctx):
         if not await is_member(ctx):
-            raise commands.MissingPermissions(['Member role required'])
+            raise commands.MissingPermissions(['Squire/Member role required'])
+        return True
+
+    return commands.check(predicate)
+
+
+def require_knight():
+    """Decorator to require Knight role or higher"""
+
+    async def predicate(ctx):
+        if not await is_knight(ctx):
+            raise commands.MissingPermissions(['Knight role required'])
         return True
 
     return commands.check(predicate)

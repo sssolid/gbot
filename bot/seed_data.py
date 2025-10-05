@@ -8,7 +8,7 @@ Run this after bot setup to create sample questions and configuration
 
 import sys
 from database import db
-from models import Guild, Question, QuestionOption, QuestionType, Game, Configuration, ChannelRegistry, RoleRegistry
+from models import Guild, Question, QuestionOption, QuestionType, Game, Configuration, ChannelRegistry, RoleRegistry, RoleTier
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def seed_questions(guild_id: int):
-    """Seed default application questions"""
+    """Seed default application questions with conditional follow-ups"""
     with db.session_scope() as session:
         guild = session.query(Guild).filter_by(guild_id=guild_id).first()
 
@@ -45,7 +45,6 @@ def seed_questions(guild_id: int):
         session.add(av)
         session.flush()
 
-        # Options for Age Verification
         av_yes = QuestionOption(
             question_id=av.id,
             option_text="Yes, I am 18 or older",
@@ -56,9 +55,89 @@ def seed_questions(guild_id: int):
             question_id=av.id,
             option_text="No, I am under 18",
             order=2,
-            immediate_reject=True  # Auto-flag underage applicants
+            immediate_reject=True
         )
         session.add_all([av_yes, av_no])
+
+        # How did you find us? (with conditional follow-up)
+        order += 1
+        fu = Question(
+            guild_id=guild.id,
+            question_text="How did you find our server?",
+            question_type=QuestionType.SINGLE_CHOICE,
+            order=order,
+            required=True,
+            active=True
+        )
+        session.add(fu)
+        session.flush()
+
+        fu_friend = QuestionOption(
+            question_id=fu.id,
+            option_text="Friend/Referral",
+            order=1,
+            immediate_reject=False
+        )
+        fu_discord = QuestionOption(
+            question_id=fu.id,
+            option_text="Discord Server List",
+            order=2,
+            immediate_reject=False
+        )
+        fu_social = QuestionOption(
+            question_id=fu.id,
+            option_text="Social Media",
+            order=3,
+            immediate_reject=False
+        )
+        fu_gaming = QuestionOption(
+            question_id=fu.id,
+            option_text="Gaming Community",
+            order=4,
+            immediate_reject=False
+        )
+        fu_search = QuestionOption(
+            question_id=fu.id,
+            option_text="Search Engine",
+            order=5,
+            immediate_reject=False
+        )
+        fu_other = QuestionOption(
+            question_id=fu.id,
+            option_text="Other",
+            order=6,
+            immediate_reject=False
+        )
+        session.add_all([fu_friend, fu_discord, fu_social, fu_gaming, fu_search, fu_other])
+        session.flush()
+
+        # Conditional question: If they selected "Friend/Referral"
+        order += 1
+        fu_followup = Question(
+            guild_id=guild.id,
+            question_text="Who referred you? Please provide their username so we can verify.",
+            question_type=QuestionType.SHORT_TEXT,
+            order=order,
+            required=True,
+            active=True,
+            parent_question_id=fu.id,
+            parent_option_id=fu_friend.id
+        )
+        session.add(fu_followup)
+
+        # Conditional question: If they selected "Other"
+        order += 1
+        fu_other_followup = Question(
+            guild_id=guild.id,
+            question_text="Please tell us how you found us:",
+            question_type=QuestionType.SHORT_TEXT,
+            order=order,
+            required=True,
+            active=True,
+            parent_question_id=fu.id,
+            parent_option_id=fu_other.id
+        )
+        session.add(fu_other_followup)
 
         # Family first question
         order += 1
@@ -79,7 +158,6 @@ def seed_questions(guild_id: int):
             order=1,
             immediate_reject=False
         )
-
         fq_no = QuestionOption(
             question_id=fq.id,
             option_text="No, I do not have kids or support family first priorities.",
@@ -88,38 +166,7 @@ def seed_questions(guild_id: int):
         )
         session.add_all([fq_yes, fq_no])
 
-        # How did you find us?
-        order += 1
-        fu = Question(
-            guild_id=guild.id,
-            question_text="How did you find our server?",
-            question_type=QuestionType.SINGLE_CHOICE,
-            order=order,
-            required=True,
-            active=True
-        )
-        session.add(fu)
-        session.flush()
-
-        options_fu = [
-            "Friend/Referral",
-            "Discord Server List",
-            "Social Media",
-            "Gaming Community",
-            "Search Engine",
-            "Other"
-        ]
-
-        for idx, opt_text in enumerate(options_fu):
-            opt = QuestionOption(
-                question_id=fu.id,
-                option_text=opt_text,
-                order=idx + 1,
-                immediate_reject=False
-            )
-            session.add(opt)
-
-        # Personal Experience
+        # Personal Responsibility
         order += 1
         pr = Question(
             guild_id=guild.id,
@@ -152,7 +199,7 @@ def seed_questions(guild_id: int):
         order += 1
         pro = Question(
             guild_id=guild.id,
-            question_text="We don’t do pronouns here. You’re addressed by your username or standard he/she based on what’s obvious. Will you push others to use them?",
+            question_text="We don't do pronouns here. You're addressed by your username or standard he/she based on what's obvious. Will you push others to use them?",
             question_type=QuestionType.SINGLE_CHOICE,
             order=order,
             required=False,
@@ -167,7 +214,6 @@ def seed_questions(guild_id: int):
             order=1,
             immediate_reject=True
         )
-
         pro_no = QuestionOption(
             question_id=pro.id,
             option_text="No, I agree with this policy.",
@@ -180,7 +226,7 @@ def seed_questions(guild_id: int):
         order += 1
         adult = Question(
             guild_id=guild.id,
-            question_text="Our guild has thick skin.  Banter and trash talk are part of gaming. If someone says something you don’t like, how will you respond?",
+            question_text="Our guild has thick skin. Banter and trash talk are part of gaming. If someone says something you don't like, how will you respond?",
             question_type=QuestionType.SINGLE_CHOICE,
             order=order,
             required=False,
@@ -208,7 +254,7 @@ def seed_questions(guild_id: int):
         order += 1
         agree = Question(
             guild_id=guild.id,
-            question_text="This guild is for conservative, family focused gamers who can handle adult humor and zero drama. If you’re not 100% on board with our values, you’ll be a problem. Are you in?",
+            question_text="This guild is for conservative, family focused gamers who can handle adult humor and zero drama. If you're not 100% on board with our values, you'll be a problem. Are you in?",
             question_type=QuestionType.SINGLE_CHOICE,
             order=order,
             required=True,
@@ -287,13 +333,11 @@ def seed_games(guild_id: int):
             logger.error(f"Guild {guild_id} not found.")
             return False
 
-        # Check if games already exist
         existing = session.query(Game).filter_by(guild_id=guild.id).count()
         if existing > 0:
             logger.warning(f"Guild already has {existing} games. Skipping seed.")
             return False
 
-        # Add Mortal Online 2
         game = Game(
             guild_id=guild.id,
             name="Mortal Online 2",
@@ -342,6 +386,7 @@ def seed_channels(guild_id: int):
         logger.info(f"Successfully seeded channels for guild {guild_id}")
         return True
 
+
 def seed_roles(guild_id: int):
     with db.session_scope() as session:
         guild = session.query(Guild).filter_by(guild_id=guild_id).first()
@@ -357,21 +402,28 @@ def seed_roles(guild_id: int):
 
         role = RoleRegistry(
             guild_id=guild.id,
-            role_tier="ADMIN",
+            role_tier="SOVEREIGN",
             role_id=1418955168204066937,
             hierarchy_level=3
         )
         session.add(role)
         role = RoleRegistry(
             guild_id=guild.id,
-            role_tier="MODERATOR",
+            role_tier="TEMPLAR",
             role_id=1418955465697660939,
             hierarchy_level=2
         )
         session.add(role)
         role = RoleRegistry(
             guild_id=guild.id,
-            role_tier="MEMBER",
+            role_tier="KNIGHT",
+            role_id=1418955679690920039,
+            hierarchy_level=1
+        )
+        session.add(role)
+        role = RoleRegistry(
+            guild_id=guild.id,
+            role_tier="SQUIRE",
             role_id=1418955825510219887,
             hierarchy_level=1
         )
@@ -399,7 +451,6 @@ def seed_configuration(guild_id: int):
             logger.error(f"Guild {guild_id} not found.")
             return False
 
-        # Check if config already exists
         existing = session.query(Configuration).filter_by(guild_id=guild.id).first()
         if existing:
             logger.warning("Configuration already exists. Skipping seed.")
@@ -435,17 +486,19 @@ def seed_all(guild_id: int):
         success = False
 
     if not seed_channels(guild_id):
-        success = False
+        return False
 
     if not seed_roles(guild_id):
-        success = False
+        return False
 
     if success:
         logger.info("✅ Seed process completed successfully!")
         logger.info("\nNext steps:")
-        logger.info("1. Use /set_channel to configure bot channels")
-        logger.info("2. Use /set_role to configure role hierarchy")
-        logger.info("3. Use /view_config to verify your setup")
+        logger.info("1. Use /set_channel to configure bot channels (announcements, moderator_queue, welcome, rules)")
+        logger.info("2. Use /set_role to configure role hierarchy (sovereign, templar, knight, squire, applicant)")
+        logger.info("3. Use /set_welcome_message to set the welcome channel message")
+        logger.info("4. Use /set_rules_message to set the rules channel message")
+        logger.info("5. Use /view_config to verify your setup")
     else:
         logger.warning("⚠️ Seed process completed with warnings. Check logs above.")
 

@@ -7,14 +7,16 @@ from discord import app_commands
 from datetime import datetime
 import logging
 
+from sqlalchemy.orm import joinedload
+
 from models import (
     Guild, Member, Question, QuestionOption, Submission, Answer, Appeal,
-    ApplicationStatus, QuestionType, AppealStatus
+    ApplicationStatus, QuestionType, AppealStatus, SubmissionType, RoleTier
 )
 from database import db
 from utils.helpers import (
     get_or_create_guild, get_or_create_member, create_embed,
-    try_send_dm, get_channel_id
+    try_send_dm, get_channel_id, get_role_id
 )
 
 logger = logging.getLogger(__name__)
@@ -28,115 +30,84 @@ class OnboardingCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
-        """Greet new members and invite them to apply"""
+        """Send DM with onboarding options when member joins"""
         if member.bot:
             return
 
-        await get_or_create_guild(member.guild.id, member.guild.name)
+        guild_id = member.guild.id
+        guild_name = member.guild.name
+
+        await get_or_create_guild(guild_id, guild_name)
+        await get_or_create_member(guild_id, member.id, member.name)
 
         embed = await create_embed(
-            title="Welcome to the Server!",
+            title=f"Welcome to {guild_name}!",
             description=(
-                f"Hello {member.mention}! Welcome to **{member.guild.name}**.\n\n"
-                "To get started, please complete our application process using `/apply`.\n"
-                "This helps us get to know you better and ensures a great community experience."
+                "Thank you for joining our community! Please select how you'd like to proceed:\n\n"
+                "**🛡️ Apply to Join** - Complete an application to become a full member\n"
+                "**🤝 Friend/Ally** - You're from another guild or know someone here\n"
+                "**👤 Regular User** - Just here to hang out, no application needed"
             ),
-            color=discord.Color.green()
+            color=discord.Color.blue()
         )
 
-        dm_sent = await try_send_dm(member, embed=embed)
+        view = OnboardingChoiceView(self.bot, guild_id)
+        dm_sent = await try_send_dm(member, embed=embed, view=view)
 
         if not dm_sent:
             channel_id = await get_channel_id(member.guild.id, "welcome")
             if channel_id:
                 channel = member.guild.get_channel(channel_id)
                 if channel:
-                    await channel.send(embed=embed)
+                    await channel.send(
+                        f"{member.mention}, please check your DMs to complete onboarding! "
+                        "If you can't receive DMs, please enable them and rejoin.",
+                        delete_after=60
+                    )
 
-    @app_commands.command(name="apply", description="Start or continue your application")
-    @app_commands.guild_only()
-    async def apply(self, interaction: discord.Interaction):
-        """Start or resume application process"""
-        member_record = await get_or_create_member(
-            interaction.guild.id,
-            interaction.user.id,
-            interaction.user.name
-        )
-
-        if not member_record:
-            await interaction.response.send_message(
-                "❌ Server not configured. Please contact an administrator.",
-                ephemeral=True
-            )
-            return
-
-        if member_record.blacklisted:
-            await interaction.response.send_message(
-                "❌ You are not permitted to use this bot.",
-                ephemeral=True
-            )
-            return
-
-        if member_record.status == ApplicationStatus.APPROVED:
-            await interaction.response.send_message(
-                "✅ You're already approved! Welcome to the community.",
-                ephemeral=True
-            )
-            return
-
-        if member_record.status == ApplicationStatus.PENDING:
-            await interaction.response.send_message(
-                "⏳ Your application is pending review. Please wait for a moderator to process it.",
-                ephemeral=True
-            )
-            return
-
-        if member_record.status == ApplicationStatus.REJECTED:
-            await interaction.response.send_message(
-                "❌ Your application was rejected. Please use `/appeal` to submit an appeal.",
-                ephemeral=True
-            )
-            return
-
-        await self._start_application(interaction, member_record)
-
-    async def _start_application(self, interaction: discord.Interaction, member: Member):
+    async def start_application(self, interaction: discord.Interaction, member: Member, guild_id: int):
         """Begin the application flow"""
         with db.session_scope() as session:
-            # Get fresh member data
             member = session.query(Member).filter_by(id=member.id).first()
 
-            # If member status is IN_PROGRESS, they can start/continue
-            if member.status != ApplicationStatus.IN_PROGRESS:
-                last_status = session.query(Submission.status) \
-                    .filter_by(member_id=member.id) \
-                    .order_by(Submission.id.desc()) \
-                    .limit(1).scalar()
-
-                if last_status in (ApplicationStatus.APPROVED, ApplicationStatus.REJECTED, ApplicationStatus.PENDING):
-                    await self._send_response(
-                        interaction,
-                        "❌ You cannot start a new application. If rejected, use `/appeal`.",
-                        ephemeral=True
-                    )
-                    return
-
-            submission = session.query(Submission).filter_by(
-                member_id=member.id,
-                status=ApplicationStatus.IN_PROGRESS
-            ).first()
+            submission = (
+                session.query(Submission)
+                .options(joinedload(Submission.answers))  # 👈 eager-load answers
+                .filter_by(
+                    member_id=member.id,
+                    status=ApplicationStatus.IN_PROGRESS,
+                    submission_type=SubmissionType.APPLICANT,
+                )
+                .first()
+            )
 
             if not submission:
                 submission = Submission(
                     member_id=member.id,
-                    status=ApplicationStatus.IN_PROGRESS
+                    status=ApplicationStatus.IN_PROGRESS,
+                    submission_type=SubmissionType.APPLICANT,
                 )
                 session.add(submission)
                 session.flush()
+                session.refresh(submission)
 
-            guild = session.query(Guild).filter_by(guild_id=interaction.guild.id).first()
+            # Set APPLICANT role - get guild from bot
+            guild = self.bot.get_guild(guild_id)
+            if guild:
+                applicant_role_id = await get_role_id(guild_id, RoleTier.APPLICANT)
+                if applicant_role_id:
+                    applicant_role = guild.get_role(applicant_role_id)
+                    discord_member = guild.get_member(interaction.user.id)
+                    if applicant_role and discord_member:
+                        try:
+                            await discord_member.add_roles(applicant_role, reason="Started application")
+                            member.role_tier = RoleTier.APPLICANT
+                        except discord.Forbidden:
+                            logger.error(f"Cannot assign applicant role to {interaction.user.id}")
+
+            guild_db = session.query(Guild).filter_by(guild_id=guild_id).first()
             questions = session.query(Question).filter_by(
-                guild_id=guild.id,
+                guild_id=guild_db.id,
                 active=True,
                 parent_question_id=None
             ).order_by(Question.order).all()
@@ -149,7 +120,8 @@ class OnboardingCog(commands.Cog):
                 )
                 return
 
-            answered_ids = {a.question_id for a in submission.answers}
+            answers = session.query(Answer).filter_by(submission_id=submission.id).all()
+            answered_ids = {a.question_id for a in answers}
             next_question = None
 
             for q in questions:
@@ -157,17 +129,49 @@ class OnboardingCog(commands.Cog):
                     next_question = q
                     break
 
+            # If no root questions left, check for conditional questions
             if not next_question:
-                await self._submit_application(interaction, submission)
+                next_question = await self._get_next_conditional_question(session, submission)
+
+            if not next_question:
+                await self._submit_application(interaction, submission, guild_id)
                 return
 
-            await self._present_question(interaction, submission.id, next_question)
+            await self._present_question(interaction, submission.id, next_question, guild_id)
+
+    async def _get_next_conditional_question(self, session, submission):
+        """Get next conditional question based on answers"""
+        answers = (
+            session.query(Answer)
+            .options(joinedload(Answer.selected_options))
+            .filter_by(submission_id=submission.id)
+            .all()
+        )
+
+        for answer in answers:
+            if answer.selected_options:
+                for option in answer.selected_options:
+                    conditional = session.query(Question).filter_by(
+                        parent_option_id=option.id,
+                        active=True
+                    ).first()
+
+                    if conditional:
+                        already_answered = session.query(Answer).filter_by(
+                            submission_id=submission.id,
+                            question_id=conditional.id
+                        ).first()
+
+                        if not already_answered:
+                            return conditional
+        return None
 
     async def _present_question(
             self,
             interaction: discord.Interaction,
             submission_id: int,
-            question: Question
+            question: Question,
+            guild_id: int
     ):
         """Present a question to the user"""
         if question.question_type in [QuestionType.SINGLE_CHOICE, QuestionType.MULTI_CHOICE]:
@@ -175,6 +179,7 @@ class OnboardingCog(commands.Cog):
                 self.bot,
                 submission_id,
                 question,
+                guild_id,
                 is_multi=question.question_type == QuestionType.MULTI_CHOICE
             )
 
@@ -190,13 +195,15 @@ class OnboardingCog(commands.Cog):
         else:
             if not interaction.response.is_done():
                 modal = QuestionModal(
+                    self.bot,
                     submission_id,
                     question,
+                    guild_id,
                     question.question_type
                 )
                 await interaction.response.send_modal(modal)
 
-    async def _submit_application(self, interaction: discord.Interaction, submission: Submission):
+    async def _submit_application(self, interaction: discord.Interaction, submission: Submission, guild_id: int):
         """Submit completed application for review"""
         with db.session_scope() as session:
             submission = session.query(Submission).filter_by(id=submission.id).first()
@@ -207,7 +214,14 @@ class OnboardingCog(commands.Cog):
             flagged = False
             flag_reason = []
 
-            for answer in submission.answers:
+            answers = (
+                session.query(Answer)
+                .options(joinedload(Answer.selected_options))
+                .filter_by(submission_id=submission.id)
+                .all()
+            )
+
+            for answer in answers:
                 for option in answer.selected_options:
                     if option.immediate_reject:
                         flagged = True
@@ -219,7 +233,7 @@ class OnboardingCog(commands.Cog):
 
             session.commit()
 
-        await self._send_to_moderators(interaction.guild.id, submission.id)
+        await self._send_to_moderators(guild_id, submission.id)
 
         embed = await create_embed(
             title="Application Submitted!",
@@ -248,87 +262,61 @@ class OnboardingCog(commands.Cog):
             submission = session.query(Submission).filter_by(id=submission_id).first()
             member = submission.member
 
-            embed = discord.Embed(
-                title="📋 New Application",
-                color=discord.Color.orange() if submission.flagged else discord.Color.blue()
-            )
-
-            embed.add_field(
-                name="Applicant",
-                value=f"<@{member.user_id}> ({member.username})",
-                inline=False
-            )
-
-            if submission.flagged:
+            if submission.submission_type == SubmissionType.FRIEND:
+                embed = discord.Embed(
+                    title="🤝 New Friend/Ally Request",
+                    color=discord.Color.gold()
+                )
                 embed.add_field(
-                    name="⚠️ FLAGGED",
-                    value=submission.flag_reason or "Immediate reject option selected",
+                    name="User",
+                    value=f"<@{member.user_id}> ({member.username})",
+                    inline=False
+                )
+                embed.add_field(
+                    name="Information",
+                    value=submission.friend_info[:1024],
+                    inline=False
+                )
+            else:
+                embed = discord.Embed(
+                    title="📋 New Application",
+                    color=discord.Color.orange() if submission.flagged else discord.Color.blue()
+                )
+
+                embed.add_field(
+                    name="Applicant",
+                    value=f"<@{member.user_id}> ({member.username})",
                     inline=False
                 )
 
-            for answer in submission.answers:
-                question = answer.question
-                if answer.text_answer:
-                    value = answer.text_answer[:1024]
-                elif answer.numeric_answer is not None:
-                    value = str(answer.numeric_answer)
-                elif answer.selected_options:
-                    value = ", ".join([opt.option_text for opt in answer.selected_options])
-                else:
-                    value = "No answer"
+                if submission.flagged:
+                    embed.add_field(
+                        name="⚠️ FLAGGED",
+                        value=submission.flag_reason or "Immediate reject option selected",
+                        inline=False
+                    )
 
-                embed.add_field(
-                    name=question.question_text[:256],
-                    value=value,
-                    inline=False
-                )
+                for answer in submission.answers:
+                    question = answer.question
+                    if answer.text_answer:
+                        value = answer.text_answer[:1024]
+                    elif answer.numeric_answer is not None:
+                        value = str(answer.numeric_answer)
+                    elif answer.selected_options:
+                        value = ", ".join([opt.option_text for opt in answer.selected_options])
+                    else:
+                        value = "No answer"
+
+                    embed.add_field(
+                        name=question.question_text[:256],
+                        value=value,
+                        inline=False
+                    )
 
             embed.set_footer(text=f"Submission ID: {submission_id}")
 
             view = ModReviewView(self.bot, submission_id)
             await channel.send(embed=embed, view=view)
-
-    @app_commands.command(name="appeal", description="Submit an appeal if your application was rejected")
-    @app_commands.guild_only()
-    async def appeal(self, interaction: discord.Interaction):
-        """Allow a rejected member to submit an appeal"""
-        member_record = await get_or_create_member(
-            interaction.guild.id,
-            interaction.user.id,
-            interaction.user.name
-        )
-
-        if not member_record or member_record.status != ApplicationStatus.REJECTED:
-            await interaction.response.send_message(
-                "⚠️ You can only appeal if your application has been rejected.",
-                ephemeral=True
-            )
-            return
-
-        with db.session_scope() as session:
-            member = session.query(Member).filter_by(id=member_record.id).first()
-
-            if member.appeal_count >= 1:
-                await interaction.response.send_message(
-                    "❌ You have already submitted an appeal. You cannot submit another.",
-                    ephemeral=True
-                )
-                return
-
-            pending_appeal = session.query(Appeal).filter_by(
-                member_id=member.id,
-                status=AppealStatus.PENDING
-            ).first()
-
-            if pending_appeal:
-                await interaction.response.send_message(
-                    "⏳ You already have a pending appeal. Please wait for a moderator to review it.",
-                    ephemeral=True
-                )
-                return
-
-        modal = AppealModal(member_record.id)
-        await interaction.response.send_modal(modal)
 
     async def _send_response(self, interaction, content=None, embed=None, view=None, ephemeral=False):
         """Helper to send response or followup based on interaction state"""
@@ -342,14 +330,123 @@ class OnboardingCog(commands.Cog):
             await interaction.response.send_message(**kwargs)
 
 
+class OnboardingChoiceView(discord.ui.View):
+    """View for initial onboarding choice"""
+
+    def __init__(self, bot, guild_id: int):
+        super().__init__(timeout=None)
+        self.bot = bot
+        self.guild_id = guild_id
+
+    @discord.ui.button(label="🛡️ Apply to Join", style=discord.ButtonStyle.primary, custom_id="apply")
+    async def apply_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Start application process"""
+        member_record = await get_or_create_member(
+            self.guild_id,
+            interaction.user.id,
+            interaction.user.name
+        )
+
+        if member_record.blacklisted:
+            await interaction.response.send_message(
+                "❌ You are not permitted to apply.",
+                ephemeral=True
+            )
+            return
+
+        onboarding_cog = self.bot.get_cog('OnboardingCog')
+        if onboarding_cog:
+            await onboarding_cog.start_application(interaction, member_record, self.guild_id)
+
+    @discord.ui.button(label="🤝 Friend/Ally", style=discord.ButtonStyle.secondary, custom_id="friend")
+    async def friend_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Friend/Ally path"""
+        member_record = await get_or_create_member(
+            self.guild_id,
+            interaction.user.id,
+            interaction.user.name
+        )
+
+        if member_record.blacklisted:
+            await interaction.response.send_message(
+                "❌ You are not permitted to join as a friend.",
+                ephemeral=True
+            )
+            return
+
+        modal = FriendModal(self.bot, self.guild_id, member_record.id)
+        await interaction.response.send_modal(modal)
+
+    @discord.ui.button(label="👤 Regular User", style=discord.ButtonStyle.secondary, custom_id="regular")
+    async def regular_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Regular user - no onboarding needed"""
+        await interaction.response.send_message(
+            "✅ Welcome! You're all set. Feel free to explore the server!",
+            ephemeral=True
+        )
+
+
+class FriendModal(discord.ui.Modal):
+    """Modal for friend/ally information"""
+
+    def __init__(self, bot, guild_id: int, member_id: int):
+        super().__init__(title="Friend/Ally Information")
+        self.bot = bot
+        self.guild_id = guild_id
+        self.member_id = member_id
+
+        self.info = discord.ui.TextInput(
+            label="Tell us about yourself",
+            placeholder="Who are you? What guild are you from? Who do you know here?",
+            style=discord.TextStyle.long,
+            required=True,
+            max_length=2000
+        )
+        self.add_item(self.info)
+
+    async def on_submit(self, interaction: discord.Interaction):
+        """Submit friend request"""
+        with db.session_scope() as session:
+            submission = Submission(
+                member_id=self.member_id,
+                submission_type=SubmissionType.FRIEND,
+                friend_info=self.info.value,
+                status=ApplicationStatus.PENDING,
+                submitted_at=datetime.utcnow()
+            )
+            session.add(submission)
+
+            member = session.query(Member).filter_by(id=self.member_id).first()
+            member.status = ApplicationStatus.PENDING
+
+            session.commit()
+            submission_id = submission.id
+
+        onboarding_cog = self.bot.get_cog('OnboardingCog')
+        if onboarding_cog:
+            await onboarding_cog._send_to_moderators(self.guild_id, submission_id)
+
+        embed = await create_embed(
+            title="✅ Request Submitted",
+            description=(
+                "Thank you! Your friend/ally request has been submitted.\n\n"
+                "A moderator will review it and get back to you soon."
+            ),
+            color=discord.Color.green()
+        )
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+
 class QuestionView(discord.ui.View):
     """Interactive view for answering choice questions"""
 
-    def __init__(self, bot, submission_id: int, question: Question, is_multi: bool = False):
+    def __init__(self, bot, submission_id: int, question: Question, guild_id: int, is_multi: bool = False):
         super().__init__(timeout=300)
         self.bot = bot
         self.submission_id = submission_id
         self.question = question
+        self.guild_id = guild_id
 
         options = [
             discord.SelectOption(
@@ -417,16 +514,18 @@ class QuestionView(discord.ui.View):
 
         onboarding_cog = self.bot.get_cog('OnboardingCog')
         if onboarding_cog:
-            await onboarding_cog._start_application(interaction, member)
+            await onboarding_cog.start_application(interaction, member, self.guild_id)
 
 
 class QuestionModal(discord.ui.Modal):
     """Modal for text/numeric questions"""
 
-    def __init__(self, submission_id: int, question: Question, question_type: QuestionType):
+    def __init__(self, bot, submission_id: int, question: Question, guild_id: int, question_type: QuestionType):
         super().__init__(title="Application Question")
+        self.bot = bot
         self.submission_id = submission_id
         self.question = question
+        self.guild_id = guild_id
         self.question_type = question_type
 
         style = discord.TextStyle.long if question_type == QuestionType.LONG_TEXT else discord.TextStyle.short
@@ -477,188 +576,9 @@ class QuestionModal(discord.ui.Modal):
         with db.session_scope() as session:
             member = session.query(Member).filter_by(id=member_id).first()
 
-        from bot import OnboardingBot
-        bot = interaction.client
-        onboarding_cog = bot.get_cog('OnboardingCog')
+        onboarding_cog = self.bot.get_cog('OnboardingCog')
         if onboarding_cog:
-            await onboarding_cog._start_application(interaction, member)
-
-
-class AppealModal(discord.ui.Modal):
-    """Modal for appeal submission"""
-
-    def __init__(self, member_id: int):
-        super().__init__(title="Appeal Application Rejection")
-        self.member_id = member_id
-
-        self.reason = discord.ui.TextInput(
-            label="Why should we reconsider?",
-            style=discord.TextStyle.long,
-            required=True,
-            max_length=1000,
-            placeholder="Explain why you believe your application should be reconsidered..."
-        )
-        self.add_item(self.reason)
-
-    async def on_submit(self, interaction: discord.Interaction):
-        """Submit appeal"""
-        with db.session_scope() as session:
-            member = session.query(Member).filter_by(id=self.member_id).first()
-
-            appeal = Appeal(
-                member_id=member.id,
-                reason=str(self.reason.value),
-                status=AppealStatus.PENDING
-            )
-            session.add(appeal)
-            member.appeal_count += 1
-            session.commit()
-
-            appeal_id = appeal.id
-            user_id = member.user_id
-
-        channel_id = await get_channel_id(interaction.guild.id, "moderator_queue")
-        if channel_id:
-            channel = interaction.guild.get_channel(channel_id)
-            if channel:
-                embed = discord.Embed(
-                    title="📨 Appeal Submitted",
-                    color=discord.Color.gold()
-                )
-                embed.add_field(
-                    name="User",
-                    value=f"<@{user_id}>",
-                    inline=False
-                )
-                embed.add_field(
-                    name="Reason",
-                    value=self.reason.value,
-                    inline=False
-                )
-                embed.set_footer(text=f"Appeal ID: {appeal_id}")
-
-                view = AppealReviewView(interaction.client, appeal_id)
-                await channel.send(embed=embed, view=view)
-
-        await interaction.response.send_message(
-            "✅ Your appeal has been submitted. A moderator will review it.",
-            ephemeral=True
-        )
-
-
-class AppealReviewView(discord.ui.View):
-    """View for moderators to review appeals"""
-
-    def __init__(self, bot, appeal_id: int):
-        super().__init__(timeout=None)
-        self.bot = bot
-        self.appeal_id = appeal_id
-
-    @discord.ui.button(label="✅ Approve Appeal", style=discord.ButtonStyle.green)
-    async def approve(self, interaction: discord.Interaction, button: discord.ui.Button):
-        """Approve the appeal"""
-        with db.session_scope() as session:
-            appeal = session.query(Appeal).filter_by(id=self.appeal_id).first()
-            if not appeal:
-                await interaction.response.send_message("❌ Appeal not found.", ephemeral=True)
-                return
-
-            if appeal.status != AppealStatus.PENDING:
-                await interaction.response.send_message("❌ This appeal has already been processed.", ephemeral=True)
-                return
-
-            member = appeal.member
-
-            appeal.status = AppealStatus.APPROVED
-            appeal.reviewed_at = datetime.utcnow()
-            appeal.reviewer_id = interaction.user.id
-
-            # Reset member status to allow reapplication
-            member.status = ApplicationStatus.IN_PROGRESS
-            member.blacklisted = False
-            member.blacklist_reason = None
-
-            # Delete ALL old submissions to give them a fresh start
-            session.query(Submission).filter_by(member_id=member.id).delete()
-
-            session.commit()
-            user_id = member.user_id
-
-        discord_user = await self.bot.fetch_user(user_id)
-        if discord_user:
-            embed = await create_embed(
-                title="✅ Appeal Approved",
-                description=(
-                    "Your appeal has been approved! You may now reapply to the server using `/apply`.\n\n"
-                    "Please take this opportunity to submit a complete and thoughtful application."
-                ),
-                color=discord.Color.green()
-            )
-            await try_send_dm(discord_user, embed=embed)
-
-        await interaction.response.send_message(
-            f"✅ Appeal approved for <@{user_id}>. They can now reapply.",
-            ephemeral=True
-        )
-
-    @discord.ui.button(label="❌ Reject Appeal", style=discord.ButtonStyle.red)
-    async def reject(self, interaction: discord.Interaction, button: discord.ui.Button):
-        """Reject the appeal"""
-        modal = AppealRejectModal(self.bot, self.appeal_id)
-        await interaction.response.send_modal(modal)
-
-
-class AppealRejectModal(discord.ui.Modal):
-    """Modal for rejecting appeal with reason"""
-
-    def __init__(self, bot, appeal_id: int):
-        super().__init__(title="Reject Appeal")
-        self.bot = bot
-        self.appeal_id = appeal_id
-
-        self.note = discord.ui.TextInput(
-            label="Note (optional)",
-            placeholder="Internal note about why appeal was rejected...",
-            style=discord.TextStyle.long,
-            required=False,
-            max_length=500
-        )
-        self.add_item(self.note)
-
-    async def on_submit(self, interaction: discord.Interaction):
-        """Process appeal rejection"""
-        with db.session_scope() as session:
-            appeal = session.query(Appeal).filter_by(id=self.appeal_id).first()
-            if not appeal:
-                await interaction.response.send_message("❌ Appeal not found.", ephemeral=True)
-                return
-
-            appeal.status = AppealStatus.REJECTED
-            appeal.reviewed_at = datetime.utcnow()
-            appeal.reviewer_id = interaction.user.id
-            appeal.reviewer_note = self.note.value
-
-            member = appeal.member
-            member.blacklisted = True
-            if not member.blacklist_reason:
-                member.blacklist_reason = "Appeal rejected"
-
-            session.commit()
-            user_id = member.user_id
-
-        discord_user = await self.bot.fetch_user(user_id)
-        if discord_user:
-            embed = await create_embed(
-                title="Appeal Decision",
-                description="Your appeal has been reviewed and was not approved.",
-                color=discord.Color.red()
-            )
-            await try_send_dm(discord_user, embed=embed)
-
-        await interaction.response.send_message(
-            f"✅ Appeal rejected for <@{user_id}>.",
-            ephemeral=True
-        )
+            await onboarding_cog.start_application(interaction, member, self.guild_id)
 
 
 class ModReviewView(discord.ui.View):

@@ -10,7 +10,7 @@ import logging
 
 from models import (
     Guild, Member, Submission, ModeratorAction, Configuration, RoleRegistry,
-    ApplicationStatus, ActionType, RoleTier
+    ApplicationStatus, ActionType, RoleTier, SubmissionType
 )
 from database import db
 from utils.helpers import (
@@ -64,11 +64,12 @@ class ModerationCog(commands.Cog):
             for sub in pending[:10]:
                 member = sub.member
                 flag_emoji = "⚠️ " if sub.flagged else ""
+                type_emoji = "🤝 " if sub.submission_type == SubmissionType.FRIEND else "🛡️ "
                 submitted = sub.submitted_at.strftime("%Y-%m-%d %H:%M UTC") if sub.submitted_at else "Unknown"
 
                 embed.add_field(
-                    name=f"{flag_emoji}ID: {sub.id}",
-                    value=f"<@{member.user_id}>\nSubmitted: {submitted}",
+                    name=f"{type_emoji}{flag_emoji}ID: {sub.id}",
+                    value=f"<@{member.user_id}>\nSubmitted: {submitted}\nType: {sub.submission_type.value}",
                     inline=True
                 )
 
@@ -104,40 +105,57 @@ class ModerationCog(commands.Cog):
                 return
 
             member = submission.member
-            embed = discord.Embed(
-                title="📋 Application Review",
-                color=discord.Color.orange() if submission.flagged else discord.Color.blue()
-            )
 
-            embed.add_field(
-                name="Applicant",
-                value=f"<@{member.user_id}> ({member.username})",
-                inline=False
-            )
-
-            if submission.flagged:
+            if submission.submission_type == SubmissionType.FRIEND:
+                embed = discord.Embed(
+                    title="🤝 Friend/Ally Review",
+                    color=discord.Color.gold()
+                )
                 embed.add_field(
-                    name="⚠️ FLAGGED",
-                    value=submission.flag_reason or "Immediate reject option selected",
+                    name="User",
+                    value=f"<@{member.user_id}> ({member.username})",
+                    inline=False
+                )
+                embed.add_field(
+                    name="Information",
+                    value=submission.friend_info[:1024],
+                    inline=False
+                )
+            else:
+                embed = discord.Embed(
+                    title="📋 Application Review",
+                    color=discord.Color.orange() if submission.flagged else discord.Color.blue()
+                )
+
+                embed.add_field(
+                    name="Applicant",
+                    value=f"<@{member.user_id}> ({member.username})",
                     inline=False
                 )
 
-            for answer in submission.answers:
-                question = answer.question
-                if answer.text_answer:
-                    value = answer.text_answer[:1024]
-                elif answer.numeric_answer is not None:
-                    value = str(answer.numeric_answer)
-                elif answer.selected_options:
-                    value = ", ".join([opt.option_text for opt in answer.selected_options])
-                else:
-                    value = "No answer"
+                if submission.flagged:
+                    embed.add_field(
+                        name="⚠️ FLAGGED",
+                        value=submission.flag_reason or "Immediate reject option selected",
+                        inline=False
+                    )
 
-                embed.add_field(
-                    name=question.question_text[:256],
-                    value=value,
-                    inline=False
-                )
+                for answer in submission.answers:
+                    question = answer.question
+                    if answer.text_answer:
+                        value = answer.text_answer[:1024]
+                    elif answer.numeric_answer is not None:
+                        value = str(answer.numeric_answer)
+                    elif answer.selected_options:
+                        value = ", ".join([opt.option_text for opt in answer.selected_options])
+                    else:
+                        value = "No answer"
+
+                    embed.add_field(
+                        name=question.question_text[:256],
+                        value=value,
+                        inline=False
+                    )
 
             submitted = submission.submitted_at.strftime("%Y-%m-%d %H:%M UTC") if submission.submitted_at else "Unknown"
             embed.set_footer(text=f"Submission ID: {submission_id} | Submitted: {submitted}")
@@ -153,14 +171,19 @@ class ModerationCog(commands.Cog):
                 RoleRegistry.hierarchy_level.desc()
             ).all()
 
-            if not roles:
+            # Filter to only show appropriate roles for approval
+            approval_roles = [r for r in roles if r.role_tier in [
+                RoleTier.SQUIRE, RoleTier.KNIGHT, RoleTier.TEMPLAR
+            ]]
+
+            if not approval_roles:
                 await interaction.response.send_message(
-                    "❌ No roles configured. Use `/set_role` first.",
+                    "❌ No approval roles configured. Use `/set_role` to set up Squire, Knight, or Templar roles.",
                     ephemeral=True
                 )
                 return
 
-            view = RoleSelectView(self.bot, submission_id, roles)
+            view = RoleSelectView(self.bot, submission_id, approval_roles)
             await interaction.response.send_message(
                 "Select the role to assign to this member:",
                 view=view,
@@ -183,6 +206,7 @@ class ModerationCog(commands.Cog):
 
             member.status = ApplicationStatus.APPROVED
             member.approved_at = datetime.utcnow()
+            member.role_tier = role_tier
 
             action = ModeratorAction(
                 submission_id=submission.id,
@@ -196,31 +220,54 @@ class ModerationCog(commands.Cog):
 
             guild_id = interaction.guild.id
             user_id = member.user_id
+            submission_type = submission.submission_type
 
+        # Remove APPLICANT role if they have it
+        applicant_role_id = await get_role_id(interaction.guild.id, RoleTier.APPLICANT)
+        if applicant_role_id:
+            applicant_role = interaction.guild.get_role(applicant_role_id)
+            discord_member = interaction.guild.get_member(user_id)
+            if applicant_role and discord_member and applicant_role in discord_member.roles:
+                try:
+                    await discord_member.remove_roles(applicant_role, reason="Application approved")
+                except discord.Forbidden:
+                    logger.error(f"Cannot remove applicant role from {user_id}")
+
+        # Assign the selected role
         role_id = await get_role_id(interaction.guild.id, role_tier)
         if role_id:
             role = interaction.guild.get_role(role_id)
             discord_member = interaction.guild.get_member(user_id)
             if role and discord_member:
                 try:
-                    await discord_member.add_roles(role, reason="Application approved")
+                    await discord_member.add_roles(role, reason=f"Application approved as {role_tier.value}")
                 except discord.Forbidden:
                     logger.error(f"Cannot assign role {role_id} to user {user_id}")
 
         discord_user = await self.bot.fetch_user(user_id)
         if discord_user:
-            embed = await create_embed(
-                title="✅ Application Approved!",
-                description=(
-                    f"Congratulations! Your application to **{interaction.guild.name}** has been approved.\n\n"
-                    "You now have access to the server. Welcome to the community!\n\n"
-                    "You can use `/character_add` to add your game characters."
-                ),
-                color=discord.Color.green()
-            )
+            if submission_type == SubmissionType.FRIEND:
+                embed = await create_embed(
+                    title="✅ Friend/Ally Request Approved!",
+                    description=(
+                        f"Your friend/ally request to **{interaction.guild.name}** has been approved.\n\n"
+                        f"You've been assigned the {role_tier.value} role. Welcome!"
+                    ),
+                    color=discord.Color.green()
+                )
+            else:
+                embed = await create_embed(
+                    title="✅ Application Approved!",
+                    description=(
+                        f"Congratulations! Your application to **{interaction.guild.name}** has been approved.\n\n"
+                        f"You've been assigned the {role_tier.value} role. Welcome to the community!\n\n"
+                        "You can use `/character_add` to add your game characters."
+                    ),
+                    color=discord.Color.green()
+                )
             await try_send_dm(discord_user, embed=embed)
 
-        await self._post_welcome_announcement(interaction.guild.id, user_id)
+        await self._post_welcome_announcement(interaction.guild.id, user_id, role_tier)
 
         await interaction.response.send_message(
             f"✅ Application approved for <@{user_id}> with {role_tier.value} role",
@@ -266,15 +313,33 @@ class ModerationCog(commands.Cog):
             session.commit()
 
             user_id = member.user_id
+            submission_type = submission.submission_type
+
+        # Remove APPLICANT role if they have it
+        applicant_role_id = await get_role_id(interaction.guild.id, RoleTier.APPLICANT)
+        if applicant_role_id:
+            applicant_role = interaction.guild.get_role(applicant_role_id)
+            discord_member = interaction.guild.get_member(user_id)
+            if applicant_role and discord_member and applicant_role in discord_member.roles:
+                try:
+                    await discord_member.remove_roles(applicant_role, reason="Application rejected")
+                except discord.Forbidden:
+                    logger.error(f"Cannot remove applicant role from {user_id}")
 
         discord_user = await self.bot.fetch_user(user_id)
         if discord_user and not ban:
+            if submission_type == SubmissionType.FRIEND:
+                title = "Friend/Ally Request Decision"
+                description = f"Your friend/ally request to **{interaction.guild.name}** was not approved at this time."
+            else:
+                title = "Application Decision"
+                description = f"Your application to **{interaction.guild.name}** was not approved at this time."
+
             embed = await create_embed(
-                title="Application Decision",
+                title=title,
                 description=(
-                    f"Your application to **{interaction.guild.name}** was not approved at this time.\n\n"
-                    f"{f'Reason: {reason}' if reason else 'No specific reason provided.'}\n\n"
-                    "You may submit an appeal using `/appeal`."
+                    f"{description}\n\n"
+                    f"{f'Reason: {reason}' if reason else 'No specific reason provided.'}"
                 ),
                 color=discord.Color.orange()
             )
@@ -302,22 +367,72 @@ class ModerationCog(commands.Cog):
     @app_commands.default_permissions(manage_roles=True)
     @app_commands.describe(
         member="The member to promote",
-        role="The role to promote them to"
+        role_tier="The role tier to promote them to (sovereign, templar, knight, squire)"
     )
-    async def promote(self, interaction: discord.Interaction, member: discord.Member, role: discord.Role):
+    async def promote(self, interaction: discord.Interaction, member: discord.Member, role_tier: str):
         """Promote a member"""
         if not await self._check_moderator(interaction):
             return
 
+        tier_map = {
+            "sovereign": RoleTier.SOVEREIGN,
+            "templar": RoleTier.TEMPLAR,
+            "knight": RoleTier.KNIGHT,
+            "squire": RoleTier.SQUIRE
+        }
+
+        if role_tier.lower() not in tier_map:
+            await interaction.response.send_message(
+                f"❌ Invalid role tier. Valid tiers: {', '.join(tier_map.keys())}",
+                ephemeral=True
+            )
+            return
+
+        tier = tier_map[role_tier.lower()]
+        role_id = await get_role_id(interaction.guild.id, tier)
+
+        if not role_id:
+            await interaction.response.send_message(
+                f"❌ {role_tier} role not configured. Use `/set_role` first.",
+                ephemeral=True
+            )
+            return
+
+        role = interaction.guild.get_role(role_id)
+        if not role:
+            await interaction.response.send_message("❌ Role not found.", ephemeral=True)
+            return
+
         try:
+            # Remove old tier roles
+            with db.session_scope() as session:
+                guild = session.query(Guild).filter_by(guild_id=interaction.guild.id).first()
+                all_tier_roles = session.query(RoleRegistry).filter_by(guild_id=guild.id).all()
+
+                for tier_role in all_tier_roles:
+                    if tier_role.role_tier != tier:
+                        old_role = interaction.guild.get_role(tier_role.role_id)
+                        if old_role and old_role in member.roles:
+                            await member.remove_roles(old_role, reason=f"Promoted to {role_tier}")
+
             await member.add_roles(role, reason=f"Promoted by {interaction.user.name}")
 
+            # Update database
             with db.session_scope() as session:
+                guild = session.query(Guild).filter_by(guild_id=interaction.guild.id).first()
+                db_member = session.query(Member).filter_by(
+                    guild_id=guild.id,
+                    user_id=member.id
+                ).first()
+
+                if db_member:
+                    db_member.role_tier = tier
+
                 action = ModeratorAction(
                     target_user_id=member.id,
                     moderator_id=interaction.user.id,
                     action_type=ActionType.PROMOTE,
-                    reason=f"Promoted to {role.name}"
+                    reason=f"Promoted to {role_tier}"
                 )
                 session.add(action)
 
@@ -343,187 +458,83 @@ class ModerationCog(commands.Cog):
                 ephemeral=True
             )
 
-    @app_commands.command(name="demote", description="Demote a member by removing a role")
+    @app_commands.command(name="demote", description="Demote a member to a lower role")
     @app_commands.guild_only()
     @app_commands.default_permissions(manage_roles=True)
     @app_commands.describe(
         member="The member to demote",
-        role="The role to remove"
+        role_tier="The role tier to demote them to (squire, applicant, or none)"
     )
-    async def demote(self, interaction: discord.Interaction, member: discord.Member, role: discord.Role):
+    async def demote(self, interaction: discord.Interaction, member: discord.Member, role_tier: str):
         """Demote a member"""
         if not await self._check_moderator(interaction):
             return
 
-        try:
-            await member.remove_roles(role, reason=f"Demoted by {interaction.user.name}")
+        tier_map = {
+            "squire": RoleTier.SQUIRE,
+            "applicant": RoleTier.APPLICANT,
+            "none": None
+        }
 
+        if role_tier.lower() not in tier_map:
+            await interaction.response.send_message(
+                f"❌ Invalid role tier. Valid tiers: {', '.join(tier_map.keys())}",
+                ephemeral=True
+            )
+            return
+
+        tier = tier_map[role_tier.lower()]
+
+        try:
+            # Remove all tier roles
             with db.session_scope() as session:
+                guild = session.query(Guild).filter_by(guild_id=interaction.guild.id).first()
+                all_tier_roles = session.query(RoleRegistry).filter_by(guild_id=guild.id).all()
+
+                for tier_role in all_tier_roles:
+                    old_role = interaction.guild.get_role(tier_role.role_id)
+                    if old_role and old_role in member.roles:
+                        await member.remove_roles(old_role, reason=f"Demoted to {role_tier}")
+
+            # Assign new role if not "none"
+            if tier:
+                role_id = await get_role_id(interaction.guild.id, tier)
+                if role_id:
+                    role = interaction.guild.get_role(role_id)
+                    if role:
+                        await member.add_roles(role, reason=f"Demoted to {role_tier}")
+
+            # Update database
+            with db.session_scope() as session:
+                guild = session.query(Guild).filter_by(guild_id=interaction.guild.id).first()
+                db_member = session.query(Member).filter_by(
+                    guild_id=guild.id,
+                    user_id=member.id
+                ).first()
+
+                if db_member:
+                    db_member.role_tier = tier
+
                 action = ModeratorAction(
                     target_user_id=member.id,
                     moderator_id=interaction.user.id,
                     action_type=ActionType.DEMOTE,
-                    reason=f"Removed {role.name}"
+                    reason=f"Demoted to {role_tier}"
                 )
                 session.add(action)
 
             await interaction.response.send_message(
-                f"✅ Removed {role.mention} from {member.mention}",
+                f"✅ Demoted {member.mention} to {role_tier}",
                 ephemeral=True
             )
 
         except discord.Forbidden:
             await interaction.response.send_message(
-                "❌ I don't have permission to manage this role.",
+                "❌ I don't have permission to manage roles.",
                 ephemeral=True
             )
 
-    @app_commands.command(name="mod_kick", description="Kick a member from the server")
-    @app_commands.guild_only()
-    @app_commands.default_permissions(kick_members=True)
-    @app_commands.describe(
-        member="The member to kick",
-        reason="Reason for kicking"
-    )
-    async def mod_kick(self, interaction: discord.Interaction, member: discord.Member, reason: str = None):
-        """Kick a member"""
-        if not await self._check_moderator(interaction):
-            return
-
-        try:
-            with db.session_scope() as session:
-                action = ModeratorAction(
-                    target_user_id=member.id,
-                    moderator_id=interaction.user.id,
-                    action_type=ActionType.KICK,
-                    reason=reason
-                )
-                session.add(action)
-
-            await member.kick(reason=reason or "No reason provided")
-
-            await interaction.response.send_message(
-                f"✅ Kicked {member.mention}\nReason: {reason or 'No reason provided'}",
-                ephemeral=True
-            )
-
-        except discord.Forbidden:
-            await interaction.response.send_message(
-                "❌ I don't have permission to kick this member.",
-                ephemeral=True
-            )
-
-    @app_commands.command(name="mod_ban", description="Ban a member from the server")
-    @app_commands.guild_only()
-    @app_commands.default_permissions(ban_members=True)
-    @app_commands.describe(
-        member="The member to ban",
-        reason="Reason for banning",
-        delete_messages="Days of messages to delete (0-7)"
-    )
-    async def mod_ban(
-            self,
-            interaction: discord.Interaction,
-            member: discord.Member,
-            reason: str = None,
-            delete_messages: int = 0
-    ):
-        """Ban a member"""
-        if not await self._check_moderator(interaction):
-            return
-
-        if delete_messages < 0 or delete_messages > 7:
-            await interaction.response.send_message(
-                "❌ Delete messages must be between 0 and 7 days.",
-                ephemeral=True
-            )
-            return
-
-        try:
-            with db.session_scope() as session:
-                db_member = session.query(Member).filter_by(
-                    user_id=member.id,
-                    guild_id=session.query(Guild).filter_by(guild_id=interaction.guild.id).first().id
-                ).first()
-
-                if db_member:
-                    db_member.blacklisted = True
-                    db_member.blacklist_reason = reason
-
-                action = ModeratorAction(
-                    target_user_id=member.id,
-                    moderator_id=interaction.user.id,
-                    action_type=ActionType.BAN,
-                    reason=reason,
-                    banned=True
-                )
-                session.add(action)
-
-            await member.ban(reason=reason or "No reason provided", delete_message_days=delete_messages)
-
-            await interaction.response.send_message(
-                f"✅ Banned {member.mention}\nReason: {reason or 'No reason provided'}",
-                ephemeral=True
-            )
-
-        except discord.Forbidden:
-            await interaction.response.send_message(
-                "❌ I don't have permission to ban this member.",
-                ephemeral=True
-            )
-
-    @app_commands.command(name="mod_timeout", description="Timeout a member")
-    @app_commands.guild_only()
-    @app_commands.default_permissions(moderate_members=True)
-    @app_commands.describe(
-        member="The member to timeout",
-        duration="Duration in minutes",
-        reason="Reason for timeout"
-    )
-    async def mod_timeout(
-            self,
-            interaction: discord.Interaction,
-            member: discord.Member,
-            duration: int,
-            reason: str = None
-    ):
-        """Timeout a member"""
-        if not await self._check_moderator(interaction):
-            return
-
-        if duration < 1 or duration > 40320:  # Max 28 days
-            await interaction.response.send_message(
-                "❌ Duration must be between 1 minute and 28 days (40320 minutes).",
-                ephemeral=True
-            )
-            return
-
-        try:
-            timeout_until = datetime.utcnow() + timedelta(minutes=duration)
-
-            with db.session_scope() as session:
-                action = ModeratorAction(
-                    target_user_id=member.id,
-                    moderator_id=interaction.user.id,
-                    action_type=ActionType.TIMEOUT,
-                    reason=f"{reason or 'No reason'} ({duration}m)"
-                )
-                session.add(action)
-
-            await member.timeout(timeout_until, reason=reason or "No reason provided")
-
-            await interaction.response.send_message(
-                f"✅ Timed out {member.mention} for {duration} minutes\nReason: {reason or 'No reason provided'}",
-                ephemeral=True
-            )
-
-        except discord.Forbidden:
-            await interaction.response.send_message(
-                "❌ I don't have permission to timeout this member.",
-                ephemeral=True
-            )
-
-    async def _post_welcome_announcement(self, guild_id: int, user_id: int):
+    async def _post_welcome_announcement(self, guild_id: int, user_id: int, role_tier: RoleTier):
         """Post welcome announcement to configured channel"""
         channel_id = await get_channel_id(guild_id, "announcements")
         if not channel_id:
@@ -543,6 +554,7 @@ class ModerationCog(commands.Cog):
             template = config.welcome_template or "Welcome {mention} to the server!"
 
         message = template.replace("{mention}", f"<@{user_id}>")
+        message += f"\n\nThey've been assigned the **{role_tier.value}** role."
 
         embed = await create_embed(
             title="🎉 New Member!",

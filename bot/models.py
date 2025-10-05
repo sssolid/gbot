@@ -22,6 +22,12 @@ class ApplicationStatus(enum.Enum):
     IN_PROGRESS = "IN_PROGRESS"
 
 
+class SubmissionType(enum.Enum):
+    APPLICANT = "applicant"
+    FRIEND = "friend"
+    REGULAR = "regular"
+
+
 class QuestionType(enum.Enum):
     SINGLE_CHOICE = "single_choice"
     MULTI_CHOICE = "multi_choice"
@@ -35,6 +41,10 @@ class RoleTier(enum.Enum):
     MODERATOR = "moderator"
     MEMBER = "member"
     APPLICANT = "applicant"
+    SOVEREIGN = "sovereign"
+    TEMPLAR = "templar"
+    KNIGHT = "knight"
+    SQUIRE = "squire"
 
 
 class ActionType(enum.Enum):
@@ -102,6 +112,7 @@ class Member(Base):
     user_id = Column(BigInteger, nullable=False, index=True)
     username = Column(String(100))
     status = Column(SQLEnum(ApplicationStatus), default=ApplicationStatus.IN_PROGRESS)
+    role_tier = Column(SQLEnum(RoleTier), nullable=True)
     blacklisted = Column(Boolean, default=False)
     blacklist_reason = Column(Text)
     joined_at = Column(DateTime, default=datetime.utcnow)
@@ -173,6 +184,8 @@ class Submission(Base):
 
     id = Column(Integer, primary_key=True)
     member_id = Column(Integer, ForeignKey('members.id'), nullable=False)
+    submission_type = Column(SQLEnum(SubmissionType), default=SubmissionType.APPLICANT)
+    friend_info = Column(Text, nullable=True)
     status = Column(SQLEnum(ApplicationStatus), default=ApplicationStatus.IN_PROGRESS)
     submitted_at = Column(DateTime)
     reviewed_at = Column(DateTime)
@@ -279,5 +292,14 @@ class Configuration(Base):
     dm_fallback_enabled = Column(Boolean, default=True)
     auto_ban_on_flag = Column(Boolean, default=False)
     announcement_enabled = Column(Boolean, default=True)
+
+    # Bot-managed messages
+    welcome_message_content = Column(Text, nullable=True)
+    welcome_message_media_url = Column(Text, nullable=True)
+    welcome_message_id = Column(BigInteger, nullable=True)
+
+    rules_message_content = Column(Text, nullable=True)
+    rules_message_media_url = Column(Text, nullable=True)
+    rules_message_id = Column(BigInteger, nullable=True)
 
     guild = relationship('Guild', back_populates='config')
