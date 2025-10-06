@@ -11,11 +11,11 @@ Wants=network-online.target
 Type=simple
 User=botuser
 Group=botuser
-WorkingDirectory=/home/botuser/discord-onboarding-bot
-Environment="PATH=/home/botuser/discord-onboarding-bot/venv/bin"
+WorkingDirectory=/home/botuser/guildbot
+Environment="PATH=/home/botuser/guildbot/venv/bin"
 
 # Start command
-ExecStart=/home/botuser/discord-onboarding-bot/venv/bin/python bot/bot.py
+ExecStart=/home/botuser/guildbot/venv/bin/python bot/bot.py
 
 # Restart configuration
 Restart=always
@@ -28,7 +28,7 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/home/botuser/discord-onboarding-bot
+ReadWritePaths=/home/botuser/guildbot
 
 # Logging
 StandardOutput=journal

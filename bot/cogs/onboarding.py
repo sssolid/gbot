@@ -46,7 +46,8 @@ class OnboardingCog(commands.Cog):
                 "Thank you for joining our community! Please select how you'd like to proceed:\n\n"
                 "**🛡️ Apply to Join** - Complete an application to become a full member\n"
                 "**🤝 Friend/Ally** - You're from another guild or know someone here\n"
-                "**👤 Regular User** - Just here to hang out, no application needed"
+                "**👤 Regular User** - Just here to hang out, no application needed\n\n"
+                "💡 *If something goes wrong during the process, you can use `/reset` in the server to start over.*"
             ),
             color=discord.Color.blue()
         )
@@ -65,6 +66,223 @@ class OnboardingCog(commands.Cog):
                         delete_after=60
                     )
 
+    @app_commands.command(name="apply", description="Start or continue your application")
+    @app_commands.guild_only()
+    async def apply(self, interaction: discord.Interaction):
+        """Start or resume application process"""
+        # Get or create member record
+        member_record = await get_or_create_member(
+            interaction.guild.id,
+            interaction.user.id,
+            interaction.user.name
+        )
+
+        if not member_record:
+            await interaction.response.send_message(
+                "❌ Server not configured. Please contact an administrator.",
+                ephemeral=True
+            )
+            return
+
+        # Check current status
+        if member_record.blacklisted:
+            await interaction.response.send_message(
+                "❌ You are not permitted to use this bot.",
+                ephemeral=True
+            )
+            return
+
+        if member_record.status == ApplicationStatus.APPROVED:
+            await interaction.response.send_message(
+                "✅ You're already approved! Welcome to the community.",
+                ephemeral=True
+            )
+            return
+
+        if member_record.status == ApplicationStatus.PENDING:
+            await interaction.response.send_message(
+                "⏳ Your application is pending review. Please wait for a moderator to process it.",
+                ephemeral=True
+            )
+            return
+
+        if member_record.status == ApplicationStatus.REJECTED:
+            await interaction.response.send_message(
+                "❌ Your application was rejected. If you believe this was a mistake, please use `/appeal` to submit an appeal.",
+                "❌ Your application was rejected. Please use `/appeal` to submit an appeal.",
+                ephemeral=True
+            )
+            return
+
+        # Start or resume application
+        await self.start_application(interaction, member_record, interaction.guild.id)
+
+    @app_commands.command(name="reset", description="Reset your onboarding process and start over")
+    @app_commands.guild_only()
+    async def reset_onboarding(self, interaction: discord.Interaction):
+        """Reset onboarding for user"""
+        with db.session_scope() as session:
+            guild = session.query(Guild).filter_by(guild_id=interaction.guild.id).first()
+            if not guild:
+                await interaction.response.send_message("❌ Server not configured.", ephemeral=True)
+                return
+
+            member = session.query(Member).filter_by(
+                guild_id=guild.id,
+                user_id=interaction.user.id
+            ).first()
+
+            if not member:
+                await interaction.response.send_message("❌ Member record not found.", ephemeral=True)
+                return
+
+            # Check if user can reset
+            can_reset = False
+            reset_message = ""
+
+            if member.status in [ApplicationStatus.IN_PROGRESS, ApplicationStatus.PENDING]:
+                can_reset = True
+                reset_message = "Your in-progress application will be deleted."
+            elif member.status == ApplicationStatus.REJECTED and member.role_tier is None:
+                can_reset = True
+                reset_message = "You can restart the application process."
+            elif member.role_tier == RoleTier.SQUIRE and member.status == ApplicationStatus.APPROVED:
+                # Friend/ally wanting to apply
+                can_reset = True
+                reset_message = "⚠️ **Warning:** This will remove your current Squire role and you'll need to complete the full application process."
+
+            if not can_reset:
+                await interaction.response.send_message(
+                    "❌ You cannot reset your onboarding at this time. You are already a full member.",
+                    ephemeral=True
+                )
+                return
+
+            # Show confirmation view
+            view = ResetConfirmView(self.bot, member.id, reset_message)
+            embed = await create_embed(
+                title="⚠️ Reset Onboarding Process",
+                description=(
+                    f"{reset_message}\n\n"
+                    "**This action will:**\n"
+                    "• Delete your current application/answers\n"
+                    "• Reset your status to 'In Progress'\n"
+                    "• Remove your current role (if any)\n"
+                    "• Allow you to start the onboarding process fresh\n\n"
+                    "**Are you sure you want to continue?**"
+                ),
+                color=discord.Color.orange()
+            )
+
+            await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
+    @app_commands.command(name="appeal", description="Appeal a rejected application (one-time only)")
+    @app_commands.guild_only()
+    async def appeal_rejection(self, interaction: discord.Interaction):
+        """Appeal a rejection"""
+        with db.session_scope() as session:
+            guild = session.query(Guild).filter_by(guild_id=interaction.guild.id).first()
+            if not guild:
+                await interaction.response.send_message("❌ Server not configured.", ephemeral=True)
+                return
+
+            member = session.query(Member).filter_by(
+                guild_id=guild.id,
+                user_id=interaction.user.id
+            ).first()
+
+            if not member:
+                await interaction.response.send_message("❌ Member record not found.", ephemeral=True)
+                return
+
+            if member.status != ApplicationStatus.REJECTED:
+                await interaction.response.send_message(
+                    "❌ You can only appeal a rejected application.",
+                    ephemeral=True
+                )
+                return
+
+            if member.appeal_count >= 1:
+                await interaction.response.send_message(
+                    "❌ You have already used your one-time appeal.",
+                    ephemeral=True
+                )
+                return
+
+            existing_appeal = session.query(Appeal).filter_by(
+                member_id=member.id,
+                status=AppealStatus.PENDING
+            ).first()
+
+            if existing_appeal:
+                await interaction.response.send_message(
+                    "❌ You already have a pending appeal.",
+                    ephemeral=True
+                )
+                return
+
+        modal = AppealModal(self.bot, interaction.guild.id)
+        await interaction.response.send_modal(modal)
+
+    async def perform_reset(self, interaction: discord.Interaction, member_id: int):
+        """Actually perform the reset"""
+        with db.session_scope() as session:
+            member = session.query(Member).filter_by(id=member_id).first()
+            guild_id = member.guild.guild_id
+
+            # Delete all in-progress submissions
+            submissions = session.query(Submission).filter_by(member_id=member.id).all()
+            for sub in submissions:
+                session.delete(sub)
+
+            # Reset status
+            member.status = ApplicationStatus.IN_PROGRESS
+            old_tier = member.role_tier
+            member.role_tier = None
+
+            session.commit()
+
+        # Remove roles from Discord
+        discord_guild = self.bot.get_guild(guild_id)
+        if discord_guild:
+            discord_member = discord_guild.get_member(interaction.user.id)
+            if discord_member and old_tier:
+                role_id = await get_role_id(guild_id, old_tier)
+                if role_id:
+                    role = discord_guild.get_role(role_id)
+                    if role and role in discord_member.roles:
+                        try:
+                            await discord_member.remove_roles(role, reason="User reset onboarding")
+                        except discord.Forbidden:
+                            logger.error(f"Cannot remove role from {interaction.user.id}")
+
+        embed = await create_embed(
+            title="✅ Onboarding Reset Complete",
+            description=(
+                "Your onboarding process has been reset.\n\n"
+                "Check your DMs to start over."
+            ),
+            color=discord.Color.green()
+        )
+
+        # Send DM with onboarding options
+        guild_name = discord_guild.name if discord_guild else "the server"
+        dm_embed = await create_embed(
+            title=f"Welcome back to {guild_name}!",
+            description=(
+                "Your onboarding process has been reset. Please select how you'd like to proceed:\n\n"
+                "**🛡️ Apply to Join** - Complete an application to become a full member\n"
+                "**🤝 Friend/Ally** - You're from another guild or know someone here\n"
+                "**👤 Regular User** - Just here to hang out, no application needed"
+            ),
+            color=discord.Color.blue()
+        )
+
+        view = OnboardingChoiceView(self.bot, guild_id)
+        await try_send_dm(interaction.user, embed=dm_embed, view=view)
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
     async def start_application(self, interaction: discord.Interaction, member: Member, guild_id: int):
         """Begin the application flow"""
         with db.session_scope() as session:
@@ -72,7 +290,7 @@ class OnboardingCog(commands.Cog):
 
             submission = (
                 session.query(Submission)
-                .options(joinedload(Submission.answers))  # 👈 eager-load answers
+                .options(joinedload(Submission.answers))
                 .filter_by(
                     member_id=member.id,
                     status=ApplicationStatus.IN_PROGRESS,
@@ -91,7 +309,7 @@ class OnboardingCog(commands.Cog):
                 session.flush()
                 session.refresh(submission)
 
-            # Set APPLICANT role - get guild from bot
+            # Set APPLICANT role
             guild = self.bot.get_guild(guild_id)
             if guild:
                 applicant_role_id = await get_role_id(guild_id, RoleTier.APPLICANT)
@@ -106,6 +324,29 @@ class OnboardingCog(commands.Cog):
                             logger.error(f"Cannot assign applicant role to {interaction.user.id}")
 
             guild_db = session.query(Guild).filter_by(guild_id=guild_id).first()
+
+            # Get all answered questions
+            answers = session.query(Answer).options(
+                joinedload(Answer.selected_options)
+            ).filter_by(submission_id=submission.id).all()
+            answered_ids = {a.question_id for a in answers}
+
+            # PRIORITY 1: Check for unanswered conditional questions triggered by already-answered questions
+            # This ensures conditionals are asked immediately after their trigger
+            for answer in answers:
+                if answer.selected_options:
+                    for option in answer.selected_options:
+                        conditional = session.query(Question).filter_by(
+                            parent_option_id=option.id,
+                            active=True
+                        ).first()
+
+                        if conditional and conditional.id not in answered_ids:
+                            # Found an unanswered conditional - ask it immediately
+                            await self._present_question(interaction, submission.id, conditional, guild_id)
+                            return
+
+            # PRIORITY 2: Check for unanswered root questions
             questions = session.query(Question).filter_by(
                 guild_id=guild_db.id,
                 active=True,
@@ -120,51 +361,18 @@ class OnboardingCog(commands.Cog):
                 )
                 return
 
-            answers = session.query(Answer).filter_by(submission_id=submission.id).all()
-            answered_ids = {a.question_id for a in answers}
             next_question = None
-
             for q in questions:
                 if q.id not in answered_ids:
                     next_question = q
                     break
 
-            # If no root questions left, check for conditional questions
-            if not next_question:
-                next_question = await self._get_next_conditional_question(session, submission)
-
-            if not next_question:
-                await self._submit_application(interaction, submission, guild_id)
+            if next_question:
+                await self._present_question(interaction, submission.id, next_question, guild_id)
                 return
 
-            await self._present_question(interaction, submission.id, next_question, guild_id)
-
-    async def _get_next_conditional_question(self, session, submission):
-        """Get next conditional question based on answers"""
-        answers = (
-            session.query(Answer)
-            .options(joinedload(Answer.selected_options))
-            .filter_by(submission_id=submission.id)
-            .all()
-        )
-
-        for answer in answers:
-            if answer.selected_options:
-                for option in answer.selected_options:
-                    conditional = session.query(Question).filter_by(
-                        parent_option_id=option.id,
-                        active=True
-                    ).first()
-
-                    if conditional:
-                        already_answered = session.query(Answer).filter_by(
-                            submission_id=submission.id,
-                            question_id=conditional.id
-                        ).first()
-
-                        if not already_answered:
-                            return conditional
-        return None
+            # PRIORITY 3: All questions answered - submit application
+            await self._submit_application(interaction, submission, guild_id)
 
     async def _present_question(
             self,
@@ -233,7 +441,7 @@ class OnboardingCog(commands.Cog):
 
             session.commit()
 
-        await self._send_to_moderators(guild_id, submission.id)
+        await self._send_to_moderators(guild_id, submission.id, interaction.user)
 
         embed = await create_embed(
             title="Application Submitted!",
@@ -247,8 +455,8 @@ class OnboardingCog(commands.Cog):
 
         await self._send_response(interaction, embed=embed, ephemeral=True)
 
-    async def _send_to_moderators(self, guild_id: int, submission_id: int):
-        """Post application to moderator queue"""
+    async def _send_to_moderators(self, guild_id: int, submission_id: int, user: discord.User):
+        """Post application to moderator queue with enhanced profile info"""
         channel_id = await get_channel_id(guild_id, "moderator_queue")
         if not channel_id:
             logger.warning(f"No moderator queue channel configured for guild {guild_id}")
@@ -313,7 +521,32 @@ class OnboardingCog(commands.Cog):
                         inline=False
                     )
 
-            embed.set_footer(text=f"Submission ID: {submission_id}")
+            # Enhanced profile information
+            if user:
+                # Avatar
+                avatar_url = user.display_avatar.url if user.display_avatar else None
+                if avatar_url:
+                    embed.set_thumbnail(url=avatar_url)
+                    embed.add_field(name="🖼️ Avatar", value=f"[View]({avatar_url})", inline=True)
+
+                # Banner
+                try:
+                    full_user = await self.bot.fetch_user(user.id)
+                    if full_user.banner:
+                        banner_url = full_user.banner.url
+                        embed.set_image(url=banner_url)
+                        embed.add_field(name="🎨 Banner", value=f"[View]({banner_url})", inline=True)
+                except:
+                    pass
+
+                # Display name
+                embed.add_field(name="👤 Display Name", value=user.display_name, inline=True)
+
+                # Account created
+                created_at = user.created_at.strftime("%Y-%m-%d")
+                embed.add_field(name="📅 Account Created", value=created_at, inline=True)
+
+            embed.set_footer(text=f"Submission ID: {submission_id} | User ID: {member.user_id}")
 
             view = ModReviewView(self.bot, submission_id)
             await channel.send(embed=embed, view=view)
@@ -328,6 +561,181 @@ class OnboardingCog(commands.Cog):
             await interaction.followup.send(**kwargs)
         else:
             await interaction.response.send_message(**kwargs)
+
+
+class ResetConfirmView(discord.ui.View):
+    """Confirmation view for reset"""
+
+    def __init__(self, bot, member_id: int, message: str):
+        super().__init__(timeout=60)
+        self.bot = bot
+        self.member_id = member_id
+        self.message = message
+
+    @discord.ui.button(label="✅ Yes, Reset", style=discord.ButtonStyle.danger)
+    async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
+        onboarding_cog = self.bot.get_cog('OnboardingCog')
+        if onboarding_cog:
+            await onboarding_cog.perform_reset(interaction, self.member_id)
+
+    @discord.ui.button(label="❌ Cancel", style=discord.ButtonStyle.secondary)
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Cancelled.", ephemeral=True)
+
+
+class AppealModal(discord.ui.Modal):
+    """Modal for appeal submission"""
+
+    def __init__(self, bot, guild_id: int):
+        super().__init__(title="Appeal Rejection")
+        self.bot = bot
+        self.guild_id = guild_id
+
+        self.reason = discord.ui.TextInput(
+            label="Why should we reconsider?",
+            placeholder="Explain why you believe the decision should be reconsidered...",
+            style=discord.TextStyle.long,
+            required=True,
+            max_length=2000
+        )
+        self.add_item(self.reason)
+
+    async def on_submit(self, interaction: discord.Interaction):
+        with db.session_scope() as session:
+            guild = session.query(Guild).filter_by(guild_id=self.guild_id).first()
+            member = session.query(Member).filter_by(
+                guild_id=guild.id,
+                user_id=interaction.user.id
+            ).first()
+
+            appeal = Appeal(
+                member_id=member.id,
+                reason=self.reason.value,
+                status=AppealStatus.PENDING
+            )
+            session.add(appeal)
+
+            member.appeal_count += 1
+
+            session.commit()
+            appeal_id = appeal.id
+
+        # Send to moderators
+        channel_id = await get_channel_id(self.guild_id, "moderator_queue")
+        if channel_id:
+            channel = self.bot.get_channel(channel_id)
+            if channel:
+                embed = discord.Embed(
+                    title="📢 Application Appeal",
+                    description=f"**User:** <@{interaction.user.id}>\n\n**Appeal Reason:**\n{self.reason.value}",
+                    color=discord.Color.purple()
+                )
+                embed.set_footer(text=f"Appeal ID: {appeal_id}")
+
+                view = AppealReviewView(self.bot, appeal_id)
+                await channel.send(embed=embed, view=view)
+
+        await interaction.response.send_message(
+            "✅ Your appeal has been submitted. A moderator will review it shortly.",
+            ephemeral=True
+        )
+
+
+class AppealReviewView(discord.ui.View):
+    """View for moderator to review appeal"""
+
+    def __init__(self, bot, appeal_id: int):
+        super().__init__(timeout=None)
+        self.bot = bot
+        self.appeal_id = appeal_id
+
+    @discord.ui.button(label="✅ Approve Appeal", style=discord.ButtonStyle.green)
+    async def approve(self, interaction: discord.Interaction, button: discord.ui.Button):
+        with db.session_scope() as session:
+            appeal = session.query(Appeal).filter_by(id=self.appeal_id).first()
+            if not appeal:
+                await interaction.response.send_message("❌ Appeal not found.", ephemeral=True)
+                return
+
+            appeal.status = AppealStatus.APPROVED
+            appeal.reviewed_at = datetime.utcnow()
+            appeal.reviewer_id = interaction.user.id
+
+            member = appeal.member
+            member.status = ApplicationStatus.IN_PROGRESS
+            member.role_tier = None
+
+            session.commit()
+            user_id = member.user_id
+
+        # Send DM to user
+        user = await self.bot.fetch_user(user_id)
+        if user:
+            embed = await create_embed(
+                title="✅ Appeal Approved",
+                description=(
+                    "Good news! Your appeal has been approved.\n\n"
+                    "You can now restart the application process. "
+                    "Use `/apply` or `/reset` in the server to begin again."
+                ),
+                color=discord.Color.green()
+            )
+            await try_send_dm(user, embed=embed)
+
+        await interaction.response.send_message("✅ Appeal approved. User notified.", ephemeral=True)
+
+    @discord.ui.button(label="❌ Reject Appeal", style=discord.ButtonStyle.red)
+    async def reject(self, interaction: discord.Interaction, button: discord.ui.Button):
+        modal = AppealRejectModal(self.bot, self.appeal_id)
+        await interaction.response.send_modal(modal)
+
+
+class AppealRejectModal(discord.ui.Modal):
+    """Modal for rejecting appeal with reason"""
+
+    def __init__(self, bot, appeal_id: int):
+        super().__init__(title="Reject Appeal")
+        self.bot = bot
+        self.appeal_id = appeal_id
+
+        self.note = discord.ui.TextInput(
+            label="Reason (will be sent to user)",
+            placeholder="Enter reason for rejection...",
+            style=discord.TextStyle.long,
+            required=False,
+            max_length=1000
+        )
+        self.add_item(self.note)
+
+    async def on_submit(self, interaction: discord.Interaction):
+        with db.session_scope() as session:
+            appeal = session.query(Appeal).filter_by(id=self.appeal_id).first()
+            if not appeal:
+                await interaction.response.send_message("❌ Appeal not found.", ephemeral=True)
+                return
+
+            appeal.status = AppealStatus.REJECTED
+            appeal.reviewed_at = datetime.utcnow()
+            appeal.reviewer_id = interaction.user.id
+            appeal.reviewer_note = self.note.value
+
+            session.commit()
+            user_id = appeal.member.user_id
+
+        # Send DM to user
+        user = await self.bot.fetch_user(user_id)
+        if user:
+            embed = await create_embed(
+                title="Appeal Decision",
+                description=(
+                    f"Your appeal has been reviewed and was not approved.\n\n"
+                    f"{f'**Reason:** {self.note.value}' if self.note.value else ''}"
+                ),
+                color=discord.Color.orange()
+            )
+            await try_send_dm(user, embed=embed)
+
+        await interaction.response.send_message("✅ Appeal rejected. User notified.", ephemeral=True)
 
 
 class OnboardingChoiceView(discord.ui.View):
@@ -424,7 +832,7 @@ class FriendModal(discord.ui.Modal):
 
         onboarding_cog = self.bot.get_cog('OnboardingCog')
         if onboarding_cog:
-            await onboarding_cog._send_to_moderators(self.guild_id, submission_id)
+            await onboarding_cog._send_to_moderators(self.guild_id, submission_id, interaction.user)
 
         embed = await create_embed(
             title="✅ Request Submitted",

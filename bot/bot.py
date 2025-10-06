@@ -49,7 +49,9 @@ class OnboardingBot(commands.Bot):
             'cogs.onboarding',
             'cogs.moderation',
             'cogs.characters',
-            'cogs.admin'
+            'cogs.admin',
+            'cogs.logging',
+            'cogs.moderation_utils'
         ]
 
     async def setup_hook(self):

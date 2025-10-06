@@ -45,6 +45,7 @@ class RoleTier(enum.Enum):
     TEMPLAR = "templar"
     KNIGHT = "knight"
     SQUIRE = "squire"
+    ALLY = "ally"
 
 
 class ActionType(enum.Enum):
@@ -56,12 +57,21 @@ class ActionType(enum.Enum):
     TIMEOUT = "timeout"
     PROMOTE = "promote"
     DEMOTE = "demote"
+    RESET = "reset"
+    STRIP_ROLES = "strip_roles"
 
 
 class AppealStatus(enum.Enum):
     PENDING = "pending"
     APPROVED = "approved"
     REJECTED = "rejected"
+
+
+class ProfileChangeType(enum.Enum):
+    AVATAR = "avatar"
+    NAME = "name"
+    NICKNAME = "nickname"
+    BANNER = "banner"
 
 
 # Models
@@ -79,6 +89,8 @@ class Guild(Base):
     questions = relationship('Question', back_populates='guild', cascade='all, delete-orphan')
     games = relationship('Game', back_populates='guild', cascade='all, delete-orphan')
     config = relationship('Configuration', back_populates='guild', uselist=False, cascade='all, delete-orphan')
+    message_logs = relationship('MessageLog', back_populates='guild', cascade='all, delete-orphan')
+    profile_changes = relationship('ProfileChangeLog', back_populates='guild', cascade='all, delete-orphan')
 
 
 class ChannelRegistry(Base):
@@ -118,6 +130,11 @@ class Member(Base):
     joined_at = Column(DateTime, default=datetime.utcnow)
     approved_at = Column(DateTime)
     appeal_count = Column(Integer, default=0)
+
+    # Profile tracking
+    last_avatar_url = Column(Text)
+    last_display_name = Column(String(100))
+    last_nickname = Column(String(100))
 
     guild = relationship('Guild', back_populates='members')
     submissions = relationship('Submission', back_populates='member', cascade='all, delete-orphan')
@@ -293,6 +310,10 @@ class Configuration(Base):
     auto_ban_on_flag = Column(Boolean, default=False)
     announcement_enabled = Column(Boolean, default=True)
 
+    # Logging settings
+    message_logging_enabled = Column(Boolean, default=True)
+    profile_change_alerts_enabled = Column(Boolean, default=True)
+
     # Bot-managed messages
     welcome_message_content = Column(Text, nullable=True)
     welcome_message_media_url = Column(Text, nullable=True)
@@ -303,3 +324,49 @@ class Configuration(Base):
     rules_message_id = Column(BigInteger, nullable=True)
 
     guild = relationship('Guild', back_populates='config')
+
+
+class MessageLog(Base):
+    __tablename__ = 'message_logs'
+
+    id = Column(Integer, primary_key=True)
+    guild_id = Column(Integer, ForeignKey('guilds.id'), nullable=False)
+    channel_id = Column(BigInteger, nullable=False)
+    message_id = Column(BigInteger, nullable=False, index=True)
+    user_id = Column(BigInteger, nullable=False, index=True)
+    username = Column(String(100))
+    content = Column(Text)
+    attachments = Column(Text)  # JSON array of attachment URLs
+    embeds = Column(Text)  # JSON array of embed data
+    deleted = Column(Boolean, default=False)
+    edited = Column(Boolean, default=False)
+    original_content = Column(Text)  # For tracking edits
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    deleted_at = Column(DateTime)
+    edited_at = Column(DateTime)
+
+    guild = relationship('Guild', back_populates='message_logs')
+
+
+class ProfileChangeLog(Base):
+    __tablename__ = 'profile_change_logs'
+
+    id = Column(Integer, primary_key=True)
+    guild_id = Column(Integer, ForeignKey('guilds.id'), nullable=False)
+    user_id = Column(BigInteger, nullable=False, index=True)
+    change_type = Column(SQLEnum(ProfileChangeType), nullable=False)
+    old_value = Column(Text)
+    new_value = Column(Text)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    notified = Column(Boolean, default=False)
+
+    guild = relationship('Guild', back_populates='profile_changes')
+
+
+class RateLimitLog(Base):
+    __tablename__ = 'rate_limit_logs'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(BigInteger, nullable=False, index=True)
+    command = Column(String(100), nullable=False)
+    timestamp = Column(DateTime, default=datetime.utcnow)

@@ -166,6 +166,17 @@ class ModerationCog(commands.Cog):
     async def show_approve_options(self, interaction: discord.Interaction, submission_id: int):
         """Show role selection for approval"""
         with db.session_scope() as session:
+            submission = session.query(Submission).filter_by(id=submission_id).first()
+            if not submission:
+                await interaction.response.send_message("❌ Submission not found.", ephemeral=True)
+                return
+
+            # Check if this is a friend/ally request - auto-assign to Ally
+            if submission.submission_type == SubmissionType.FRIEND:
+                await self.approve_application(interaction, submission_id, RoleTier.ALLY)
+                return
+
+            # Regular application - show role selection
             guild = session.query(Guild).filter_by(guild_id=interaction.guild.id).first()
             roles = session.query(RoleRegistry).filter_by(guild_id=guild.id).order_by(
                 RoleRegistry.hierarchy_level.desc()
@@ -270,7 +281,7 @@ class ModerationCog(commands.Cog):
         await self._post_welcome_announcement(interaction.guild.id, user_id, role_tier)
 
         await interaction.response.send_message(
-            f"✅ Application approved for <@{user_id}> with {role_tier.value} role",
+            f"✅ {'Friend/Ally' if submission_type == SubmissionType.FRIEND else 'Application'} approved for <@{user_id}> with {role_tier.value} role",
             ephemeral=True
         )
 
@@ -358,7 +369,7 @@ class ModerationCog(commands.Cog):
 
         ban_text = " and banned" if ban else ""
         await interaction.response.send_message(
-            f"✅ Application rejected{ban_text} for <@{user_id}>",
+            f"✅ {'Friend/Ally request' if submission_type == SubmissionType.FRIEND else 'Application'} rejected{ban_text} for <@{user_id}>",
             ephemeral=True
         )
 

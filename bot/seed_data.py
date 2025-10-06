@@ -143,7 +143,7 @@ def seed_questions(guild_id: int):
         order += 1
         fq = Question(
             guild_id=guild.id,
-            question_text="Most of us are parents who value traditional family roles. Do you have kids or support family first priorities?",
+            question_text="Our guild is competitive and enjoys striving for success, but we also recognize that real life responsibilities come first. Are you comfortable being part of a group that plays seriously when in game, yet prioritizes balance with personal obligations?",
             question_type=QuestionType.SINGLE_CHOICE,
             order=order,
             required=False,
@@ -154,13 +154,13 @@ def seed_questions(guild_id: int):
 
         fq_yes = QuestionOption(
             question_id=fq.id,
-            option_text="Yes, I have kids or support family first priorities.",
+            option_text="Yes, I enjoy competitive play but agree that real life always comes first.",
             order=1,
             immediate_reject=False
         )
         fq_no = QuestionOption(
             question_id=fq.id,
-            option_text="No, I do not have kids or support family first priorities.",
+            option_text="No, I prefer a guild that prioritizes competition over outside obligations.",
             order=2,
             immediate_reject=True
         )
@@ -366,19 +366,25 @@ def seed_channels(guild_id: int):
         channel = ChannelRegistry(
             guild_id=guild.id,
             channel_type="announcements",
-            channel_id=1418810985266942083
+            channel_id=1418812086661939240
         )
         session.add(channel)
         channel = ChannelRegistry(
             guild_id=guild.id,
             channel_type="moderator_queue",
-            channel_id=1419154339536044084
+            channel_id=1419122849301659648
         )
         session.add(channel)
         channel = ChannelRegistry(
             guild_id=guild.id,
             channel_type="welcome",
             channel_id=1418809469202337933
+        )
+        session.add(channel)
+        channel = ChannelRegistry(
+            guild_id=guild.id,
+            channel_type="rules",
+            channel_id=1418809469202337934
         )
         session.add(channel)
         session.commit()
@@ -404,27 +410,34 @@ def seed_roles(guild_id: int):
             guild_id=guild.id,
             role_tier="SOVEREIGN",
             role_id=1418955168204066937,
-            hierarchy_level=3
+            hierarchy_level=4
         )
         session.add(role)
         role = RoleRegistry(
             guild_id=guild.id,
             role_tier="TEMPLAR",
             role_id=1418955465697660939,
-            hierarchy_level=2
+            hierarchy_level=3
         )
         session.add(role)
         role = RoleRegistry(
             guild_id=guild.id,
             role_tier="KNIGHT",
             role_id=1418955679690920039,
-            hierarchy_level=1
+            hierarchy_level=2
         )
         session.add(role)
         role = RoleRegistry(
             guild_id=guild.id,
             role_tier="SQUIRE",
             role_id=1418955825510219887,
+            hierarchy_level=1
+        )
+        session.add(role)
+        role = RoleRegistry(
+            guild_id=guild.id,
+            role_tier="ALLY",
+            role_id=1418956007349948418,
             hierarchy_level=1
         )
         session.add(role)

@@ -1,16 +1,33 @@
-# Discord Onboarding & Member Management Bot
+# Discord Onboarding & Member Management Bot v2.0
 
-A comprehensive Discord bot for automating member onboarding, application review, and character profile management. Built with Python, discord.py, and SQLAlchemy.
+A comprehensive Discord bot for automating member onboarding, application review, and character profile management with advanced moderation tools and logging capabilities.
+
+## 🆕 What's New in v2.0
+
+### User-Facing Features
+- **🔄 Self-Service Reset** - Members can use `/reset` to restart their onboarding if something goes wrong
+- **📢 Appeal System** - Rejected applicants can appeal decisions one time with `/appeal`
+- **👤 Enhanced Profile Display** - Application reviews show full profile info (avatar, banner, account age)
+
+### Moderator Tools
+- **📊 Message Logging** - Complete message history including deleted/edited messages
+- **🔍 Log Search** - Search through message logs with `/search_logs`
+- **👁️ Profile Change Alerts** - Automatic notifications when users change avatars/names
+- **🔄 Admin Reset** - Moderators can reset any user's onboarding with `/admin_reset_user`
+- **🗑️ Strip Roles** - Remove all roles and reset status with `/admin_strip_roles`
+- **💬 Bot Messaging** - Send DMs or channel messages through the bot
+- **🖱️ Context Menus** - Right-click users for quick moderation actions
+- **⏱️ Rate Limiting** - Automatic spam prevention for bot commands
 
 ## Features
 
-- 🎯 **DM-Based Onboarding** - Private message onboarding flow with three paths: Apply, Friend/Ally, or Regular User
+- 🎯 **DM-Based Onboarding** - Private message onboarding flow with three paths
 - 🔄 **Conditional Questions** - Dynamic follow-up questions based on previous answers
 - 👥 **Moderation Workflow** - Streamlined review queue for moderators
 - 🛡️ **Guild Role Hierarchy** - Sovereign, Templar, Knight, and Squire ranks
 - 🎮 **Character Management** - Track game characters (Mortal Online 2 and more)
 - 📢 **Bot-Managed Messages** - Welcome and rules messages managed by the bot
-- ⚙️ **Fully Configurable** - No hard-coded values, everything stored in database
+- ⚙️ **Fully Configurable** - Everything stored in database
 - 🔒 **Role-Based Permissions** - Hierarchical permission system
 - 📊 **Audit Logging** - Track all moderator actions
 - 🚀 **PostgreSQL Ready** - SQLite by default, easy migration to PostgreSQL
@@ -19,12 +36,9 @@ A comprehensive Discord bot for automating member onboarding, application review
 
 - [Requirements](#requirements)
 - [Installation](#installation)
-- [Configuration](#configuration)
-- [Onboarding System](#onboarding-system)
-- [Role Hierarchy](#role-hierarchy)
+- [Migration from v1.0](#migration-from-v10)
+- [New Features Guide](#new-features-guide)
 - [Commands](#commands)
-- [Conditional Questions](#conditional-questions)
-- [Bot-Managed Messages](#bot-managed-messages)
 - [Operations Guide](#operations-guide)
 
 ## Requirements
@@ -35,433 +49,625 @@ A comprehensive Discord bot for automating member onboarding, application review
 
 ## Installation
 
-### 1. Clone or Download
+### New Installation
 
 ```bash
+# 1. Clone and setup
 git clone <repository-url>
 cd discord-onboarding-bot
-```
+./setup.sh
 
-### 2. Create Virtual Environment
-
-```bash
-python -m venv venv
-
-# Activate on Windows
-venv\Scripts\activate
-
-# Activate on Linux/Mac
-source venv/bin/activate
-```
-
-### 3. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Configure Environment
-
-```bash
-# Copy the example environment file
+# 2. Configure environment
 cp .env.example .env
+nano .env  # Add DISCORD_TOKEN and GUILD_ID
 
-# Edit .env with your values
-nano .env  # or use your preferred editor
+# 3. Start bot
+python bot/bot.py
+
+# 4. Seed default data
+python bot/seed_data.py YOUR_GUILD_ID
+
+# 5. Configure in Discord
+/set_channel channel_type:announcements channel:#announcements
+/set_channel channel_type:moderator_queue channel:#mod-queue
+/set_role role_tier:sovereign role:@GuildLeader
+# ... (see QUICKSTART.md for full setup)
 ```
 
-**Required Environment Variables:**
+## Migration from v1.0
 
-```env
-DISCORD_TOKEN=your_bot_token_here
-GUILD_ID=your_guild_id_here
-DATABASE_URL=sqlite:///bot.db
+If you're upgrading from v1.0, run the migration script:
+
+```bash
+# Backup your database first!
+cp bot.db bot.db.backup
+
+# Run migration
+python bot/migrate_v2.py
+
+# Restart bot
+python bot/bot.py
 ```
 
-## Configuration
+The migration adds:
+- Message logging tables
+- Profile change tracking
+- Rate limiting system
+- New columns for enhanced features
 
-### Discord Bot Setup
+**Your existing data is safe** - the migration only adds new tables and columns.
 
-1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
-2. Click "New Application"
-3. Go to "Bot" section and click "Add Bot"
-4. Under "Privileged Gateway Intents", enable:
-   - ✅ Server Members Intent
-   - ✅ Message Content Intent
-5. Copy the bot token and add to `.env`
-6. Go to "OAuth2 > URL Generator"
-7. Select scopes: `bot` and `applications.commands`
-8. Select permissions:
-   - Manage Roles
-   - Ban Members
-   - Send Messages
-   - Manage Messages (for bot-managed messages)
-   - Embed Links
-   - Use Slash Commands
-9. Copy the generated URL and invite the bot to your server
+## New Features Guide
 
-## Onboarding System
+### 1. User Reset Command
 
-### How It Works
+Members can reset their own onboarding process if they make a mistake or want to change their path (from Friend/Ally to full member, etc.).
 
-When a member joins your server, they receive a **DM from the bot** with three options:
-
-#### 🛡️ Apply to Join
-- Full application process with customizable questions
-- Automatically assigned APPLICANT role while pending
-- Questions can have conditional follow-ups
-- Auto-flagged for immediate reject answers
-- Reviewed by moderators in private queue
-
-#### 🤝 Friend/Ally
-- For members from other guilds or friend referrals
-- Simple text field to explain who they are
-- Sent to moderator queue for approval
-- Can be assigned any role tier upon approval
-
-#### 👤 Regular User
-- No onboarding needed
-- Immediate access to server
-- No special roles assigned
-
-### Why DM-Based?
-
-- **Privacy**: Applicants don't expose answers publicly
-- **Cleaner Server**: No spam in public channels
-- **Better UX**: Interactive buttons and forms in a private space
-- **Persistent**: Members can complete at their own pace
-
-## Role Hierarchy
-
-The bot implements a guild-based role system:
-
-| Role Tier | Discord Name | Description | Hierarchy Level |
-|-----------|--------------|-------------|-----------------|
-| **Sovereign** | Guild Leader | Full administrative control | 4 |
-| **Templar** | Moderator | Can review applications and moderate | 3 |
-| **Knight** | Trusted Member | Special privileged member role | 2 |
-| **Squire** | Member | Approved guild member | 1 |
-| **Applicant** | Pending | Application submitted, awaiting review | 0 |
-
-### Role Management
-
-- Roles are **stored in the database** per member
-- Moderators can `/promote` and `/demote` members
-- Role assignments trigger announcements
-- Old roles automatically removed on promotion/demotion
-
-### Setup Roles
-
+**How it works:**
 ```
-/set_role role_tier:sovereign role:@Guild Leader
-/set_role role_tier:templar role:@Moderator
-/set_role role_tier:knight role:@Knight
-/set_role role_tier:squire role:@Member
-/set_role role_tier:applicant role:@Applicant
+User: /reset
+Bot: Shows confirmation with warning about role removal
+User: Confirms
+Bot: Deletes application, removes roles, restarts onboarding
 ```
+
+**Restrictions:**
+- Only available during IN_PROGRESS or PENDING status
+- Rejected users can reset once
+- Approved members with roles (except Squire/Friend) cannot reset
+- Friends/Allies can reset to apply as full member (loses Squire role)
+
+**User sees:**
+```
+⚠️ This will:
+• Delete your current application
+• Reset your status
+• Remove your current role
+• Allow you to start fresh
+
+Are you sure?
+```
+
+### 2. Appeal System
+
+Rejected applicants get ONE chance to appeal the decision.
+
+**Process:**
+```
+1. User: /appeal
+2. Bot: Opens modal "Why should we reconsider?"
+3. User: Writes appeal explanation
+4. Bot: Sends to moderator queue
+5. Moderator: Reviews and approves or rejects with reason
+6. User: Receives DM with decision
+```
+
+**Appeal Review UI:**
+```
+📢 Application Appeal
+User: @Username
+
+Appeal Reason:
+[User's explanation]
+
+[✅ Approve Appeal] [❌ Reject Appeal]
+```
+
+**Limitations:**
+- Only ONE appeal allowed per rejection
+- Appeal counter tracked in database
+- Can only appeal if status is REJECTED
+
+### 3. Enhanced Application Review
+
+When moderators review applications, they now see:
+
+**Profile Information:**
+- 🖼️ Avatar (thumbnail + link)
+- 🎨 Banner (full image if available)
+- 👤 Display name
+- 📅 Account creation date
+- 🆔 User ID
+
+This lets moderators spot potential issues immediately (inappropriate avatars, brand new accounts, etc.) without needing to manually check profiles.
+
+### 4. Message Logging System
+
+**Automatic logging of:**
+- ✅ All messages sent in server
+- ❌ Deleted messages (preserved in database)
+- ✏️ Edited messages (original + new content saved)
+- 📎 Attachments (URLs logged)
+- 📋 Embeds (data logged)
+
+**Moderator commands:**
+
+```bash
+# View last 10 messages from a user
+/view_logs member:@User limit:10
+
+# Search all messages for a term
+/search_logs query:"inappropriate" member:@User
+
+# Context menu: Right-click user → "View User Logs"
+```
+
+**What moderators see:**
+```
+📜 Message Logs - Username
+Showing last 10 messages
+
+#general - 2025-01-15 14:30 UTC ❌ [DELETED]
+```
+This was inappropriate content
+```
+
+#general - 2025-01-15 14:25 UTC ✏️ [EDITED]
+```
+Original message here
+```
+```
+
+**Use cases:**
+- User posts something against terms, then deletes it
+- User claims they didn't say something
+- Investigating harassment reports
+- Pattern analysis for problematic behavior
+
+### 5. Profile Change Monitoring
+
+**Automatic alerts when users change:**
+- 🖼️ Avatar
+- 📝 Username
+- 🏷️ Server nickname
+
+**Moderator notification:**
+```
+👤 Profile Change Detected
+User: @Username (ID: 12345)
+
+🖼️ Avatar Changed
+[Old Avatar] → [New Avatar]
+(Thumbnails shown)
+
+Review if changes violate server terms
+```
+
+**Why this matters:**
+- User joins with appropriate avatar, then changes to inappropriate one
+- User changes name to impersonate staff
+- Tracking ban evaders who change identity
+- Policy enforcement (profile content rules)
+
+### 6. Advanced Moderator Commands
+
+**Reset User's Onboarding**
+```
+/admin_reset_user member:@User
+```
+- Deletes all submissions/answers
+- Resets status to IN_PROGRESS
+- Removes current role
+- Sends DM to user notifying them
+- Logs action in audit trail
+
+**Strip All Roles**
+```
+/admin_strip_roles member:@User reason:"Violated terms"
+```
+- Removes ALL guild roles (except @everyone)
+- Resets database status
+- Sends DM with reason
+- Allows fresh start via /reset
+- Logs action with reason
+
+**Send DM Through Bot**
+```
+/admin_dm member:@User
+```
+Opens modal for message content. Useful for:
+- Official warnings
+- Policy clarifications  
+- Appeal follow-ups
+- Impersonal communication
+
+**Send Message to Channel**
+```
+/admin_send channel:#announcements
+```
+Opens modal for title and content. Useful for:
+- Official announcements
+- Policy updates
+- Bot-attributed messages
+- Consistent formatting
+
+### 7. Context Menu Commands
+
+Right-click any user to access:
+- **Reset User** - Quick access to admin reset
+- **Strip Roles** - Quick role stripping (asks for reason)
+- **DM User** - Send DM through bot
+- **View User Logs** - See their message history
+
+### 8. Rate Limiting
+
+**Automatic spam prevention:**
+- Tracks command usage per user
+- Default: 5 uses per 5 minute window
+- Applies to user-facing commands
+- Prevents bot abuse/overload
+
+**How it works:**
+```python
+# User tries command 6th time in 5 minutes
+if rate_limited:
+    return "⏱️ You're using commands too quickly. Please wait."
+```
+
+**Logged in database** for abuse pattern analysis.
 
 ## Commands
 
 ### Member Commands
 
-| Command | Description |
-|---------|-------------|
-| N/A | Onboarding starts automatically via DM on join |
-| `/character_add` | Add a new game character |
-| `/character_list` | View your characters |
-| `/character_remove` | Remove a character |
+| Command | Description | Rate Limited |
+|---------|-------------|--------------|
+| `/reset` | Reset your onboarding process | ✅ Yes |
+| `/appeal` | Appeal a rejected application (one-time) | ✅ Yes |
+| `/character_add` | Add a game character | ✅ Yes |
+| `/character_list` | View your characters | ✅ Yes |
+| `/character_remove` | Remove a character | ✅ Yes |
 
 ### Moderator Commands (Templar+)
 
 | Command | Description |
 |---------|-------------|
-| `/queue` | View pending applications and friend requests |
-| `/review <submission_id>` | Review a specific application |
-| `/promote <member> <tier>` | Promote member to higher role |
-| `/demote <member> <tier>` | Demote member to lower role |
+| `/queue` | View pending applications |
+| `/review <id>` | Review specific application |
+| `/promote <member> <tier>` | Promote member |
+| `/demote <member> <tier>` | Demote member |
+| `/admin_reset_user <member>` | Reset user's onboarding |
+| `/admin_strip_roles <member> [reason]` | Strip all roles |
+| `/admin_dm <member>` | Send DM through bot |
+| `/admin_send <channel>` | Send message to channel |
+| `/view_logs <member> [limit]` | View message logs |
+| `/search_logs <query> [member]` | Search message logs |
+
+### Context Menu (Right-Click)
+
+**On Users:**
+- Reset User
+- Strip Roles  
+- DM User
+- View User Logs
 
 ### Admin Commands (Sovereign)
 
-| Command | Description |
-|---------|-------------|
-| `/admin_help` | View all admin commands |
-| `/set_channel` | Configure bot channels |
-| `/set_role` | Configure role hierarchy |
-| `/add_game` | Add a supported game |
-| `/add_question` | Add application question |
-| `/add_conditional_question` | Add follow-up question |
-| `/set_welcome_message` | Set welcome channel message |
-| `/set_rules_message` | Set rules channel message |
-| `/update_welcome_message` | Update existing welcome |
-| `/update_rules_message` | Update existing rules |
-| `/set_welcome` | Set welcome announcement template |
-| `/view_config` | View current configuration |
-| `/health` | Check bot health status |
-
-## Conditional Questions
-
-Conditional questions appear based on the user's previous answers.
-
-### Example Flow
-
-**Main Question**: "How did you find our server?"
-- Option 1: "Friend/Referral"
-- Option 2: "Discord Server List"
-- Option 3: "Other"
-
-**Conditional Question** (if "Friend/Referral" selected):
-"Who referred you? Please provide their username so we can verify."
-
-**Conditional Question** (if "Other" selected):
-"Please tell us how you found us:"
-
-### Adding Conditional Questions
-
-1. First add the parent question:
-```
-/add_question
-```
-
-2. Note the question ID from the response
-
-3. Add the conditional question:
-```
-/add_conditional_question parent_question_id:1 parent_option_text:"Friend/Referral"
-```
-
-4. Fill out the modal with the follow-up question details
-
-### Use Cases
-
-- **Referral Verification**: Ask for referrer name when they select "Friend"
-- **Detailed Feedback**: Ask "What other game?" if they select "Other games"
-- **Policy Acceptance**: Show additional terms if they answer certain ways
-- **Custom Paths**: Create different question branches for different types of applicants
-
-## Bot-Managed Messages
-
-The bot can manage welcome and rules messages, ensuring they're:
-- Not tied to a specific user account
-- Easily updatable by admins
-- Consistent in format
-- Support media (images/videos via URLs)
-
-### Setup Welcome Message
-
-```
-/set_channel channel_type:welcome channel:#welcome
-/set_welcome_message
-```
-
-Fill in the modal:
-- **Message Content**: The text to display
-- **Media URL** (optional): Direct link to image/video
-
-### Setup Rules Message
-
-```
-/set_channel channel_type:rules channel:#rules
-/set_rules_message
-```
-
-Fill in the modal:
-- **Rules Content**: The server rules
-- **Media URL** (optional): Direct link to image/video
-
-### Updating Messages
-
-To update existing messages:
-```
-/update_welcome_message
-/update_rules_message
-```
-
-**Note**: To display media inline (not just as a link), manually edit the message in Discord and attach the file directly.
-
-## Channel Configuration
-
-Required channels:
-
-```
-/set_channel channel_type:announcements channel:#announcements
-/set_channel channel_type:moderator_queue channel:#mod-queue
-/set_channel channel_type:welcome channel:#welcome
-/set_channel channel_type:rules channel:#rules
-```
-
-## Initial Setup
-
-### 1. Start the Bot
-
-```bash
-python bot/bot.py
-```
-
-### 2. Seed Default Data
-
-```bash
-python bot/seed_data.py YOUR_GUILD_ID
-```
-
-This creates:
-- Default application questions with conditional follow-ups
-- Mortal Online 2 game entry
-- Default configuration
-
-### 3. Configure Channels
-
-```
-/set_channel channel_type:announcements channel:#announcements
-/set_channel channel_type:moderator_queue channel:#mod-queue
-/set_channel channel_type:welcome channel:#welcome
-/set_channel channel_type:rules channel:#rules
-```
-
-### 4. Configure Roles
-
-```
-/set_role role_tier:sovereign role:@Guild Leader
-/set_role role_tier:templar role:@Moderator
-/set_role role_tier:knight role:@Knight
-/set_role role_tier:squire role:@Member
-/set_role role_tier:applicant role:@Applicant
-```
-
-### 5. Set Bot-Managed Messages
-
-```
-/set_welcome_message
-/set_rules_message
-```
-
-### 6. Verify Setup
-
-```
-/view_config
-/health
-```
+All previous admin commands remain:
+- `/admin_help` - Command list
+- `/set_channel` - Configure channels
+- `/set_role` - Configure roles
+- `/add_question` - Add question
+- `/add_conditional_question` - Add follow-up
+- `/set_welcome_message` - Set welcome
+- `/set_rules_message` - Set rules
+- `/view_config` - View configuration
+- `/health` - Bot health status
 
 ## Operations Guide
 
-### Application Review Workflow
+### Daily Moderation Workflow
 
-1. Member joins server
-2. Bot sends DM with three options
-3. Member selects path (Apply/Friend/Regular)
-4. **If Apply**: Complete multi-step application in DMs
-5. **If Friend**: Provide information about themselves
-6. Bot posts to moderator queue
-7. Moderator uses `/queue` to see pending
-8. Moderator uses `/review <id>` for details
-9. Moderator approves with role selection or rejects
-10. Member receives DM notification
-11. Announcement posted in public channel
-
-### Managing Members
-
-**Promote a Squire to Knight**:
 ```
-/promote member:@Username role_tier:knight
+1. Check /queue for new applications
+2. Right-click user → View User Logs (if suspicious)
+3. /review <id> to see full application + profile
+4. Check profile alerts in mod queue
+5. Approve with role or reject with reason
 ```
 
-**Demote a Knight to Squire**:
+### Handling Appeals
+
 ```
-/demote member:@Username role_tier:squire
+1. Appeal appears in mod queue with user's explanation
+2. Review original rejection reason
+3. Check if circumstances changed
+4. [✅ Approve Appeal] - User can reapply
+   OR
+   [❌ Reject Appeal] - Provide clear reason
 ```
 
-**Remove all roles**:
-```
-/demote member:@Username role_tier:none
-```
+### Investigating Policy Violations
 
-### Customizing Questions
-
-**Add a new question**:
 ```
-/add_question
+1. Receive report of inappropriate content
+2. /view_logs member:@User
+3. Check for deleted/edited messages
+4. /search_logs query:"keyword" member:@User
+5. Take appropriate action (warning, kick, ban)
 ```
 
-**Add a follow-up based on answer**:
+### Profile Change Response
+
 ```
-/add_conditional_question parent_question_id:5 parent_option_text:"Yes"
+When alert appears:
+1. Review old vs new avatar/name
+2. Determine if violates policy
+3. If violation:
+   - /admin_dm to send warning
+   - /admin_strip_roles if serious
+   - Or ban if appropriate
 ```
 
-## Database Schema
+### Resetting Problem Users
 
-### Key Models
+**Soft reset** (give another chance):
+```
+/admin_reset_user member:@User
+```
 
-- **Guild**: Discord server information
-- **Member**: User records with `role_tier` field
-- **Submission**: Applications/requests with `submission_type` (applicant/friend/regular)
-- **Question**: Application questions with `parent_question_id` and `parent_option_id` for conditionals
-- **QuestionOption**: Answer choices with `immediate_reject` flag
-- **Answer**: User responses linked to questions
-- **RoleRegistry**: Role configuration with hierarchy levels
-- **Configuration**: Server settings including bot-managed message IDs
+**Hard reset** (serious violation):
+```
+/admin_strip_roles member:@User reason:"Policy violation - [details]"
+```
+
+### Rate Limit Abuse
+
+If user is spamming commands:
+- Rate limiter prevents excessive use automatically
+- Check logs: `SELECT * FROM rate_limit_logs WHERE user_id = X`
+- If malicious, consider timeout or ban
+
+## Configuration
+
+### Enable/Disable Logging
+
+```sql
+-- Disable message logging
+UPDATE configurations SET message_logging_enabled = 0;
+
+-- Disable profile change alerts
+UPDATE configurations SET profile_change_alerts_enabled = 0;
+```
+
+### Adjust Rate Limits
+
+Edit in code (`moderation_utils.py`):
+```python
+# Default: 5 uses per 5 minutes
+await self.check_rate_limit(user_id, command, max_uses=5, window_minutes=5)
+```
+
+## Database Schema Changes
+
+### New Tables
+
+**message_logs**
+- Stores all messages with deletion/edit tracking
+- Indexed by message_id and user_id
+
+**profile_change_logs**
+- Tracks avatar, name, nickname changes
+- Indexed by user_id
+
+**rate_limit_logs**
+- Command usage tracking
+- Indexed by user_id
+
+### New Columns
+
+**members**
+- `last_avatar_url` - Track avatar changes
+- `last_display_name` - Track name changes
+- `last_nickname` - Track nickname changes
+
+**configurations**
+- `message_logging_enabled` - Toggle message logging
+- `profile_change_alerts_enabled` - Toggle profile alerts
+
+**moderator_actions**
+- Added `RESET` and `STRIP_ROLES` to ActionType enum
 
 ## Troubleshooting
 
-### Members not receiving DMs
+### Migration Issues
 
-**Solution**: Ensure members have DMs enabled. The bot will try to post a fallback message in the welcome channel if DMs fail.
+```bash
+# If migration fails
+cp bot.db.backup bot.db
+python bot/migrate_v2.py
 
-### Conditional questions not appearing
-
-**Solution**: Ensure `parent_option_id` matches exactly with the option the user selected. Check with `/view_config`.
-
-### Roles not being assigned
-
-**Solution**: 
-1. Ensure bot's role is **higher** than the roles it's trying to assign
-2. Verify roles are configured: `/view_config`
-3. Check bot has "Manage Roles" permission
-
-### Bot-managed messages not updating
-
-**Solution**:
-1. Ensure bot has "Manage Messages" permission
-2. Check the message wasn't deleted
-3. Use `/set_welcome_message` again if needed
-
-### Application role not removed after approval
-
-**Solution**: Ensure APPLICANT role is configured and bot can manage it.
-
-## Advanced Configuration
-
-### PostgreSQL Migration
-
-```env
-DATABASE_URL=postgresql://username:password@localhost:5432/dbname
+# Check migration status
+sqlite3 bot.db
+.tables  # Should see message_logs, profile_change_logs, rate_limit_logs
 ```
 
-### Custom Onboarding Paths
+### Message Logs Not Appearing
 
-Modify `onboarding.py` to add additional onboarding paths beyond Apply/Friend/Regular.
+1. Check configuration:
+   ```sql
+   SELECT message_logging_enabled FROM configurations;
+   ```
+
+2. Verify bot has `Read Message History` permission
+
+3. Check logs: `tail -f bot.log`
+
+### Profile Changes Not Alerting
+
+1. Check configuration:
+   ```sql
+   SELECT profile_change_alerts_enabled FROM configurations;
+   ```
+
+2. Verify moderator_queue channel is set
+
+3. Bot needs `View Members` intent (should be enabled by default)
+
+### Rate Limiting Too Strict
+
+Adjust in `moderation_utils.py`:
+```python
+max_uses=10,  # Increase from 5
+window_minutes=5
+```
+
+## Security Considerations
+
+### Message Logging Privacy
+
+- Logs contain user messages including deleted content
+- Should comply with data retention policies
+- Consider GDPR implications in EU
+- Implement periodic cleanup if needed
+
+### Access Control
+
+- Only Templar+ can view message logs
+- Only Sovereign+ can strip roles
+- Context menus respect role hierarchy
+- Rate limits prevent abuse
+
+### Data Retention
+
+Consider implementing:
+```python
+# Delete logs older than 90 days
+DELETE FROM message_logs WHERE timestamp < datetime('now', '-90 days');
+DELETE FROM profile_change_logs WHERE timestamp < datetime('now', '-90 days');
+DELETE FROM rate_limit_logs WHERE timestamp < datetime('now', '-30 days');
+```
+
+## Best Practices
+
+### For Administrators
+
+1. **Regular log review** - Check for patterns of abuse
+2. **Consistent appeals** - Have clear appeal criteria
+3. **Document decisions** - Use reason fields thoroughly
+4. **Privacy respect** - Don't abuse message logging
+5. **Clear communication** - Use /admin_dm for formal warnings
+
+### For Moderators
+
+1. **Check logs first** - Before accusing, verify with /view_logs
+2. **Context matters** - Read full conversation, not just flagged message
+3. **Fair appeals** - Give benefit of doubt if circumstances changed
+4. **Use reset wisely** - admin_reset_user is for genuine mistakes
+5. **Document actions** - Always provide reason for strip_roles
+
+## Performance
+
+### Database Size
+
+With logging enabled:
+- ~1KB per message (text only)
+- ~5KB per message (with attachments)
+- High-traffic server (10K msgs/day) = ~5MB/day
+
+**Recommendation:** Implement periodic cleanup of old logs
+
+### Query Optimization
+
+Indexes are already created on:
+- message_logs(message_id, user_id)
+- profile_change_logs(user_id)
+- rate_limit_logs(user_id)
+
+For high-volume servers, consider:
+- PostgreSQL instead of SQLite
+- Partitioning message_logs by month
+- Archive old logs to separate table
+
+## Advanced Usage
+
+### Custom Alert Conditions
+
+Edit `logging.py` to add custom profile change rules:
+
+```python
+# Alert only for new accounts
+if (datetime.now() - member.created_at).days < 30:
+    await self._alert_profile_change(...)
+```
 
 ### Webhook Integration
 
-Connect moderator actions to external webhooks for logging or integration with other tools.
+Send logs to external service:
 
-## Security Best Practices
+```python
+# In logging.py on_message_delete
+webhook_url = "https://your-service.com/webhook"
+requests.post(webhook_url, json={
+    'user_id': message.author.id,
+    'content': message.content,
+    'deleted_at': datetime.now()
+})
+```
 
-1. **Never commit `.env`** - Contains sensitive tokens
-2. **Use strong role hierarchy** - Ensure bot role is positioned correctly
-3. **Regular backups** - Backup `bot.db` or PostgreSQL regularly
-4. **Monitor logs** - Check `bot.log` for suspicious activity
-5. **Limit admin access** - Only trust Sovereign role to server owner
+### Analytics
+
+Query message logs for insights:
+
+```sql
+-- Most active users
+SELECT user_id, COUNT(*) as msg_count 
+FROM message_logs 
+WHERE deleted = 0 
+GROUP BY user_id 
+ORDER BY msg_count DESC 
+LIMIT 10;
+
+-- Deletion patterns
+SELECT user_id, COUNT(*) as deleted_count
+FROM message_logs
+WHERE deleted = 1
+GROUP BY user_id
+HAVING deleted_count > 10;
+```
+
+## Roadmap
+
+Future features being considered:
+- 🔍 Advanced search with regex
+- 📊 Analytics dashboard
+- 🤖 Auto-moderation rules
+- 📧 Email notifications for appeals
+- 🔗 Integration with other bots
+- 📱 Mobile app for moderation
 
 ## Support
 
 For issues:
-1. Check `bot.log`
+1. Check `bot.log` for errors
 2. Use `/health` to verify setup
-3. Review this README
+3. Review this documentation
 4. Check Discord.py documentation
+
+## Changelog
+
+### v2.0 (2025-01-15)
+- Added `/reset` command for users
+- Added `/appeal` system for rejected applicants
+- Enhanced application review with full profile display
+- Added message logging system
+- Added profile change monitoring
+- Added advanced moderator commands
+- Added context menu commands
+- Added rate limiting
+- Database migration system
+- Performance optimizations
+
+### v1.0 (Initial Release)
+- DM-based onboarding
+- Conditional questions
+- Role hierarchy system
+- Character management
+- Bot-managed messages
 
 ## License
 
-[Add your license information here]
+[Your license here]
 
 ## Credits
 
@@ -472,4 +678,5 @@ Built with:
 
 ---
 
-**Version**: 2.0 with DM Onboarding, Conditional Questions, and Bot-Managed Messages
+**Version**: 2.0
+**Last Updated**: January 2025

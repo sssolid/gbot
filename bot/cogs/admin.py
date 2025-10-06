@@ -39,7 +39,7 @@ class AdminCog(commands.Cog):
             fields=[
                 ("Channel Setup",
                  "`/set_channel` - Configure bot channels\n`/add_channel_type` - Add custom channel type", False),
-                ("Role Setup", "`/set_role` - Configure role hierarchy", False),
+                ("Role Setup", "`/set_role` - Configure role hierarchy (sovereign, templar, knight, squire, ally, applicant)", False),
                 ("Games", "`/add_game` - Add supported games", False),
                 ("Questions",
                  "`/add_question` - Add application questions\n`/add_conditional_question` - Add follow-up question",
@@ -97,7 +97,7 @@ class AdminCog(commands.Cog):
     @app_commands.guild_only()
     @app_commands.default_permissions(administrator=True)
     @app_commands.describe(
-        role_tier="Role tier (sovereign, templar, knight, squire, applicant)",
+        role_tier="Role tier (sovereign, templar, knight, squire, ally, applicant)",
         role="The role to use"
     )
     async def set_role(
@@ -115,6 +115,7 @@ class AdminCog(commands.Cog):
             "templar": RoleTier.TEMPLAR,
             "knight": RoleTier.KNIGHT,
             "squire": RoleTier.SQUIRE,
+            "ally": RoleTier.ALLY,
             "applicant": RoleTier.APPLICANT,
             # Legacy support
             "admin": RoleTier.SOVEREIGN,
@@ -127,6 +128,7 @@ class AdminCog(commands.Cog):
             RoleTier.TEMPLAR: 3,
             RoleTier.KNIGHT: 2,
             RoleTier.SQUIRE: 1,
+            RoleTier.ALLY: 1,
             RoleTier.APPLICANT: 0
         }
 
