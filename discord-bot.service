@@ -11,11 +11,11 @@ Wants=network-online.target
 Type=simple
 User=botuser
 Group=botuser
-WorkingDirectory=/home/botuser/guildbot
-Environment="PATH=/home/botuser/guildbot/venv/bin"
+WorkingDirectory=/home/botuser/gbot
+Environment="PATH=/home/botuser/gbot/.venv/bin"
 
 # Start command
-ExecStart=/home/botuser/guildbot/venv/bin/python bot/bot.py
+ExecStart=/home/botuser/gbot/.venv/bin/python bot/bot.py
 
 # Restart configuration
 Restart=always
@@ -28,7 +28,7 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/home/botuser/guildbot
+ReadWritePaths=/home/botuser/gbot
 
 # Logging
 StandardOutput=journal
