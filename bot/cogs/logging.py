@@ -196,7 +196,7 @@ class LoggingCog(commands.Cog):
                     member_record.last_display_name = after.name
 
             # Check nickname change
-            if before.nick != after.nick:
+            if before.nick != after.nick and before.nick is not None:
                 change = ProfileChangeLog(
                     guild_id=guild.id,
                     user_id=before.id,
@@ -256,11 +256,13 @@ class LoggingCog(commands.Cog):
                 )
 
             elif change.change_type == ProfileChangeType.NICKNAME:
-                embed.add_field(
-                    name="🏷️ Nickname Changed",
-                    value=f"`{change.old_value}` → `{change.new_value}`",
-                    inline=False
-                )
+                # Only display if old nickname is not None (new join)
+                if change.old_value:
+                    embed.add_field(
+                        name="🏷️ Nickname Changed",
+                        value=f"`{change.old_value}` → `{change.new_value}`",
+                        inline=False
+                    )
 
         embed.set_footer(text="Review if changes violate server terms")
 

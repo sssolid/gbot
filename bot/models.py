@@ -3,14 +3,35 @@
 
 from sqlalchemy import (
     Column, Integer, String, BigInteger, Boolean, DateTime, Text,
-    ForeignKey, Table, Enum as SQLEnum
+    ForeignKey, Table
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.types import TypeDecorator, String
 from datetime import datetime
 import enum
 
 Base = declarative_base()
+
+
+class EnumAsString(TypeDecorator):
+    impl = String(50)
+
+    def __init__(self, enumtype, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._enumtype = enumtype
+
+    def process_bind_param(self, value, dialect):
+        # When saving to DB
+        if isinstance(value, self._enumtype):
+            return value.value
+        return value
+
+    def process_result_value(self, value, dialect):
+        # When loading from DB
+        if value is not None:
+            return self._enumtype(value)
+        return value
 
 
 # Enums
@@ -109,7 +130,8 @@ class RoleRegistry(Base):
 
     id = Column(Integer, primary_key=True)
     guild_id = Column(Integer, ForeignKey('guilds.id'), nullable=False)
-    role_tier = Column(SQLEnum(RoleTier), nullable=False)
+    role_tier = Column(EnumAsString(RoleTier), nullable=False)
+    # role_tier = Column(SQLEnum(RoleTier), nullable=False)
     role_id = Column(BigInteger, nullable=False)
     hierarchy_level = Column(Integer, default=0)
 
@@ -123,8 +145,10 @@ class Member(Base):
     guild_id = Column(Integer, ForeignKey('guilds.id'), nullable=False)
     user_id = Column(BigInteger, nullable=False, index=True)
     username = Column(String(100))
-    status = Column(SQLEnum(ApplicationStatus), default=ApplicationStatus.IN_PROGRESS)
-    role_tier = Column(SQLEnum(RoleTier), nullable=True)
+    status = Column(EnumAsString(ApplicationStatus), default=ApplicationStatus.IN_PROGRESS)
+    # status = Column(SQLEnum(ApplicationStatus), default=ApplicationStatus.IN_PROGRESS)
+    role_tier = Column(EnumAsString(RoleTier), nullable=False)
+    # role_tier = Column(SQLEnum(RoleTier), nullable=True)
     blacklisted = Column(Boolean, default=False)
     blacklist_reason = Column(Text)
     joined_at = Column(DateTime, default=datetime.utcnow)
@@ -148,7 +172,8 @@ class Question(Base):
     id = Column(Integer, primary_key=True)
     guild_id = Column(Integer, ForeignKey('guilds.id'), nullable=False)
     question_text = Column(Text, nullable=False)
-    question_type = Column(SQLEnum(QuestionType), nullable=False)
+    question_type = Column(EnumAsString(QuestionType), nullable=False)
+    # question_type = Column(SQLEnum(QuestionType), nullable=False)
     order = Column(Integer, nullable=False)
     required = Column(Boolean, default=True)
     active = Column(Boolean, default=True)
@@ -201,9 +226,11 @@ class Submission(Base):
 
     id = Column(Integer, primary_key=True)
     member_id = Column(Integer, ForeignKey('members.id'), nullable=False)
-    submission_type = Column(SQLEnum(SubmissionType), default=SubmissionType.APPLICANT)
+    submission_type = Column(EnumAsString(SubmissionType), default=SubmissionType.APPLICANT)
+    # submission_type = Column(SQLEnum(SubmissionType), default=SubmissionType.APPLICANT)
     friend_info = Column(Text, nullable=True)
-    status = Column(SQLEnum(ApplicationStatus), default=ApplicationStatus.IN_PROGRESS)
+    status = Column(EnumAsString(ApplicationStatus), default=ApplicationStatus.IN_PROGRESS)
+    # status = Column(SQLEnum(ApplicationStatus), default=ApplicationStatus.IN_PROGRESS)
     submitted_at = Column(DateTime)
     reviewed_at = Column(DateTime)
     reviewer_id = Column(BigInteger)
@@ -247,7 +274,8 @@ class Appeal(Base):
     id = Column(Integer, primary_key=True)
     member_id = Column(Integer, ForeignKey('members.id'), nullable=False)
     reason = Column(Text, nullable=False)
-    status = Column(SQLEnum(AppealStatus), default=AppealStatus.PENDING)
+    status = Column(EnumAsString(AppealStatus), default=AppealStatus.PENDING)
+    # status = Column(SQLEnum(AppealStatus), default=AppealStatus.PENDING)
     submitted_at = Column(DateTime, default=datetime.utcnow)
     reviewed_at = Column(DateTime)
     reviewer_id = Column(BigInteger)
@@ -292,7 +320,8 @@ class ModeratorAction(Base):
     submission_id = Column(Integer, ForeignKey('submissions.id'), nullable=True)
     target_user_id = Column(BigInteger, nullable=False)
     moderator_id = Column(BigInteger, nullable=False)
-    action_type = Column(SQLEnum(ActionType), nullable=False)
+    action_type = Column(EnumAsString(ActionType), nullable=False)
+    # action_type = Column(SQLEnum(ActionType), nullable=False)
     reason = Column(Text)
     banned = Column(Boolean, default=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
@@ -354,7 +383,8 @@ class ProfileChangeLog(Base):
     id = Column(Integer, primary_key=True)
     guild_id = Column(Integer, ForeignKey('guilds.id'), nullable=False)
     user_id = Column(BigInteger, nullable=False, index=True)
-    change_type = Column(SQLEnum(ProfileChangeType), nullable=False)
+    change_type = Column(EnumAsString(ProfileChangeType), nullable=False)
+    # change_type = Column(SQLEnum(ProfileChangeType), nullable=False)
     old_value = Column(Text)
     new_value = Column(Text)
     timestamp = Column(DateTime, default=datetime.utcnow)

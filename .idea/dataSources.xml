@@ -22,5 +22,12 @@
         </library>
       </libraries>
     </data-source>
+    <data-source source="LOCAL" name="gbot@multislayer" uuid="f59a6708-8e93-4d38-ba3e-6edcecf688a1">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://multislayer:5432/gbot</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

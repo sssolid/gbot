@@ -15,7 +15,7 @@ WorkingDirectory=/home/botuser/gbot
 Environment="PATH=/home/botuser/gbot/.venv/bin"
 
 # Start command
-ExecStart=/home/botuser/gbot/.venv/bin/python bot/bot.py
+ExecStart=/home/botuser/gbot/.venv/bin/python3 bot/bot.py
 
 # Restart configuration
 Restart=always
@@ -27,7 +27,7 @@ StartLimitBurst=5
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
-ProtectHome=true
+ProtectHome=read-only
 ReadWritePaths=/home/botuser/gbot
 
 # Logging
