@@ -50,7 +50,8 @@ async def get_or_create_member(guild_id: int, user_id: int, username: str = None
                 guild_id=guild.id,
                 user_id=user_id,
                 username=username,
-                status=ApplicationStatus.IN_PROGRESS
+                status=ApplicationStatus.IN_PROGRESS,
+                role_tier=RoleTier.CITIZEN
             )
             session.add(member)
             session.flush()

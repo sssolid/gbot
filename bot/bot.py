@@ -1,5 +1,6 @@
 # File: bot.py
 # Location: /bot/bot.py
+import argparse
 import os
 
 import discord
@@ -17,9 +18,22 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Discord Guild Bot")
+    parser.add_argument(
+        "--dev",
+        action="store_true",
+        help="Run the bot in development mode"
+    )
+    return parser.parse_args()
+
+args = parse_args()
+
+config = Config(dev=args.dev)
+
 # Configure logging
 logging.basicConfig(
-    level=getattr(logging, Config.LOG_LEVEL),
+    level=getattr(logging, config.LOG_LEVEL),
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(sys.stdout),
@@ -33,14 +47,15 @@ logger = logging.getLogger(__name__)
 class OnboardingBot(commands.Bot):
     """Discord Onboarding & Member Management Bot"""
 
-    def __init__(self):
+    def __init__(self, config):
         intents = discord.Intents.default()
         intents.members = True
         intents.message_content = True
         intents.guilds = True
+        self.config = config
 
         super().__init__(
-            command_prefix=Config.COMMAND_PREFIX,
+            command_prefix=self.config.COMMAND_PREFIX,
             intents=intents,
             help_command=None
         )
@@ -51,7 +66,9 @@ class OnboardingBot(commands.Bot):
             'cogs.characters',
             'cogs.admin',
             'cogs.logging',
-            'cogs.moderation_utils'
+            'cogs.moderation_utils',
+            'cogs.game_items',      # NEW: Game items database
+            'cogs.rpg_game'         # NEW: RPG mini-game
         ]
 
     async def setup_hook(self):
@@ -76,7 +93,7 @@ class OnboardingBot(commands.Bot):
 
         # Sync commands
         try:
-            Snowflake = discord.Object(int(os.getenv("GUILD_ID")))
+            Snowflake = discord.Object(int(self.config.GUILD_ID))
             self.tree.clear_commands(guild=Snowflake)
             self.tree.copy_global_to(guild=Snowflake)
             synced = await self.tree.sync(guild=Snowflake)
@@ -130,6 +147,9 @@ class OnboardingBot(commands.Bot):
                     "3. Configure roles with `/set_role`\n"
                     "4. Add application questions with `/add_question`\n"
                     "5. Add supported games with `/add_game`\n\n"
+                    "**NEW Game Features:**\n"
+                    "• RPG mini-game with leveling and battles\n"
+                    "• Game item database (great for MO2!)\n\n"
                     "Need help? Check the documentation or use `/health` to verify setup."
                 ),
                 color=discord.Color.blue()
@@ -192,19 +212,23 @@ class OnboardingBot(commands.Bot):
 
 async def main():
     """Main entry point"""
+
     # Validate configuration
     try:
-        Config.validate()
+        config.validate()
     except ValueError as e:
         logger.error(f"Configuration error: {e}")
         sys.exit(1)
 
+    # Initialize database globally
+    db.init_app(config)
+
     # Create and run bot
-    bot = OnboardingBot()
+    bot = OnboardingBot(config=config)
 
     try:
         async with bot:
-            await bot.start(Config.DISCORD_TOKEN)
+            await bot.start(config.DISCORD_TOKEN)
     except KeyboardInterrupt:
         logger.info("Received keyboard interrupt")
     except Exception as e:

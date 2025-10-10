@@ -5,14 +5,34 @@
 Seed script for initializing default data
 Run this after bot setup to create sample questions and configuration
 """
-
+import json
+import os
 import sys
+from typing import Dict
+
+from config import Config
 from database import db
 from models import Guild, Question, QuestionOption, QuestionType, Game, Configuration, ChannelRegistry, RoleRegistry, RoleTier
 import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+def load_seed_config(env: str = "prod"):
+    """Load seed configuration from JSON file"""
+    base_dir = os.path.join(os.path.dirname(__file__), "seed_configs")
+    filename = f"seed_config_{env}.json"
+    path = os.path.join(base_dir, filename)
+
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Seed configuration file not found: {path}")
+
+    with open(path, "r") as f:
+        config = json.load(f)
+
+    logger.info(f"Loaded seed configuration: {filename}")
+    return config
 
 
 def seed_questions(guild_id: int):
@@ -350,10 +370,10 @@ def seed_games(guild_id: int):
         return True
 
 
-def seed_channels(guild_id: int):
+def seed_channels(guild_id: int, seed_config: dict):
+    """Seed channels from JSON config"""
     with db.session_scope() as session:
         guild = session.query(Guild).filter_by(guild_id=guild_id).first()
-
         if not guild:
             logger.error(f"Guild {guild_id} not found.")
             return False
@@ -363,40 +383,18 @@ def seed_channels(guild_id: int):
             logger.warning(f"Guild already has {existing} channels. Skipping seed.")
             return False
 
-        channel = ChannelRegistry(
-            guild_id=guild.id,
-            channel_type="announcements",
-            channel_id=1418812086661939240
-        )
-        session.add(channel)
-        channel = ChannelRegistry(
-            guild_id=guild.id,
-            channel_type="moderator_queue",
-            channel_id=1419122849301659648
-        )
-        session.add(channel)
-        channel = ChannelRegistry(
-            guild_id=guild.id,
-            channel_type="welcome",
-            channel_id=1418809469202337933
-        )
-        session.add(channel)
-        channel = ChannelRegistry(
-            guild_id=guild.id,
-            channel_type="rules",
-            channel_id=1418809469202337934
-        )
-        session.add(channel)
-        session.commit()
+        for ch_type, ch_id in seed_config["channels"].items():
+            session.add(ChannelRegistry(guild_id=guild.id, channel_type=ch_type, channel_id=ch_id))
 
+        session.commit()
         logger.info(f"Successfully seeded channels for guild {guild_id}")
         return True
 
 
-def seed_roles(guild_id: int):
+def seed_roles(guild_id: int, config: dict):
+    """Seed roles from JSON config"""
     with db.session_scope() as session:
         guild = session.query(Guild).filter_by(guild_id=guild_id).first()
-
         if not guild:
             logger.error(f"Guild {guild_id} not found.")
             return False
@@ -406,51 +404,24 @@ def seed_roles(guild_id: int):
             logger.warning(f"Guild already has {existing} roles. Skipping seed.")
             return False
 
-        role = RoleRegistry(
-            guild_id=guild.id,
-            role_tier="SOVEREIGN",
-            role_id=1418955168204066937,
-            hierarchy_level=4
-        )
-        session.add(role)
-        role = RoleRegistry(
-            guild_id=guild.id,
-            role_tier="TEMPLAR",
-            role_id=1418955465697660939,
-            hierarchy_level=3
-        )
-        session.add(role)
-        role = RoleRegistry(
-            guild_id=guild.id,
-            role_tier="KNIGHT",
-            role_id=1418955679690920039,
-            hierarchy_level=2
-        )
-        session.add(role)
-        role = RoleRegistry(
-            guild_id=guild.id,
-            role_tier="SQUIRE",
-            role_id=1418955825510219887,
-            hierarchy_level=1
-        )
-        session.add(role)
-        role = RoleRegistry(
-            guild_id=guild.id,
-            role_tier="ALLY",
-            role_id=1418956007349948418,
-            hierarchy_level=1
-        )
-        session.add(role)
-        role = RoleRegistry(
-            guild_id=guild.id,
-            role_tier="APPLICANT",
-            role_id=1423764072062783488,
-            hierarchy_level=0
-        )
-        session.add(role)
+        hierarchy = {
+            "SOVEREIGN": 4,
+            "TEMPLAR": 3,
+            "KNIGHT": 2,
+            "SQUIRE": 1,
+            "ALLY": 1,
+            "APPLICANT": 0
+        }
+
+        for tier, role_id in config["roles"].items():
+            session.add(RoleRegistry(
+                guild_id=guild.id,
+                role_tier=tier,
+                role_id=role_id,
+                hierarchy_level=hierarchy.get(tier, 0)
+            ))
 
         session.commit()
-
         logger.info(f"Successfully seeded roles for guild {guild_id}")
         return True
 
@@ -483,11 +454,14 @@ def seed_configuration(guild_id: int):
         return True
 
 
-def seed_all(guild_id: int):
+def seed_all(guild_id: int, dev_mode: bool = False):
     """Seed all default data"""
     logger.info(f"Starting seed process for guild {guild_id}")
 
     success = True
+
+    # Load environment-specific configuration
+    seed_config = load_seed_config(dev_mode and "dev" or "prod")
 
     if not seed_configuration(guild_id):
         success = False
@@ -498,10 +472,10 @@ def seed_all(guild_id: int):
     if not seed_questions(guild_id):
         success = False
 
-    if not seed_channels(guild_id):
+    if not seed_channels(guild_id, seed_config):
         return False
 
-    if not seed_roles(guild_id):
+    if not seed_roles(guild_id, seed_config):
         return False
 
     if success:
@@ -520,8 +494,8 @@ def seed_all(guild_id: int):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python seed_data.py <guild_id>")
-        print("\nExample: python seed_data.py 123456789012345678")
+        print("Usage: python seed_data.py <guild_id> [--dev]")
+        print("\nExample: python seed_data.py 123456789012345678 --dev")
         print("\nTo find your guild ID:")
         print("1. Enable Developer Mode in Discord (User Settings > Advanced)")
         print("2. Right-click your server icon")
@@ -533,6 +507,11 @@ if __name__ == "__main__":
     except ValueError:
         print("Error: Guild ID must be a number")
         sys.exit(1)
+
+    # Initialize config and database
+    dev_mode = "--dev" in sys.argv
+    config = Config(dev=dev_mode)
+    db.init_app(config)
 
     # Initialize database
     db.create_tables()
